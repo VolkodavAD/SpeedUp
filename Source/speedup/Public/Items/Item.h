@@ -42,6 +42,8 @@ struct FBaseItemInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 	int ItemID = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+	FString ItemName = "Item";
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 	ItemType Type = ItemType::Sneakers;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 	ItemLevelRare LevelRare = ItemLevelRare::Common;

@@ -11,6 +11,7 @@ UItem::UItem()
 void UItem::SetItemInfo(FBaseItemInfo NewItemInfo)
 {
 	ItemInfo.ItemID = NewItemInfo.ItemID;
+	ItemInfo.ItemName = NewItemInfo.ItemName;
 	ItemInfo.ItemLevel = NewItemInfo.ItemLevel;
 	ItemInfo.LevelRare = NewItemInfo.LevelRare;
 	ItemInfo.Type = NewItemInfo.Type;
