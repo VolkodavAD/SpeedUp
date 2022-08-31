@@ -49,6 +49,8 @@ struct FBaseItemInfo
 	ItemLevelRare LevelRare = ItemLevelRare::Common;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 	int ItemLevel = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+	StatusItem ItemStatus = StatusItem::Deactive;
 };
 
 UCLASS(Blueprintable)

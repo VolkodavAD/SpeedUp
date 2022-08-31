@@ -5,9 +5,14 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
+#include "Components/ProgressBar.h"
+#include "Items/Item.h"
 #include "ItemBaseWidget.generated.h"
 
 class UTextBlock;
+class UImage;
+class UProgressBar;
 /**
  * 
  */
@@ -15,5 +20,44 @@ UCLASS()
 class SPEEDUP_API UItemBaseWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+	UFUNCTION(BlueprintCallable)
+		void GetAndSetItemName(FString ItemName);
+
+	UFUNCTION(BlueprintCallable)
+		void GetAndSetNFTtype(ItemType ItemType);
+
+	UFUNCTION(BlueprintCallable)
+		void GetAndSetNFTrare(ItemLevelRare ItemRare);
+
+	UFUNCTION(BlueprintCallable)
+		void GetAndSetNFTactiveStatus(StatusItem ItemStatus);
+
+public:
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* NFTnameTextBlock;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UImage* NFTimageBlock;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* NFTtypeTextBlock;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* NFTlevelRareTextBlock;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* NFTactiveStatusTextBlock;
+
+	int NFTmaxPower;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UProgressBar* NFTcurrentPower;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UProgressBar* TimeToPowerRecovery;
+
+protected:
+
+	void NativeOnInitialized() override;
 };

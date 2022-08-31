@@ -15,6 +15,7 @@ void UItem::SetItemInfo(FBaseItemInfo NewItemInfo)
 	ItemInfo.ItemLevel = NewItemInfo.ItemLevel;
 	ItemInfo.LevelRare = NewItemInfo.LevelRare;
 	ItemInfo.Type = NewItemInfo.Type;
+	ItemInfo.ItemStatus = NewItemInfo.ItemStatus;
 }
 
 
