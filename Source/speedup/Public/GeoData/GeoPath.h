@@ -17,11 +17,13 @@ struct FGeoPointInfo
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector2D PointLocation;
+		FVector2D PointLocation;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector2D PointVelosity;
+		FVector2D PointVelosity;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int CurrentTime;
+		int CurrentTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FString Name = "Path";
 };
 
 UCLASS(Blueprintable)
@@ -36,6 +38,8 @@ public:
 		FVector2D PointVelosity;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int CurrentTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FString Name = "Path";
 
 	void SetGeoPointInfo(FGeoPointInfo AddedGeoPointInfo);
 };

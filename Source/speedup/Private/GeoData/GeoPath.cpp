@@ -5,6 +5,7 @@ void UGeotPoint::SetGeoPointInfo(FGeoPointInfo AddedGeoPointInfo)
 	PointLocation = AddedGeoPointInfo.PointLocation;
 	PointVelosity = AddedGeoPointInfo.PointVelosity;
 	CurrentTime = AddedGeoPointInfo.CurrentTime;
+
 }
 
 void UGeoPath::AddPoint(const FGeoPointInfo AddedPoint)
@@ -20,7 +21,6 @@ void UGeoPath::AddPointByLocationVelocity(const FVector2D AddedPointLocation, co
 	NewPoint.CurrentTime = CurrentTime;
 	//PointInPath->Add(NewPoint);
 }
-
 
 /*
 bool UGeoPath::GetPoint(int IndexPoint, FMovePoint& ResultPoit)
