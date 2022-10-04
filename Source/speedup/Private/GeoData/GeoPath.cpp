@@ -22,15 +22,15 @@ void UGeoPath::AddPointByLocationVelocity(const FVector2D AddedPointLocation, co
 	//PointInPath->Add(NewPoint);
 }
 
-/*
-bool UGeoPath::GetPoint(int IndexPoint, FMovePoint& ResultPoit)
+
+bool UGeoPath::GetPoint(int IndexPoint, UGeotPoint& ResultPoit)
 {
-	ResultPoit.CurrentTime = 0;
-	ResultPoit.PointLocation = 0.0;
-	ResultPoit.PointVelosity = 0.0;
+	ResultPoit.CurrentTime = 0.0;
+	ResultPoit.PointLocation = FVector2D(0.0, 0.0);
+	ResultPoit.PointVelosity = FVector2D(0.0, 0.0);
 	return false;
 }
-*/
+
 /*
 FMovePoint* UGeoPath::GetPoint(int IndexPoint)
 {

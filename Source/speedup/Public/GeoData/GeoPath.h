@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Engine/DataTable.h"
 #include "GeoPath.generated.h"
 
 /**
@@ -12,9 +13,9 @@
 
 
 USTRUCT(BlueprintType)
-struct FGeoPointInfo
+struct FGeoPointInfo : public FTableRowBase
 {
-	GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointLocation;
@@ -45,13 +46,13 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FGeoPathinfo
+struct FGeoPathinfo : public FTableRowBase
 {
-	GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
 
-		//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-		//TArray<FMovePoint> PointInPath;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+	//TArray<FMovePoint> PointInPath;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 		float PathLangth = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 		int TotalTime = 0;
@@ -60,6 +61,9 @@ struct FGeoPathinfo
 		float minVelosity = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velocity")
 		float maxVelosity = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+		TArray<FGeoPointInfo> PointsInPath;
 };
 
 UCLASS(Blueprintable)
@@ -83,5 +87,5 @@ public:
 	void AddPointByLocationVelocity(const FVector2D AddedPointLocation, const FVector2D AddedPointVelosity, const int CurrentTime);
 
 	//UFUNCTION(BlueprintCallable, BlueprintPure)
-	//bool GetPoint(int IndexPoint, FMovePoint &ResultPoit);
+	bool GetPoint(int IndexPoint, UGeotPoint &ResultPoit);
 };

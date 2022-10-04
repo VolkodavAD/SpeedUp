@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Engine/DataTable.h"
 #include "Item.generated.h"
 
 /**
@@ -35,9 +36,10 @@ enum class StatusItem : uint8
 
 // Base constant information about item. For DataTable
 USTRUCT(BlueprintType)
-struct FBaseItemInfo
+struct FBaseItemInfo : public FTableRowBase
 {
-	GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
+	//GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 	int ItemID = 0;
