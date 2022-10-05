@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BaseWalletWidget.h"
+#include "widgets/BaseWalletWidget.h"
 
 
 void UBaseWalletWidget::NativeOnInitialized()
