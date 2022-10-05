@@ -22,6 +22,28 @@ void UGeoPath::AddPointByLocationVelocity(const FVector2D AddedPointLocation, co
 	//PointInPath->Add(NewPoint);
 }
 
+bool UGeoPath::SavePuthInDataTable(FString RowName, UDataTable * DataTable_Puths)
+{
+
+	//static ConstructorHelpers::FObjectFinder<UDataTable> valtotextlookup(TEXT("DataTable'/Game/Data/ValToText.ValToText'"));
+	//if (valtotextlookup.Object) ValToTextTable = valtotextlookup.Object;
+	FGeoPathinfo new_struct;
+	new_struct.TotalTime = 100.0;
+
+	FGeoPointInfo AddedRow;
+	AddedRow.Name = "A1";
+
+	new_struct = this->PlayerPathInfo;
+	if (DataTable_Puths->IsValidLowLevel())
+	{
+		DataTable_Puths->AddRow(FName(RowName), new_struct);
+		//DataTable_Puths->AddRow("test_item_insert2", new_struct);
+
+		//DataTable_Puths->AddRow(FName("001"), AddedRow); 
+		//DataTable_Puths->Row
+	}
+	return false;
+}
 
 bool UGeoPath::GetPoint(int IndexPoint, UGeotPoint& ResultPoit)
 {
@@ -29,7 +51,12 @@ bool UGeoPath::GetPoint(int IndexPoint, UGeotPoint& ResultPoit)
 	ResultPoit.PointLocation = FVector2D(0.0, 0.0);
 	ResultPoit.PointVelosity = FVector2D(0.0, 0.0);
 	return false;
+
+	//FGeoPointInfo AddedRow;
+	//AddedRow.Name = "A1";
+	//DataTable_Puths.AddRow(FName("001"), AddedRow);
 }
+
 
 /*
 FMovePoint* UGeoPath::GetPoint(int IndexPoint)
