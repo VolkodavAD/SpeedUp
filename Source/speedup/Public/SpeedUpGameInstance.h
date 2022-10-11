@@ -34,6 +34,8 @@ public:
     UPROPERTY(BlueprintReadWrite)
        UWidgetManager* widgetManager;
 
+    
+
     UFUNCTION(BlueprintImplementableEvent)
         void InitWidgetManager();
 

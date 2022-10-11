@@ -3,3 +3,14 @@
 
 #include "Widgets/BaseSpeedUpWidget.h"
 
+void UBaseSpeedUpWidget::Hide()
+{
+	HidePrep();
+	SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UBaseSpeedUpWidget::Show()
+{
+	ShowPrep();
+	SetVisibility(ESlateVisibility::Visible);
+}

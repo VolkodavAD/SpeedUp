@@ -5,6 +5,7 @@
 
 void USpeedUpGameInstance::Init()
 {
+	Super::Init();
 	widgetManager = NewObject<UWidgetManager>();
 	InitWidgetManager();
 }

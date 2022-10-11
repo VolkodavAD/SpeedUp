@@ -40,6 +40,12 @@ public:
             int zOrder = 0);
 
 
+    //UFUNCTION(BlueprintCallable)
+    //    void InitAndStartCaching(USpeedUpGameInstance* gi);
+
+    //UFUNCTION(BlueprintCallable)
+    //    void EndCaching();
+
     UFUNCTION(BlueprintCallable)
         bool ShowWidget(FString name);
 
