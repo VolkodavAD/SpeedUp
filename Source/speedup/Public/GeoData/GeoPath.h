@@ -74,6 +74,11 @@ class SPEEDUP_API UGeoPath : public UObject
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	FGeoPathinfo PlayerPathInfo;
+	
+	/*
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+	UDataTable *DataTable_Puths;
+	*/
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	//TArray<FGeoPathinfo> PlayerPointsInfoInPath;
@@ -88,4 +93,7 @@ public:
 
 	//UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool GetPoint(int IndexPoint, UGeotPoint &ResultPoit);
+
+	UFUNCTION(BlueprintCallable)
+	bool SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths);
 };
