@@ -84,8 +84,9 @@ public:
 	//TArray<FGeoPathinfo> PlayerPointsInfoInPath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	TArray<UGeotPoint*> PointsInPath;
-
+	TArray<FGeoPointInfo> PointsInPath;
+	
+	UFUNCTION(BlueprintCallable)
 	void AddPoint(const FGeoPointInfo AddedPoint);
 
 	UFUNCTION(BlueprintCallable)
@@ -96,4 +97,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths);
+
+	//UFUNCTION(BlueprintCallable, BlueprintPure)
+	//bool StartPath(int IndexPoint, UGeotPoint& ResultPoit);
+
 };

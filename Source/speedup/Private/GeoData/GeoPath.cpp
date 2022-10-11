@@ -5,24 +5,27 @@ void UGeotPoint::SetGeoPointInfo(FGeoPointInfo AddedGeoPointInfo)
 	PointLocation = AddedGeoPointInfo.PointLocation;
 	PointVelosity = AddedGeoPointInfo.PointVelosity;
 	CurrentTime = AddedGeoPointInfo.CurrentTime;
-
 }
 
 void UGeoPath::AddPoint(const FGeoPointInfo AddedPoint)
 {
 	UGeotPoint* NewGeotPoint = NewObject<UGeotPoint>();
 	NewGeotPoint->SetGeoPointInfo(AddedPoint);
-	PointsInPath.Add(NewGeotPoint);
+
+	PointsInPath.Add(AddedPoint);
 }
 
 void UGeoPath::AddPointByLocationVelocity(const FVector2D AddedPointLocation, const FVector2D AddedPointVelosity, const int CurrentTime)
 {
 	FGeoPointInfo NewPoint;
+	NewPoint.PointLocation = AddedPointLocation;
+	NewPoint.PointVelosity = AddedPointVelosity;
 	NewPoint.CurrentTime = CurrentTime;
-	//PointInPath->Add(NewPoint);
+
+	AddPoint(NewPoint);
 }
 
-bool UGeoPath::SavePuthInDataTable(FString RowName, UDataTable * DataTable_Puths)
+bool UGeoPath::SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths)
 {
 
 	//static ConstructorHelpers::FObjectFinder<UDataTable> valtotextlookup(TEXT("DataTable'/Game/Data/ValToText.ValToText'"));
