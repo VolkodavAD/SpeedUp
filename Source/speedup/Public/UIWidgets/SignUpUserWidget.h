@@ -29,7 +29,7 @@ class SPEEDUP_API USignUpUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-public:
+/*public:
 	void MakeRequest();
 
 	void OnPostReceivedResponse(FHttpRequestPtr Request, const FHttpResponsePtr Response, const bool bWasSuccessful) const
@@ -50,5 +50,5 @@ public:
 		FString ReturnString;
 		FJsonObjectConverter::UStructToJsonObjectString<const FData>(Object,ReturnString);
 		return ReturnString;
-	}
+	}*/
 };

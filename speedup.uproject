@@ -39,6 +39,14 @@
 		{
 			"Name": "LocationServicesIOSImpl",
 			"Enabled": true
+		},
+		{
+			"Name": "HTTPChunkInstaller",
+			"Enabled": true
+		},
+		{
+			"Name": "JsonBlueprintUtilities",
+			"Enabled": true
 		}
 	]
 }

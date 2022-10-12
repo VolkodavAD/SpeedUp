@@ -5,6 +5,7 @@
 #include "HttpModule.h"
 
 
+/*
 void USignUpUserWidget::MakeRequest()
 {
 	FHttpModule* Module = &FHttpModule::Get();
@@ -16,3 +17,4 @@ void USignUpUserWidget::MakeRequest()
 	Request->SetContentAsString(GetContent());//Абстрактная строка, некогда бывшая Json файлом. (Об этом Ниже).
 	Request->ProcessRequest(); // Отправляем запрос.
 }
+*/
