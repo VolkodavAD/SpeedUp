@@ -7,7 +7,8 @@
 #include "TimerManager.h"
 #include "GeoPath.h"
 //#include "GeoReferencingSystem.h"
-//#include "LocationServicesBPLibrary.h"
+#include "LocationServicesBPLibrary.h"
+#include "LocationServicesImpl.h"
 #include <Engine.h>
 #include <EngineService.h>
 //#include <LocationServicesImpl.h>
@@ -48,7 +49,12 @@ public:
 	void StopPath(FTimerHandle CurrentTimerH);
 
 public:
-	FEngineService* SSS;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
+	ULocationServicesImpl* SpeedupULocationServicesImpl;	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
+	ULocationServices* SpeedUp_ULocationServices;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
 	bool ServisEnable;

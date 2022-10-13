@@ -13,7 +13,7 @@ USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 	ActivCarPath = NewObject<UGeoPath>();
 	ActivPlanePath = NewObject<UGeoPath>();
 
-	//InitLocationServis
+	//InitLocationServis();
 
 	//https://docs.unrealengine.com/4.26/en-US/PythonAPI/class/LocationServices.html
 	// https://docs.unrealengine.com/5.0/en-US/PythonAPI/class/LocationServicesData.html#unreal.LocationServicesData
@@ -77,8 +77,14 @@ void USpeedup_GeoDataSystem::RepeatingFunction()
     // Do something here...
 }
 
+
 bool USpeedup_GeoDataSystem::InitServis()
 {
+	//GeoLocationServis->InitLocationServices(ELocationAccuracy::Best, 1000.0, 10.0);
+	if (SpeedUp_ULocationServices != nullptr)
+	{
+		//return SpeedUp_ULocationServices->InitLocationServices(ELocationAccuracy::Best, 1000.0, 10.0);
+	}
 	return false;
 }
 
