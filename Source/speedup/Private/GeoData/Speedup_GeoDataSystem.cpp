@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GeoData/Speedup_GeoDataSystem.h"
+#include "LocationServicesImpl.h"
+#include "LocationServicesBPLibrary.h"
 
 // Sets default values for this component's properties
 USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
@@ -13,6 +15,8 @@ USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 	ActivCarPath = NewObject<UGeoPath>();
 	ActivPlanePath = NewObject<UGeoPath>();
 
+
+	SpeedUp_ULocationServices = NewObject<ULocationServices>();
 	//InitLocationServis();
 
 	//https://docs.unrealengine.com/4.26/en-US/PythonAPI/class/LocationServices.html
@@ -30,8 +34,14 @@ void USpeedup_GeoDataSystem::BeginPlay()
 	// ...	
 }
 
-FGeoPointInfo USpeedup_GeoDataSystem::GetDiviceLocstion()
+FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocstion()
 {
+	FLocationServicesData LastFLocationServicesData;
+	if (SpeedUp_ULocationServices != nullptr)
+	{
+		LastFLocationServicesData = SpeedUp_ULocationServices->GetLastKnownLocation();
+	}
+	
 	FGeoPointInfo CurrentPoint;
 	return CurrentPoint;
 }
@@ -68,27 +78,33 @@ void USpeedup_GeoDataSystem::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void USpeedup_GeoDataSystem::RepeatingFunction()
 {
-    // Once we've called this function enough times, clear the Timer.
-    //if (--RepeatingCallsRemaining <= 0)
-    {
+   // Once we've called this function enough times, clear the Timer.
+   /*if (--RepeatingCallsRemaining <= 0)
+   {
 		//GetWorld()->GetTimerManager().ClearTimer(Sneakers_TimerHandle);
         // MemberTimerHandle can now be reused for any other Timer.
     }
+	*/
     // Do something here...
 }
 
 
 bool USpeedup_GeoDataSystem::InitServis()
 {
-	//GeoLocationServis->InitLocationServices(ELocationAccuracy::Best, 1000.0, 10.0);
+	//SpeedUp_ULocationServices::InitLocationServices(ELocationAccuracy::LA_Best, 1000.0, 10.0);
+	//GeoLocationServis->InitLocationServices(ELocationAccuracy::LA_Best, 1000.0, 10.0);
 	if (SpeedUp_ULocationServices != nullptr)
 	{
-		//return SpeedUp_ULocationServices->InitLocationServices(ELocationAccuracy::Best, 1000.0, 10.0);
+		return SpeedUp_ULocationServices->InitLocationServices(ELocationAccuracy::LA_Best, 1000.0, 10.0);
 	}
 	return false;
 }
 
 bool USpeedup_GeoDataSystem::StartServis()
 {
+	if (SpeedUp_ULocationServices != nullptr)
+	{
+		return SpeedUp_ULocationServices->StartLocationServices();
+	}
 	return false;
 }

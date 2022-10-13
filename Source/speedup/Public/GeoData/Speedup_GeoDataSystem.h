@@ -7,15 +7,14 @@
 #include "TimerManager.h"
 #include "GeoPath.h"
 //#include "GeoReferencingSystem.h"
-#include "LocationServicesBPLibrary.h"
-#include "LocationServicesImpl.h"
-#include <Engine.h>
-#include <EngineService.h>
+//#include <Engine.h>
+//#include <EngineService.h>
 //#include <LocationServicesImpl.h>
 //#include "GeoReferencingSystem.h"
 //#include "AzureSpatialAnchorsTypes.h"
 #include "Speedup_GeoDataSystem.generated.h"
 
+class ULocationServices;
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPEEDUP_API USpeedup_GeoDataSystem : public UActorComponent
@@ -41,7 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool StartServis();
 	UFUNCTION(BlueprintCallable)
-	FGeoPointInfo GetDiviceLocstion();
+	FGeoPointInfo GetLastLocstion();
 
 	UFUNCTION(BlueprintCallable)
 	void StartPath(FTimerHandle CurrentTimerH);
@@ -50,11 +49,11 @@ public:
 
 public:
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
-	ULocationServicesImpl* SpeedupULocationServicesImpl;	
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
+	//ULocationServicesImpl* SpeedupULocationServicesImpl;	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
-	ULocationServices* SpeedUp_ULocationServices;
+	class ULocationServices* SpeedUp_ULocationServices;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
 	bool ServisEnable;
