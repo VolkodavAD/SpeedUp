@@ -10,10 +10,12 @@ public class speedup : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
-			"Core", "CoreUObject", "Engine", "InputCore", "UMG",
+			"Core", "CoreUObject", "Engine", "InputCore", "UMG", "LocationServicesImpl"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+		
+		PublicIncludePaths.AddRange(new string[] {"<LocationServicesImpl>/Public", "<LocationServicesImpl>/Classes" });	
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
