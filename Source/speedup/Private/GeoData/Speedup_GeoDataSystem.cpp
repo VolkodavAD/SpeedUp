@@ -2,7 +2,7 @@
 
 #include "GeoData/Speedup_GeoDataSystem.h"
 #include "LocationServicesImpl.h"
-#include "LocationServicesBPLibrary.h"
+//#include "LocationServicesBPLibrary.h"
 
 // Sets default values for this component's properties
 USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
@@ -15,9 +15,24 @@ USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 	ActivCarPath = NewObject<UGeoPath>();
 	ActivPlanePath = NewObject<UGeoPath>();
 
-
 	SpeedUp_ULocationServices = NewObject<ULocationServices>();
-	//InitLocationServis();
+
+	if (InitServis())
+	{
+		ServisInit = true;
+		if (StartServis())
+		{ 
+			ServisStart = true;
+		}
+		else
+		{
+			ServisStart = false;
+		}
+	}
+	else
+	{
+		ServisInit = false;
+	}
 
 	//https://docs.unrealengine.com/4.26/en-US/PythonAPI/class/LocationServices.html
 	// https://docs.unrealengine.com/5.0/en-US/PythonAPI/class/LocationServicesData.html#unreal.LocationServicesData
@@ -41,8 +56,8 @@ FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocstion()
 	{
 		LastFLocationServicesData = SpeedUp_ULocationServices->GetLastKnownLocation();
 	}
-	
 	FGeoPointInfo CurrentPoint;
+	CurrentPoint.PointLocation = FVector2D(LastFLocationServicesData.Longitude, LastFLocationServicesData.Latitude);
 	return CurrentPoint;
 }
 
