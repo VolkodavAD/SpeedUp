@@ -6,13 +6,13 @@
 void UItemBaseWidget::NativeOnInitialized()
 {
 	FBaseItemInfo NewItemInfo;
-	GetAndSetItemName(NewItemInfo.ItemName);
-	GetAndSetNFTtype(NewItemInfo.Type);
-	GetAndSetNFTrare(NewItemInfo.LevelRare);
-	GetAndSetNFTactiveStatus(NewItemInfo.ItemStatus);
+	SetItemName(NewItemInfo.ItemName);
+	SetNFTtype(NewItemInfo.Type);
+	SetNFTrare(NewItemInfo.LevelRare);
+	SetNFTactiveStatus(NewItemInfo.ItemStatus);
 }
 
-void UItemBaseWidget::GetAndSetItemName(FString NFTname)
+void UItemBaseWidget::SetItemName(FString NFTname)
 {
 	
 	if (NFTnameTextBlock) {
@@ -20,21 +20,21 @@ void UItemBaseWidget::GetAndSetItemName(FString NFTname)
 	}
 }
 
-void UItemBaseWidget::GetAndSetNFTtype(ItemType NFTtype)
+void UItemBaseWidget::SetNFTtype(ItemType NFTtype)
 {
 	if (NFTtypeTextBlock) {
 		NFTtypeTextBlock->SetText(UEnum::GetDisplayValueAsText(NFTtype));
 	}
 }
 
-void UItemBaseWidget::GetAndSetNFTrare(ItemLevelRare NFTrare)
+void UItemBaseWidget::SetNFTrare(ItemLevelRare NFTrare)
 {
 	if (NFTlevelRareTextBlock) {
 		NFTlevelRareTextBlock->SetText(UEnum::GetDisplayValueAsText(NFTrare));
 	}
 }
 
-void UItemBaseWidget::GetAndSetNFTactiveStatus(StatusItem NFTstatus)
+void UItemBaseWidget::SetNFTactiveStatus(StatusItem NFTstatus)
 {
 	if (NFTactiveStatusTextBlock) {
 		NFTactiveStatusTextBlock->SetText(UEnum::GetDisplayValueAsText(NFTstatus));

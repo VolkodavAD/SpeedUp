@@ -22,16 +22,16 @@ class SPEEDUP_API UItemBaseWidget : public UUserWidget
 	GENERATED_BODY()
 
 	UFUNCTION(BlueprintCallable)
-		void GetAndSetItemName(FString ItemName);
+		void SetItemName(FString ItemName);
 
 	UFUNCTION(BlueprintCallable)
-		void GetAndSetNFTtype(ItemType ItemType);
+		void SetNFTtype(ItemType ItemType);
 
 	UFUNCTION(BlueprintCallable)
-		void GetAndSetNFTrare(ItemLevelRare ItemRare);
+		void SetNFTrare(ItemLevelRare ItemRare);
 
 	UFUNCTION(BlueprintCallable)
-		void GetAndSetNFTactiveStatus(StatusItem ItemStatus);
+		void SetNFTactiveStatus(StatusItem ItemStatus);
 
 public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -54,8 +54,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UProgressBar* NFTcurrentPower;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UProgressBar* TimeToPowerRecovery;
+	/*UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UProgressBar* TimeToPowerRecovery;*/
 
 protected:
 
