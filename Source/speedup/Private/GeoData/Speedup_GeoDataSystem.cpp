@@ -1,8 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GeoData/Speedup_GeoDataSystem.h"
+//#include "/Engine/Plugins/Runtime/LocationServicesBPLibrary/Source/LocationServicesBPLibrary/Classes/LocationServicesImpl.h"
 #include "LocationServicesImpl.h"
-//#include "LocationServicesBPLibrary.h"
+#include "LocationServicesBPLibrary.h"
+
+#include "LocationServicesBPLibraryModule.h"
+
 
 // Sets default values for this component's properties
 USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
@@ -15,7 +19,7 @@ USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 	ActivCarPath = NewObject<UGeoPath>();
 	ActivPlanePath = NewObject<UGeoPath>();
 
-	SpeedUp_ULocationServices = NewObject<ULocationServices>();
+	SpeedupULocationServices = NewObject<ULocationServices>();
 
 	if (InitServis())
 	{
@@ -36,6 +40,8 @@ USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 
 	//https://docs.unrealengine.com/4.26/en-US/PythonAPI/class/LocationServices.html
 	// https://docs.unrealengine.com/5.0/en-US/PythonAPI/class/LocationServicesData.html#unreal.LocationServicesData
+	// https://www.protechtraining.com/blog/post/tutorial-android-location-service-example-198
+	// https://forums.unrealengine.com/t/mobile-enabling-location-sevices/385104/10
 	//unreal.LocationServices
 }
 
@@ -49,12 +55,19 @@ void USpeedup_GeoDataSystem::BeginPlay()
 	// ...	
 }
 
-FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocstion()
+/*
+FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocation()
+{
+	FGeoPointInfo CurrentPoint;
+	return CurrentPoint;
+}*/
+
+FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocation_Implementation()
 {
 	FLocationServicesData LastFLocationServicesData;
-	if (SpeedUp_ULocationServices != nullptr)
+	if ((SpeedupULocationServices != nullptr) && ServisInit && ServisStart)
 	{
-		LastFLocationServicesData = SpeedUp_ULocationServices->GetLastKnownLocation();
+		//LastFLocationServicesData = SpeedupULocationServices->GetLastKnownLocation();
 	}
 	FGeoPointInfo CurrentPoint;
 	CurrentPoint.PointLocation = FVector2D(LastFLocationServicesData.Longitude, LastFLocationServicesData.Latitude);
@@ -108,18 +121,18 @@ bool USpeedup_GeoDataSystem::InitServis()
 {
 	//SpeedUp_ULocationServices::InitLocationServices(ELocationAccuracy::LA_Best, 1000.0, 10.0);
 	//GeoLocationServis->InitLocationServices(ELocationAccuracy::LA_Best, 1000.0, 10.0);
-	if (SpeedUp_ULocationServices != nullptr)
+	//if (SpeedUp_ULocationServices != nullptr)
 	{
-		return SpeedUp_ULocationServices->InitLocationServices(ELocationAccuracy::LA_Best, 1000.0, 10.0);
+		//return SpeedUp_ULocationServices->InitLocationServices(ELocationAccuracy::LA_Best, 1000.0, 10.0);
 	}
 	return false;
 }
 
 bool USpeedup_GeoDataSystem::StartServis()
 {
-	if (SpeedUp_ULocationServices != nullptr)
+	//if (SpeedUp_ULocationServices != nullptr)
 	{
-		return SpeedUp_ULocationServices->StartLocationServices();
+		//return ULocationServicesImpl->StartLocationServices();
 	}
 	return false;
 }

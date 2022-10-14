@@ -14,6 +14,7 @@
 //#include "AzureSpatialAnchorsTypes.h"
 #include "Speedup_GeoDataSystem.generated.h"
 
+class ULocationServicesImpl; 
 class ULocationServices;
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -39,8 +40,8 @@ public:
 	bool InitServis();
 	UFUNCTION(BlueprintCallable)
 	bool StartServis();
-	UFUNCTION(BlueprintCallable)
-	FGeoPointInfo GetLastLocstion();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
+	FGeoPointInfo GetLastLocation();
 
 	UFUNCTION(BlueprintCallable)
 	void StartPath(FTimerHandle CurrentTimerH);
@@ -49,11 +50,14 @@ public:
 
 public:
 	
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
-	//ULocationServicesImpl* SpeedupULocationServicesImpl;	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
+	ULocationServices* SpeedupULocationServices;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
-	class ULocationServices* SpeedUp_ULocationServices;
+	ULocationServicesImpl* SpeedupULocationServicesImpl;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
+	//class ULocationServicesImpl* SpeedUp_ULocationServices;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
 	bool ServisEnable;
