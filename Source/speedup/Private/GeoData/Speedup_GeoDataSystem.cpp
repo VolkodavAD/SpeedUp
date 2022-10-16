@@ -35,14 +35,7 @@ USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 	{
 		ServiceInit = false;
 	}
-
-	//https://docs.unrealengine.com/4.26/en-US/PythonAPI/class/LocationServices.html
-	// https://docs.unrealengine.com/5.0/en-US/PythonAPI/class/LocationServicesData.html#unreal.LocationServicesData
-	// https://www.protechtraining.com/blog/post/tutorial-android-location-service-example-198
-	// https://forums.unrealengine.com/t/mobile-enabling-location-sevices/385104/10
-	//unreal.LocationServices
 }
-
 
 void USpeedup_GeoDataSystem::SetServiceEnable(bool value)
 {
@@ -52,7 +45,6 @@ void USpeedup_GeoDataSystem::SetServiceStart(bool value)
 {
 	ServiceStart = value;
 }
-
 void USpeedup_GeoDataSystem::SetServiceInit(bool value)
 {
 	ServiceInit = value;
@@ -67,23 +59,13 @@ void USpeedup_GeoDataSystem::BeginPlay()
 	// ...	
 }
 
-/*
-FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocation()
-{
-	FGeoPointInfo CurrentPoint;
-	return CurrentPoint;
-}*/
-
-
 FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocation_Implementation()
 {
-	//FLocationServicesData LastFLocationServicesData;
-	//if ((SpeedupULocationServices != nullptr) && ServiceInit && ServiceStart)
-	//{
-		//LastFLocationServicesData = SpeedupULocationServices->GetLastKnownLocation();
-	//}
 	FGeoPointInfo CurrentPoint;
-	//CurrentPoint.PointLocation = FVector2D(LastFLocationServicesData.Longitude, LastFLocationServicesData.Latitude);
+	CurrentPoint.Name = "0";
+	CurrentPoint.CurrentTime = 0.0f;
+	CurrentPoint.PointLocation = FVector2D();
+	CurrentPoint.PointVelosity = FVector2D();
 	return CurrentPoint;
 }
 
@@ -99,18 +81,22 @@ void USpeedup_GeoDataSystem::StartPath(FTimerHandle CurrentTimerH)
 		ActivSneakersPath = NewObject<UGeoPath>();
 		if (Sneakers_TimerHandle.IsValid())
 		{
-			GetWorld()->GetTimerManager().SetTimer(CurrentTimerH, this, &USpeedup_GeoDataSystem::UpdateLocation, 6.0f, true, 2.0f);
+			GetWorld()->GetTimerManager().SetTimer(CurrentTimerH, this, &USpeedup_GeoDataSystem::UpdateLocationSneckers, 6.0f, true, 2.0f);
 		}
 	}
 }
 
-void USpeedup_GeoDataSystem::OnDeath_Implementation() {};
-
 void USpeedup_GeoDataSystem::StartPathInSneckers()
 {
+	if (ActivSneakersPath != nullptr)
+	{
+		ActivSneakersPath = nullptr;
+	}
+	ActivSneakersPath = NewObject<UGeoPath>(); 
+	ActivSneakersPath->PlayerPathInfo.PathID = LastSneakersPathID;
+
 	StartPath(Sneakers_TimerHandle);
 }
-
 void USpeedup_GeoDataSystem::StopPathInSneckers()
 {
 	StopPath(Sneakers_TimerHandle);
@@ -123,7 +109,6 @@ void USpeedup_GeoDataSystem::StopPath(FTimerHandle CurrentTimerH)
 		GetWorld()->GetTimerManager().ClearTimer(CurrentTimerH);
 	}
 }
-
 // Called every frame
 void USpeedup_GeoDataSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -131,7 +116,6 @@ void USpeedup_GeoDataSystem::TickComponent(float DeltaTime, ELevelTick TickType,
 
 	// ...
 }
-
 void USpeedup_GeoDataSystem::UpdateLocation_Implementation()
 {
 	GetLastLocation();
@@ -144,13 +128,15 @@ void USpeedup_GeoDataSystem::UpdateLocation_Implementation()
 	*/
     // Do something here...
 }
-
+void USpeedup_GeoDataSystem::UpdateLocationSneckers()
+{
+	ActivSneakersPath->AddPoint(GetLastLocation());
+}
 
 bool USpeedup_GeoDataSystem::InitService()
 {
 	return false;
 }
-
 bool USpeedup_GeoDataSystem::StartService()
 {
 	return false;

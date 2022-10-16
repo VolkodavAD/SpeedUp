@@ -40,14 +40,14 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FMyBindableEvent OnAwesomeness;
-	// Create Event
-	UFUNCTION(BlueprintImplementableEvent, Category = "BaseCharacter")
-	void OnDeath();
-	void OnDeath_Implementation();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "GeoData")
 	void UpdateLocation();
 	void UpdateLocation_Implementation();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "GeoData")
+	void UpdateLocationSneckers();
+
 	UFUNCTION(BlueprintCallable)
 	bool InitService();
 	UFUNCTION(BlueprintCallable)
@@ -98,6 +98,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	UGeoPath* ActivPlanePath;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+		int LastSneakersPathID;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+		int LastCarPathID;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+		int LastPlanePathID;
 
 private:
 	UFUNCTION(BlueprintCallable)

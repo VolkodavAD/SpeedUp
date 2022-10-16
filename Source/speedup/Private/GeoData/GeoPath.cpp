@@ -7,17 +7,28 @@ void UGeotPoint::SetGeoPointInfo(FGeoPointInfo AddedGeoPointInfo)
 	CurrentTime = AddedGeoPointInfo.CurrentTime;
 }
 
+FGeoPointInfo UGeotPoint::GetGeoPointInfo()
+{
+	FGeoPointInfo ReturnedGeoPoints;
+	ReturnedGeoPoints.PointID = PointID;
+	ReturnedGeoPoints.PointLocation = PointLocation;
+	ReturnedGeoPoints.PointVelosity = PointVelosity;
+	ReturnedGeoPoints.CurrentTime = CurrentTime;
+
+	return ReturnedGeoPoints;
+}
+
 void UGeoPath::AddPoint(const FGeoPointInfo AddedPoint)
 {
 	UGeotPoint* NewGeotPoint = NewObject<UGeotPoint>();
 	NewGeotPoint->SetGeoPointInfo(AddedPoint);
-
-	PointsInPath.Add(AddedPoint);
+	PlayerPathInfo.PointsInPath.Add(NewGeotPoint->GetGeoPointInfo());
 }
 
-void UGeoPath::AddPointByLocationVelocity(const FVector2D AddedPointLocation, const FVector2D AddedPointVelosity, const int CurrentTime)
+void UGeoPath::AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const FVector2D AddedPointVelosity, const int CurrentTime)
 {
 	FGeoPointInfo NewPoint;
+	NewPoint.PointID = AddedPointID;
 	NewPoint.PointLocation = AddedPointLocation;
 	NewPoint.PointVelosity = AddedPointVelosity;
 	NewPoint.CurrentTime = CurrentTime;
@@ -27,7 +38,6 @@ void UGeoPath::AddPointByLocationVelocity(const FVector2D AddedPointLocation, co
 
 bool UGeoPath::SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths)
 {
-
 	//static ConstructorHelpers::FObjectFinder<UDataTable> valtotextlookup(TEXT("DataTable'/Game/Data/ValToText.ValToText'"));
 	//if (valtotextlookup.Object) ValToTextTable = valtotextlookup.Object;
 	FGeoPathinfo new_struct;
@@ -50,6 +60,7 @@ bool UGeoPath::SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths)
 
 bool UGeoPath::GetPoint(int IndexPoint, UGeotPoint& ResultPoit)
 {
+	ResultPoit.PointID = 0;
 	ResultPoit.CurrentTime = 0.0;
 	ResultPoit.PointLocation = FVector2D(0.0, 0.0);
 	ResultPoit.PointVelosity = FVector2D(0.0, 0.0);
