@@ -10,7 +10,7 @@ public class speedup : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
-			"Core", "CoreUObject", "Engine", "InputCore", "UMG", "LocationServicesBPLibrary",
+			"Core", "CoreUObject", "Engine", "InputCore", "UMG", "LocationServicesBPLibrary", "HTTP", "Json"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
