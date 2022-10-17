@@ -1,8 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GeoData/Speedup_GeoDataSystem.h"
-#include "LocationServicesImpl.h"
+//#include "Service.h"
+//#include "/Engine/Plugins/Runtime/LocationServicesBPLibrary/Source/LocationServicesBPLibrary/Classes/LocationServicesImpl.h"
+//#include "LocationServicesImpl.h"
 //#include "LocationServicesBPLibrary.h"
+//#include "LocationServicesBPLibraryModule.h"
 
 // Sets default values for this component's properties
 USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
@@ -15,72 +18,110 @@ USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 	ActivCarPath = NewObject<UGeoPath>();
 	ActivPlanePath = NewObject<UGeoPath>();
 
-	SpeedUp_ULocationServices = NewObject<ULocationServices>();
 
-	if (InitServis())
+	if (InitService())
 	{
-		ServisInit = true;
-		if (StartServis())
+		ServiceInit = true;
+		if (StartService())
 		{ 
-			ServisStart = true;
+			ServiceStart = true;
 		}
 		else
 		{
-			ServisStart = false;
+			ServiceStart = false;
 		}
 	}
 	else
 	{
-		ServisInit = false;
+		ServiceInit = false;
 	}
 
 	//https://docs.unrealengine.com/4.26/en-US/PythonAPI/class/LocationServices.html
 	// https://docs.unrealengine.com/5.0/en-US/PythonAPI/class/LocationServicesData.html#unreal.LocationServicesData
+	// https://www.protechtraining.com/blog/post/tutorial-android-location-service-example-198
+	// https://forums.unrealengine.com/t/mobile-enabling-location-sevices/385104/10
 	//unreal.LocationServices
 }
 
+
+void USpeedup_GeoDataSystem::SetServiceEnable(bool value)
+{
+	ServiceEnable = value;
+}
+void USpeedup_GeoDataSystem::SetServiceStart(bool value)
+{
+	ServiceStart = value;
+}
+
+void USpeedup_GeoDataSystem::SetServiceInit(bool value)
+{
+	ServiceInit = value;
+}
 
 // Called when the game starts
 void USpeedup_GeoDataSystem::BeginPlay()
 {
 	Super::BeginPlay();
 	//if (Sneakers_TimerHandle.IsValid())
-	//GetWorld()->GetTimerManager().SetTimer(Sneakers_TimerHandle, this, &USpeedup_GeoDataSystem::RepeatingFunction, 1.0f, true, 2.0f);
+	//GetWorld()->GetTimerManager().SetTimer(Sneakers_TimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocation, 1.0f, true, 2.0f);
 	// ...	
 }
 
-FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocstion()
+/*
+FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocation()
 {
-	FLocationServicesData LastFLocationServicesData;
-	if (SpeedUp_ULocationServices != nullptr)
-	{
-		LastFLocationServicesData = SpeedUp_ULocationServices->GetLastKnownLocation();
-	}
 	FGeoPointInfo CurrentPoint;
-	CurrentPoint.PointLocation = FVector2D(LastFLocationServicesData.Longitude, LastFLocationServicesData.Latitude);
+	return CurrentPoint;
+}*/
+
+
+FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocation_Implementation()
+{
+	//FLocationServicesData LastFLocationServicesData;
+	//if ((SpeedupULocationServices != nullptr) && ServiceInit && ServiceStart)
+	//{
+		//LastFLocationServicesData = SpeedupULocationServices->GetLastKnownLocation();
+	//}
+	FGeoPointInfo CurrentPoint;
+	//CurrentPoint.PointLocation = FVector2D(LastFLocationServicesData.Longitude, LastFLocationServicesData.Latitude);
 	return CurrentPoint;
 }
 
 void USpeedup_GeoDataSystem::StartPath(FTimerHandle CurrentTimerH)
 {
-	if (!ServisEnable)
+	if (!ServiceEnable)
 	{
 		return;
 	}
-	//GetWorld()->GetTimerManager().SetTimer(CurrentTimerH, this, &USpeedup_GeoDataSystem::RepeatingFunction, 1.0f, true, 2.0f);
+	//GetWorld()->GetTimerManager().SetTimer(CurrentTimerH, this, &USpeedup_GeoDataSystem::UpdateLocation, 1.0f, true, 2.0f);
 	if (ActivSneakersPath != nullptr)
 	{
 		ActivSneakersPath = NewObject<UGeoPath>();
 		if (Sneakers_TimerHandle.IsValid())
 		{
-			GetWorld()->GetTimerManager().SetTimer(CurrentTimerH, this, &USpeedup_GeoDataSystem::RepeatingFunction, 1.0f, true, 2.0f);
+			GetWorld()->GetTimerManager().SetTimer(CurrentTimerH, this, &USpeedup_GeoDataSystem::UpdateLocation, 6.0f, true, 2.0f);
 		}
 	}
 }
 
+void USpeedup_GeoDataSystem::OnDeath_Implementation() {};
+
+void USpeedup_GeoDataSystem::StartPathInSneckers()
+{
+	StartPath(Sneakers_TimerHandle);
+}
+
+void USpeedup_GeoDataSystem::StopPathInSneckers()
+{
+	StopPath(Sneakers_TimerHandle);
+}
+
 void USpeedup_GeoDataSystem::StopPath(FTimerHandle CurrentTimerH)
 {
-	//GetWorld()->GetTimerManager().ClearTimer(CurrentTimerH);
+	if (CurrentTimerH.IsValid())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CurrentTimerH);
+	}
 }
 
 // Called every frame
@@ -91,8 +132,9 @@ void USpeedup_GeoDataSystem::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
-void USpeedup_GeoDataSystem::RepeatingFunction()
+void USpeedup_GeoDataSystem::UpdateLocation_Implementation()
 {
+	GetLastLocation();
    // Once we've called this function enough times, clear the Timer.
    /*if (--RepeatingCallsRemaining <= 0)
    {
@@ -104,22 +146,12 @@ void USpeedup_GeoDataSystem::RepeatingFunction()
 }
 
 
-bool USpeedup_GeoDataSystem::InitServis()
+bool USpeedup_GeoDataSystem::InitService()
 {
-	//SpeedUp_ULocationServices::InitLocationServices(ELocationAccuracy::LA_Best, 1000.0, 10.0);
-	//GeoLocationServis->InitLocationServices(ELocationAccuracy::LA_Best, 1000.0, 10.0);
-	if (SpeedUp_ULocationServices != nullptr)
-	{
-		return SpeedUp_ULocationServices->InitLocationServices(ELocationAccuracy::LA_Best, 1000.0, 10.0);
-	}
 	return false;
 }
 
-bool USpeedup_GeoDataSystem::StartServis()
+bool USpeedup_GeoDataSystem::StartService()
 {
-	if (SpeedUp_ULocationServices != nullptr)
-	{
-		return SpeedUp_ULocationServices->StartLocationServices();
-	}
 	return false;
 }
