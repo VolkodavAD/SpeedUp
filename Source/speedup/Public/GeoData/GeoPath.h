@@ -16,7 +16,9 @@ USTRUCT(BlueprintType)
 struct FGeoPointInfo : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int PointID = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointLocation;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -34,6 +36,8 @@ class SPEEDUP_API UGeotPoint : public UObject
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int PointID = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointLocation;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointVelosity;
@@ -43,12 +47,16 @@ public:
 		FString Name = "Path";
 
 	void SetGeoPointInfo(FGeoPointInfo AddedGeoPointInfo);
+	FGeoPointInfo GetGeoPointInfo();
 };
 
 USTRUCT(BlueprintType)
 struct FGeoPathinfo : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+		int PathID = 0;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	//TArray<FMovePoint> PointInPath;
@@ -83,14 +91,14 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	//TArray<FGeoPathinfo> PlayerPointsInfoInPath;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	TArray<FGeoPointInfo> PointsInPath;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+	//TArray<FGeoPointInfo> PointsInPath;
 	
 	UFUNCTION(BlueprintCallable)
 	void AddPoint(const FGeoPointInfo AddedPoint);
 
 	UFUNCTION(BlueprintCallable)
-	void AddPointByLocationVelocity(const FVector2D AddedPointLocation, const FVector2D AddedPointVelosity, const int CurrentTime);
+	void AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const FVector2D AddedPointVelosity, const int CurrentTime);
 
 	//UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool GetPoint(int IndexPoint, UGeotPoint &ResultPoit);
