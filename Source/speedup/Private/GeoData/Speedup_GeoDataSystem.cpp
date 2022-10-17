@@ -81,7 +81,7 @@ void USpeedup_GeoDataSystem::StartPath(FTimerHandle CurrentTimerH)
 		ActivSneakersPath = NewObject<UGeoPath>();
 		if (Sneakers_TimerHandle.IsValid())
 		{
-			GetWorld()->GetTimerManager().SetTimer(CurrentTimerH, this, &USpeedup_GeoDataSystem::UpdateLocationSneckers, 6.0f, true, 2.0f);
+			GetWorld()->GetTimerManager().SetTimer(CurrentTimerH, this, &USpeedup_GeoDataSystem::UpdateLocation, 6.0f, true, 2.0f);
 		}
 	}
 }
@@ -100,6 +100,7 @@ void USpeedup_GeoDataSystem::StartPathInSneckers()
 void USpeedup_GeoDataSystem::StopPathInSneckers()
 {
 	StopPath(Sneakers_TimerHandle);
+	ActivSneakersPath->PlayerPathInfo.PointsInPath.Reset(0);
 }
 
 void USpeedup_GeoDataSystem::StopPath(FTimerHandle CurrentTimerH)
@@ -128,9 +129,12 @@ void USpeedup_GeoDataSystem::UpdateLocation_Implementation()
 	*/
     // Do something here...
 }
+
 void USpeedup_GeoDataSystem::UpdateLocationSneckers()
 {
-	ActivSneakersPath->AddPoint(GetLastLocation());
+	FGeoPointInfo AddedPoint = GetLastLocation();
+	AddedPoint.PointID = LastSneakersPathID++;
+	ActivSneakersPath->AddPoint(AddedPoint);
 }
 
 bool USpeedup_GeoDataSystem::InitService()

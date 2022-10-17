@@ -45,7 +45,7 @@ public:
 	void UpdateLocation();
 	void UpdateLocation_Implementation();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "GeoData")
+	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void UpdateLocationSneckers();
 
 	UFUNCTION(BlueprintCallable)
