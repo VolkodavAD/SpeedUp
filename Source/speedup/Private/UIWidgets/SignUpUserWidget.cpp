@@ -2,7 +2,3 @@
 
 
 #include "UIWidgets/SignUpUserWidget.h"
-<<<<<<< Updated upstream
-=======
-#include "HttpModule.h"
->>>>>>> Stashed changes

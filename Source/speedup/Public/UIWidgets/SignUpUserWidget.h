@@ -25,9 +25,4 @@ UCLASS()
 class SPEEDUP_API USignUpUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
-
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 };
