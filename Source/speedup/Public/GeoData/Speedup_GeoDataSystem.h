@@ -54,6 +54,7 @@ public:
 	bool StartService();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
 	FGeoPointInfo GetLastLocation();
+	FGeoPointInfo GetLastLocation_Implementation();
 
 	UFUNCTION(BlueprintCallable)
 	void StartPath(FTimerHandle CurrentTimerH);
