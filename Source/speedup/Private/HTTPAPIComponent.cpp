@@ -24,7 +24,7 @@ void UHTTPAPIComponent::SignUpRequest(const FString Email, const FString Passwor
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 	
 	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedSignUP);
-	Request->SetURL(SignINURL);
+	Request->SetURL(SignUPURL);
 	Request->SetVerb("POST");
 	Request->SetHeader("Content-Type", "application/json");
 	Request->SetContentAsString(RequestBody);
@@ -82,6 +82,8 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 
 	Success = ResponseObject->GetBoolField("success");
 	Message = ResponseObject->GetStringField("message");
+
+	Success = bLoginSuccess;
 
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
