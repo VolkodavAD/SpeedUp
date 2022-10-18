@@ -9,6 +9,8 @@ DEFINE_LOG_CATEGORY_STATIC(HTTP_REQUEST_RESPONSE, Log, Log)
 void UHTTPAPIComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	bSuccess = false;
 }
 
 void UHTTPAPIComponent::SignUpRequest(const FString Email, const FString Password)
@@ -80,11 +82,9 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
-	Success = ResponseObject->GetBoolField("success");
+	bSuccess = ResponseObject->GetBoolField("success");
 	Message = ResponseObject->GetStringField("message");
-
-	Success = bLoginSuccess;
-
+	
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("Response : %s"), *Response->GetContentAsString())
@@ -96,9 +96,9 @@ void UHTTPAPIComponent::OnResponseReceivedLogOut(FHttpRequestPtr Request, FHttpR
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
-	Success = ResponseObject->GetBoolField("success");
+	bSuccess = ResponseObject->GetBoolField("success");
 	Message = ResponseObject->GetStringField("message");
-
+	
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("Response : %s"), *Response->GetContentAsString())
@@ -110,10 +110,10 @@ void UHTTPAPIComponent::OnResponseReceivedSignUP(FHttpRequestPtr Request, FHttpR
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
-	Success = ResponseObject->GetBoolField("success");
+	bSuccess = ResponseObject->GetBoolField("success");
 	Message = ResponseObject->GetStringField("message");
 	Data = ResponseObject->GetStringField("data");
-
+	
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))

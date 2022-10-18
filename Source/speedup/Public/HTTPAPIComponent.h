@@ -28,7 +28,7 @@ public:
 	FString LoginResult;
 
 	UPROPERTY(BlueprintReadOnly)
-	bool Success;
+	bool bSuccess;
 	
 	UPROPERTY(BlueprintReadOnly)
 	FString Message;
