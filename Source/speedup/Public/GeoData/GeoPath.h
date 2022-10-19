@@ -23,7 +23,7 @@ struct FGeoPointInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointLocation;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FVector2D PointVelosity;
+		float PointVelosity;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FDateTime  CurrentTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -41,7 +41,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointLocation;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FVector2D PointVelosity;
+		float PointVelosity;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float PointDistance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FDateTime CurrentTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -62,9 +64,9 @@ struct FGeoPathinfo : public FTableRowBase
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	//TArray<FMovePoint> PointInPath;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-		float PathLangth = 0.0f;
+		float PathLength = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-		int TotalTime = 0;
+		int FDateTime = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velocity")
 		float minVelosity = 0.0f;
@@ -99,7 +101,7 @@ public:
 	void AddPoint(const FGeoPointInfo AddedPoint);
 
 	UFUNCTION(BlueprintCallable)
-	void AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const FVector2D AddedPointVelosity, const FDateTime CurrentTime);
+	void AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const float AddedPointVelosity, const FDateTime CurrentTime);
 
 	//UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool GetPoint(int IndexPoint, UGeotPoint &ResultPoit);
