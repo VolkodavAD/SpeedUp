@@ -52,9 +52,14 @@ public:
 	bool InitService();
 	UFUNCTION(BlueprintCallable)
 	bool StartService();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
 	FGeoPointInfo GetLastLocation();
 	FGeoPointInfo GetLastLocation_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
+	float GetDistanse2Coor(FGeoPointInfo PointStart, FGeoPointInfo PointEnd);
+	float GetDistanse2Coor_Implementation(FGeoPointInfo PointStart, FGeoPointInfo PointEnd);
 
 	UFUNCTION(BlueprintCallable)
 	void StartPath(FTimerHandle CurrentTimerH);

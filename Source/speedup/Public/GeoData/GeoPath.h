@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
+#include "Misc/DateTime.h"
 #include "GeoPath.generated.h"
 
 /**
@@ -24,7 +25,7 @@ struct FGeoPointInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointVelosity;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int CurrentTime;
+		FDateTime  CurrentTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FString Name = "Path";
 };
@@ -42,7 +43,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointVelosity;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int CurrentTime;
+		FDateTime CurrentTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FString Name = "Path";
 
@@ -98,7 +99,7 @@ public:
 	void AddPoint(const FGeoPointInfo AddedPoint);
 
 	UFUNCTION(BlueprintCallable)
-	void AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const FVector2D AddedPointVelosity, const int CurrentTime);
+	void AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const FVector2D AddedPointVelosity, const FDateTime CurrentTime);
 
 	//UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool GetPoint(int IndexPoint, UGeotPoint &ResultPoit);

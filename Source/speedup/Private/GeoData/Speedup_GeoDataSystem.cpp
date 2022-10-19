@@ -68,6 +68,10 @@ FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocation_Implementation()
 	CurrentPoint.PointVelosity = FVector2D();
 	return CurrentPoint;
 }
+float USpeedup_GeoDataSystem::GetDistanse2Coor_Implementation(FGeoPointInfo PointStart, FGeoPointInfo PointEnd)
+{
+	return 0.0f;
+}
 
 void USpeedup_GeoDataSystem::StartPath(FTimerHandle CurrentTimerH)
 {
