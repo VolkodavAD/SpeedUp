@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GeoData/Speedup_GeoDataSystem.h"
+#include "Misc/DateTime.h"
 //#include "Service.h"
 //#include "/Engine/Plugins/Runtime/LocationServicesBPLibrary/Source/LocationServicesBPLibrary/Classes/LocationServicesImpl.h"
 //#include "LocationServicesImpl.h"
@@ -65,7 +66,7 @@ FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocation_Implementation()
 	CurrentPoint.Name = "0";
 	CurrentPoint.CurrentTime = 0.0f;
 	CurrentPoint.PointLocation = FVector2D();
-	CurrentPoint.PointVelosity = FVector2D();
+	CurrentPoint.PointVelosity = 0.0f;
 	return CurrentPoint;
 }
 float USpeedup_GeoDataSystem::GetDistanse2Coor_Implementation(FGeoPointInfo PointStart, FGeoPointInfo PointEnd)
@@ -138,6 +139,16 @@ void USpeedup_GeoDataSystem::UpdateLocationSneckers()
 {
 	FGeoPointInfo AddedPoint = GetLastLocation();
 	AddedPoint.PointID = LastSneakersPathID++;
+	if (ActivSneakersPath->PlayerPathInfo.PointsInPath.Num() != 0)
+	{
+		float DeltaTimePath = (AddedPoint.CurrentTime - ActivSneakersPath->PlayerPathInfo.PointsInPath.Last().CurrentTime).GetSeconds();
+		float DeltaLeghtPath = GetDistanse2Coor(ActivSneakersPath->PlayerPathInfo.PointsInPath.Last(), AddedPoint);
+		AddedPoint.PointVelosity = DeltaLeghtPath / DeltaTimePath;
+	}
+	else
+	{
+		AddedPoint.PointVelosity = -1.0;
+	}
 	ActivSneakersPath->AddPoint(AddedPoint);
 }
 
