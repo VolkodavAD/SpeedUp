@@ -25,7 +25,7 @@ void UGeoPath::AddPoint(const FGeoPointInfo AddedPoint)
 	PlayerPathInfo.PointsInPath.Add(NewGeotPoint->GetGeoPointInfo());
 }
 
-void UGeoPath::AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const FVector2D AddedPointVelosity, const int CurrentTime)
+void UGeoPath::AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const FVector2D AddedPointVelosity, const FDateTime CurrentTime)
 {
 	FGeoPointInfo NewPoint;
 	NewPoint.PointID = AddedPointID;
@@ -60,8 +60,9 @@ bool UGeoPath::SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths)
 
 bool UGeoPath::GetPoint(int IndexPoint, UGeotPoint& ResultPoit)
 {
+	FDateTime DefaultDT;
 	ResultPoit.PointID = 0;
-	ResultPoit.CurrentTime = 0.0;
+	ResultPoit.CurrentTime = DefaultDT;
 	ResultPoit.PointLocation = FVector2D(0.0, 0.0);
 	ResultPoit.PointVelosity = FVector2D(0.0, 0.0);
 	return false;
