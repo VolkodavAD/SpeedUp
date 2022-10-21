@@ -14,3 +14,15 @@ void UBaseSpeedUpWidget::Show()
 	ShowPrep();
 	SetVisibility(ESlateVisibility::Visible);
 }
+
+void UBaseSpeedUpWidget::CopyMessageToClipboard(FString text)
+{
+	FPlatformMisc::ClipboardCopy(*text);
+}
+
+FString UBaseSpeedUpWidget::PasteMessageFromClipboard()
+{
+	FString ClipboardContent;
+	FPlatformMisc::ClipboardPaste(ClipboardContent);
+	return ClipboardContent;
+}

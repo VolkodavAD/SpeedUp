@@ -44,4 +44,10 @@ public:
         void Hide();
     UFUNCTION(BlueprintCallable)
         void Show();
+
+    UFUNCTION(BlueprintCallable, Category = "")
+        static void CopyMessageToClipboard(FString text);
+
+    UFUNCTION(BlueprintCallable, Category = "")
+        static FString PasteMessageFromClipboard();
 };
