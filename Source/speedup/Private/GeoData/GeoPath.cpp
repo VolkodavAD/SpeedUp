@@ -1,3 +1,4 @@
+//#include "LocationServicesBPLibrary.h"
 #include "..\..\Public\GeoData\GeoPath.h"
 
 void UGeotPoint::SetGeoPointInfo(FGeoPointInfo AddedGeoPointInfo)
@@ -20,8 +21,11 @@ FGeoPointInfo UGeotPoint::GetGeoPointInfo()
 
 void UGeoPath::AddPoint(const FGeoPointInfo AddedPoint)
 {
+	FGeoPointInfo PreviewPointInfo = PlayerPathInfo.PointsInPath.Last();
+
 	UGeotPoint* NewGeotPoint = NewObject<UGeotPoint>();
 	NewGeotPoint->SetGeoPointInfo(AddedPoint);
+	//NewGeotPoint->PointDistance = DistanceBet
 	PlayerPathInfo.PointsInPath.Add(NewGeotPoint->GetGeoPointInfo());
 }
 
@@ -40,16 +44,16 @@ bool UGeoPath::SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths)
 {
 	//static ConstructorHelpers::FObjectFinder<UDataTable> valtotextlookup(TEXT("DataTable'/Game/Data/ValToText.ValToText'"));
 	//if (valtotextlookup.Object) ValToTextTable = valtotextlookup.Object;
-	FGeoPathinfo new_struct;
-	new_struct.PathLength = 100.0;
+	int32 NewRawName = FCString::Atoi(*DataTable_Puths->GetRowNames().Last().ToString());
 
+	FGeoPathinfo new_struct;
 	FGeoPointInfo AddedRow;
 	AddedRow.Name = "A1";
 
 	new_struct = this->PlayerPathInfo;
 	if (DataTable_Puths->IsValidLowLevel())
 	{
-		DataTable_Puths->AddRow(FName(RowName), new_struct);
+		DataTable_Puths->AddRow(FName(FString::FromInt(NewRawName)), new_struct);
 		//DataTable_Puths->AddRow("test_item_insert2", new_struct);
 
 		//DataTable_Puths->AddRow(FName("001"), AddedRow); 

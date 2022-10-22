@@ -33,19 +33,19 @@
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/756ffbd1a6054f9493ad749cd65aced1"
 		},
 		{
-			"Name": "LocationServicesAndroidImpl",
-			"Enabled": true
-		},
-		{
-			"Name": "LocationServicesIOSImpl",
-			"Enabled": true
-		},
-		{
 			"Name": "HTTPChunkInstaller",
 			"Enabled": true
 		},
 		{
 			"Name": "JsonBlueprintUtilities",
+			"Enabled": true
+		},
+		{
+			"Name": "LocationServicesAndroidImpl",
+			"Enabled": true
+		},
+		{
+			"Name": "LocationServicesIOSImpl",
 			"Enabled": true
 		}
 	]
