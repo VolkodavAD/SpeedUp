@@ -111,5 +111,4 @@ public:
 
 	//UFUNCTION(BlueprintCallable, BlueprintPure)
 	//bool StartPath(int IndexPoint, UGeotPoint& ResultPoit);
-
 };
