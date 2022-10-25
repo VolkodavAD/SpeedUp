@@ -46,3 +46,4 @@ public:
     /*UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
         void ShowNewMessagePopup(const FRemoteMessageInfo& message);*/
 };
+

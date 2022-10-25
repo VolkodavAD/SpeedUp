@@ -55,7 +55,7 @@ bool UGeoPath::SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths)
 	{
 		DataTable_Puths->AddRow(FName(FString::FromInt(NewRawName)), new_struct);
 		//DataTable_Puths->AddRow("test_item_insert2", new_struct);
-
+		// 
 		//DataTable_Puths->AddRow(FName("001"), AddedRow); 
 		//DataTable_Puths->Row
 	}

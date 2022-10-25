@@ -46,7 +46,7 @@ public:
 	void UpdateLocation_Implementation();
 
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
-	void UpdateLocationSneckers();
+	void UpdateLocationInPath();
 
 	UFUNCTION(BlueprintCallable)
 	bool InitService();
@@ -126,4 +126,8 @@ private:
 	void SetServiceStart(bool value);
 	UFUNCTION(BlueprintCallable)
 	void SetServiceInit(bool value);
+
+	float GetTotalPath_Today();
+	float GetTotalPath_Weekly();
+	float GetTotalPath_Total();
 };

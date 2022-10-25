@@ -56,6 +56,11 @@ void USpeedup_GeoDataSystem::BeginPlay()
 	//if (Sneakers_TimerHandle.IsValid())
 	//GetWorld()->GetTimerManager().SetTimer(Sneakers_TimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocation, 1.0f, true, 2.0f);
 	// ...	
+
+	for (int32 i = 0; i < ActivPath.Num(); ++i)
+	{
+		ActivPath[i] = NewObject<UGeoPath>();
+	}
 }
 
 FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocation_Implementation()
@@ -98,6 +103,10 @@ void USpeedup_GeoDataSystem::StartPath(int PuthN)
 	{
 		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocation, 6.0f, true, 2.0f);
 	}
+	if (ActivPath[PuthN] == nullptr)
+	{
+		ActivPath[PuthN] = NewObject<UGeoPath>();
+	}
 	ActivPath[PuthN]->PathIsActiv = true;
 }
 
@@ -129,9 +138,10 @@ void USpeedup_GeoDataSystem::UpdateLocation_Implementation()
 		//GetWorld()->GetTimerManager().ClearTimer(Sneakers_TimerHandle);
         // MemberTimerHandle can now be reused for any other Timer.
     }*/
+	UpdateLocationInPath();
 }
 
-void USpeedup_GeoDataSystem::UpdateLocationSneckers()
+void USpeedup_GeoDataSystem::UpdateLocationInPath()
 {
 	FGeoPointInfo AddedPoint = GetLastLocation();
 
