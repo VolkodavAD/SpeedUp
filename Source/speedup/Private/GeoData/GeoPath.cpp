@@ -3,9 +3,11 @@
 
 void UGeotPoint::SetGeoPointInfo(FGeoPointInfo AddedGeoPointInfo)
 {
+	PointID = AddedGeoPointInfo.PointID;
 	PointLocation = AddedGeoPointInfo.PointLocation;
 	PointVelosity = AddedGeoPointInfo.PointVelosity;
 	CurrentTime = AddedGeoPointInfo.CurrentTime;
+	PointDistance = AddedGeoPointInfo.PointDistance;
 }
 
 FGeoPointInfo UGeotPoint::GetGeoPointInfo()
@@ -21,7 +23,7 @@ FGeoPointInfo UGeotPoint::GetGeoPointInfo()
 
 void UGeoPath::AddPoint(const FGeoPointInfo AddedPoint)
 {
-	FGeoPointInfo PreviewPointInfo = PlayerPathInfo.PointsInPath.Last();
+	//FGeoPointInfo PreviewPointInfo = PlayerPathInfo.PointsInPath.Last();
 
 	UGeotPoint* NewGeotPoint = NewObject<UGeotPoint>();
 	NewGeotPoint->SetGeoPointInfo(AddedPoint);

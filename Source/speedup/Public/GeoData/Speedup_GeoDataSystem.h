@@ -37,8 +37,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMyBindableEvent);
-	
-	void ReInitServis();
+
 
 	UPROPERTY(BlueprintAssignable)
 	FMyBindableEvent OnAwesomeness;
@@ -50,10 +49,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void UpdateLocationInPath();
 
-	UFUNCTION(BlueprintCallable)
-	bool InitService();
-	UFUNCTION(BlueprintCallable)
-	bool StartService();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
+	void ReInitServis();
+	void ReInitServis_Implementation(); 
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
 	FGeoPointInfo GetLastLocation();
@@ -64,14 +62,9 @@ public:
 	float GetDistanse2Coor_Implementation(FGeoPointInfo PointStart, FGeoPointInfo PointEnd);
 
 	UFUNCTION(BlueprintCallable)
-	void StartPath(int PuthN);
+	void StartTrackPath(int PuthN);
 	UFUNCTION(BlueprintCallable)
-	void StopPath(int PuthN);
-
-	UFUNCTION(BlueprintCallable)
-	void StartActivPath01(int PuthN);
-	UFUNCTION(BlueprintCallable)
-	void StopActivPath01(int PuthN);
+	void StopTrackPath(int PuthN);
 
 public:
 
@@ -133,7 +126,10 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void SetServiceInit(bool value);
 
+	UFUNCTION(BlueprintCallable)
 	float GetLeghtPath_Today();
+	UFUNCTION(BlueprintCallable)
 	float GetLeghtPath_Weekly();
+	UFUNCTION(BlueprintCallable)
 	float GetLeghtPath_Total();
 };

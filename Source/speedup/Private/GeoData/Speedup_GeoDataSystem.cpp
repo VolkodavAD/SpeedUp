@@ -20,43 +20,11 @@ USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 	UGeoPath* AddedPath01 = NewObject<UGeoPath>();
 	ActivPath.Init(AddedPath01, 3);
 
-	if (InitService())
-	{
-		ServiceInit = true;
-		if (StartService())
-		{ 
-			ServiceStart = true;
-		}
-		else
-		{
-			ServiceStart = false;
-		}
-	}
-	else
-	{
-		ServiceInit = false;
-	}
 }
 
 
-void USpeedup_GeoDataSystem::ReInitServis()
+void USpeedup_GeoDataSystem::ReInitServis_Implementation()
 {
-	if (InitService())
-	{
-		ServiceInit = true;
-		if (StartService())
-		{
-			ServiceStart = true;
-		}
-		else
-		{
-			ServiceStart = false;
-		}
-	}
-	else
-	{
-		ServiceInit = false;
-	}
 }
 
 void USpeedup_GeoDataSystem::SetServiceEnable(bool value)
@@ -109,50 +77,43 @@ bool USpeedup_GeoDataSystem::HaveActivePath()
 	return false;
 }
 
-void USpeedup_GeoDataSystem::StartActivPath01(int PuthN)
-{
-}
-void USpeedup_GeoDataSystem::StopActivPath01(int PuthN)
-{
-}
-
-FString STR_IsValid = "Test";
-void USpeedup_GeoDataSystem::StartPath(int PuthN)
+void USpeedup_GeoDataSystem::StartTrackPath(int PuthN)
 {
 	ReInitServis();
 
 	UE_LOG(LogTemp, Warning, TEXT("ServiceEnable : %d"), ServiceEnable);
-	if (ServiceEnable)
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Black, FString::Printf(TEXT("ServiceEnable true")));
-	else
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Black, FString::Printf(TEXT("ServiceEnable false")));
 
-	if (!ServiceEnable)
-	{
-		return;
-	}
-	if (PathTimerHandle.IsValid() && !GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle))
+	if (PathTimerHandle.IsValid())
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Silver, FString::Printf(TEXT("PathTimerHandle.IsValid - true")));
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Silver, FString::Printf(TEXT("PathTimerHandle.IsValid - false")));
+
+	if (GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle))
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Silver, FString::Printf(TEXT("IsTimerActive - true")));
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Silver, FString::Printf(TEXT("IsTimerActive - false")));
+
+	if (!GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle))
 	{
 		//PathTimerHandle.IsValid() ? STR_IsValid = "STR_IsValid is valid": STR_IsValid = "STR_IsValid is not valid";
 
-		if (PathTimerHandle.IsValid())
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Black, FString::Printf(TEXT("PathTimerHandle.IsValid true")));
-		else
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Black, FString::Printf(TEXT("PathTimerHandle.IsValid false")));
-
 		//UE_LOG(LogTemp, Warning, TEXT("PathTimerHandle.IsValid : %d"), PathTimerHandle.IsValid());
 		//UE_LOG(LogTemp, Warning, TEXT("IsTimerActive : %s"), GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle))
-		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocation, 6.0f, true, 2.0f);
+		//GetWorld()->GetTimerManager().SetTimer(PathTimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocation, 6.0f, true, 2.0f);
 	}
+
 	if (ActivPath[PuthN] == nullptr)
 	{
 		ActivPath[PuthN] = NewObject<UGeoPath>();
 	}
+
+	GetWorld()->GetTimerManager().SetTimer(PathTimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocationInPath, 6.0f, true, 2.0f);
+
 	ActivPath[PuthN]->PathIsActiv = true;
 }
 
 
-void USpeedup_GeoDataSystem::StopPath(int PuthN)
+void USpeedup_GeoDataSystem::StopTrackPath(int PuthN)
 {
 	if (PathTimerHandle.IsValid())
 	{
@@ -161,6 +122,7 @@ void USpeedup_GeoDataSystem::StopPath(int PuthN)
 			GetWorld()->GetTimerManager().ClearTimer(PathTimerHandle);
 		}
 	}
+	ActivPath[PuthN]->PlayerPathInfo.PointsInPath.Reset(0);
 }
 
 
@@ -179,19 +141,21 @@ void USpeedup_GeoDataSystem::UpdateLocation_Implementation()
 		//GetWorld()->GetTimerManager().ClearTimer(Sneakers_TimerHandle);
         // MemberTimerHandle can now be reused for any other Timer.
     }*/
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("UpdateLocation")));
 	UpdateLocationInPath();
 }
 
 void USpeedup_GeoDataSystem::UpdateLocationInPath()
 {
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("UpdateLocationInPath")));
+
 	FGeoPointInfo AddedPoint = GetLastLocation();
 
 	for (int32 i = 0; i < ActivPath.Num(); ++i)
 	{
 		if (ActivPath[i]->PathIsActiv == true)
 		{
-			FGeoPointInfo AddedPoint_i = AddedPoint;
-			AddedPoint_i.PointID = ActivPath[i]->PlayerPathInfo.PointsInPath.Num();
+			AddedPoint.PointID = ActivPath[i]->PlayerPathInfo.PointsInPath.Num();
 			if (ActivPath[i]->PlayerPathInfo.PointsInPath.Num() > 0)
 			{
 				float DeltaTimePath = (AddedPoint.CurrentTime - ActivPath[i]->PlayerPathInfo.PointsInPath.Last().CurrentTime).GetSeconds();
@@ -222,15 +186,6 @@ void USpeedup_GeoDataSystem::UpdateLocationInPath()
 	}
 	ActivSneakersPath->AddPoint(AddedPoint);
 	*/
-}
-
-bool USpeedup_GeoDataSystem::InitService()
-{
-	return false;
-}
-bool USpeedup_GeoDataSystem::StartService()
-{
-	return false;
 }
 
 //FTimerDelegate TimerDel;

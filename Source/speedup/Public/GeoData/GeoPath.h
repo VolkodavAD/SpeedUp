@@ -24,6 +24,8 @@ struct FGeoPointInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PointVelosity;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float PointDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FDateTime  CurrentTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FString Name = "Path";
@@ -108,7 +110,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths);
-
-	//UFUNCTION(BlueprintCallable, BlueprintPure)
-	//bool StartPath(int IndexPoint, UGeotPoint& ResultPoit);
 };
