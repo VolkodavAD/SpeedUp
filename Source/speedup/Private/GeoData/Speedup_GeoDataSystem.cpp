@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GeoData/Speedup_GeoDataSystem.h"
+#include "Engine.h"
 #include "Misc/DateTime.h"
+//#include "Logging/LogMacros.h"
 //#include "Service.h"
 //#include "/Engine/Plugins/Runtime/LocationServicesBPLibrary/Source/LocationServicesBPLibrary/Classes/LocationServicesImpl.h"
 //#include "LocationServicesImpl.h"
@@ -23,6 +25,27 @@ USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 		ServiceInit = true;
 		if (StartService())
 		{ 
+			ServiceStart = true;
+		}
+		else
+		{
+			ServiceStart = false;
+		}
+	}
+	else
+	{
+		ServiceInit = false;
+	}
+}
+
+
+void USpeedup_GeoDataSystem::ReInitServis()
+{
+	if (InitService())
+	{
+		ServiceInit = true;
+		if (StartService())
+		{
 			ServiceStart = true;
 		}
 		else
@@ -93,14 +116,32 @@ void USpeedup_GeoDataSystem::StopActivPath01(int PuthN)
 {
 }
 
+FString STR_IsValid = "Test";
 void USpeedup_GeoDataSystem::StartPath(int PuthN)
 {
+	ReInitServis();
+
+	UE_LOG(LogTemp, Warning, TEXT("ServiceEnable : %d"), ServiceEnable);
+	if (ServiceEnable)
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Black, FString::Printf(TEXT("ServiceEnable true")));
+	else
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Black, FString::Printf(TEXT("ServiceEnable false")));
+
 	if (!ServiceEnable)
 	{
 		return;
 	}
 	if (PathTimerHandle.IsValid() && !GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle))
 	{
+		//PathTimerHandle.IsValid() ? STR_IsValid = "STR_IsValid is valid": STR_IsValid = "STR_IsValid is not valid";
+
+		if (PathTimerHandle.IsValid())
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Black, FString::Printf(TEXT("PathTimerHandle.IsValid true")));
+		else
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Black, FString::Printf(TEXT("PathTimerHandle.IsValid false")));
+
+		//UE_LOG(LogTemp, Warning, TEXT("PathTimerHandle.IsValid : %d"), PathTimerHandle.IsValid());
+		//UE_LOG(LogTemp, Warning, TEXT("IsTimerActive : %s"), GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle))
 		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocation, 6.0f, true, 2.0f);
 	}
 	if (ActivPath[PuthN] == nullptr)
@@ -156,6 +197,8 @@ void USpeedup_GeoDataSystem::UpdateLocationInPath()
 				float DeltaTimePath = (AddedPoint.CurrentTime - ActivPath[i]->PlayerPathInfo.PointsInPath.Last().CurrentTime).GetSeconds();
 				float DeltaLeghtPath = GetDistanse2Coor(ActivPath[i]->PlayerPathInfo.PointsInPath.Last(), AddedPoint);
 				AddedPoint.PointVelosity = DeltaLeghtPath / DeltaTimePath;
+
+				LeghtPath_Total = LeghtPath_Total + DeltaLeghtPath;
 			}
 			else
 			{
@@ -200,3 +243,17 @@ bool USpeedup_GeoDataSystem::StartService()
 //TimerDel.BindUFunction(this, FName("MyUsefulFunction"), MyInt, MyFloat);
 //Calling MyUsefulFunction after 5 seconds without looping
 //GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
+
+
+float USpeedup_GeoDataSystem::GetLeghtPath_Today()
+{
+	return LeghtPath_Today;
+}
+float USpeedup_GeoDataSystem::GetLeghtPath_Weekly()
+{
+	return LeghtPath_Weekly;
+}
+float USpeedup_GeoDataSystem::GetLeghtPath_Total()
+{
+	return LeghtPath_Total;
+}

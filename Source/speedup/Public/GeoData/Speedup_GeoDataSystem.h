@@ -38,6 +38,8 @@ public:
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMyBindableEvent);
 	
+	void ReInitServis();
+
 	UPROPERTY(BlueprintAssignable)
 	FMyBindableEvent OnAwesomeness;
 
@@ -72,7 +74,11 @@ public:
 	void StopActivPath01(int PuthN);
 
 public:
-	
+
+	float LeghtPath_Today;
+	float LeghtPath_Weekly;
+	float LeghtPath_Total;
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
 	//class ULocationServices *SpeedupULocationServices;
 
@@ -127,7 +133,7 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void SetServiceInit(bool value);
 
-	float GetTotalPath_Today();
-	float GetTotalPath_Weekly();
-	float GetTotalPath_Total();
+	float GetLeghtPath_Today();
+	float GetLeghtPath_Weekly();
+	float GetLeghtPath_Total();
 };
