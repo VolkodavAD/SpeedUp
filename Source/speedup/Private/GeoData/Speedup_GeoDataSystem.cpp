@@ -15,10 +15,8 @@ USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	// ...
-	ActivSneakersPath = NewObject<UGeoPath>();
-	ActivCarPath = NewObject<UGeoPath>();
-	ActivPlanePath = NewObject<UGeoPath>();
-
+	UGeoPath* AddedPath01 = NewObject<UGeoPath>();
+	ActivPath.Init(AddedPath01, 3);
 
 	if (InitService())
 	{
@@ -74,52 +72,52 @@ float USpeedup_GeoDataSystem::GetDistanse2Coor_Implementation(FGeoPointInfo Poin
 	return 0.0f;
 }
 
-void USpeedup_GeoDataSystem::StartPath(FTimerHandle CurrentTimerH)
+bool USpeedup_GeoDataSystem::HaveActivePath()
+{
+	for (int32 i = 0; i < ActivPath.Num(); ++i)
+	{
+		if (ActivPath[i]->PathIsActiv == true) return true;
+	}
+	return false;
+}
+
+void USpeedup_GeoDataSystem::StartActivPath01(int PuthN)
+{
+}
+void USpeedup_GeoDataSystem::StopActivPath01(int PuthN)
+{
+}
+
+void USpeedup_GeoDataSystem::StartPath(int PuthN)
 {
 	if (!ServiceEnable)
 	{
 		return;
 	}
-	//GetWorld()->GetTimerManager().SetTimer(CurrentTimerH, this, &USpeedup_GeoDataSystem::UpdateLocation, 1.0f, true, 2.0f);
-	if (ActivSneakersPath != nullptr)
+	if (PathTimerHandle.IsValid() && !GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle))
 	{
-		ActivSneakersPath = NewObject<UGeoPath>();
-		if (Sneakers_TimerHandle.IsValid())
+		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocation, 6.0f, true, 2.0f);
+	}
+	ActivPath[PuthN]->PathIsActiv = true;
+}
+
+
+void USpeedup_GeoDataSystem::StopPath(int PuthN)
+{
+	if (PathTimerHandle.IsValid())
+	{
+		if (GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle) && !HaveActivePath())
 		{
-			GetWorld()->GetTimerManager().SetTimer(CurrentTimerH, this, &USpeedup_GeoDataSystem::UpdateLocation, 6.0f, true, 2.0f);
+			GetWorld()->GetTimerManager().ClearTimer(PathTimerHandle);
 		}
 	}
 }
 
-void USpeedup_GeoDataSystem::StartPathInSneckers()
-{
-	if (ActivSneakersPath != nullptr)
-	{
-		ActivSneakersPath = nullptr;
-	}
-	ActivSneakersPath = NewObject<UGeoPath>(); 
-	ActivSneakersPath->PlayerPathInfo.PathID = LastSneakersPathID;
 
-	StartPath(Sneakers_TimerHandle);
-}
-void USpeedup_GeoDataSystem::StopPathInSneckers()
-{
-	StopPath(Sneakers_TimerHandle);
-	ActivSneakersPath->PlayerPathInfo.PointsInPath.Reset(0);
-}
-
-void USpeedup_GeoDataSystem::StopPath(FTimerHandle CurrentTimerH)
-{
-	if (CurrentTimerH.IsValid())
-	{
-		GetWorld()->GetTimerManager().ClearTimer(CurrentTimerH);
-	}
-}
 // Called every frame
 void USpeedup_GeoDataSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 	// ...
 }
 void USpeedup_GeoDataSystem::UpdateLocation_Implementation()
@@ -130,14 +128,34 @@ void USpeedup_GeoDataSystem::UpdateLocation_Implementation()
    {
 		//GetWorld()->GetTimerManager().ClearTimer(Sneakers_TimerHandle);
         // MemberTimerHandle can now be reused for any other Timer.
-    }
-	*/
-    // Do something here...
+    }*/
 }
 
 void USpeedup_GeoDataSystem::UpdateLocationSneckers()
 {
 	FGeoPointInfo AddedPoint = GetLastLocation();
+
+	for (int32 i = 0; i < ActivPath.Num(); ++i)
+	{
+		if (ActivPath[i]->PathIsActiv == true)
+		{
+			FGeoPointInfo AddedPoint_i = AddedPoint;
+			AddedPoint_i.PointID = ActivPath[i]->PlayerPathInfo.PointsInPath.Num();
+			if (ActivPath[i]->PlayerPathInfo.PointsInPath.Num() > 0)
+			{
+				float DeltaTimePath = (AddedPoint.CurrentTime - ActivPath[i]->PlayerPathInfo.PointsInPath.Last().CurrentTime).GetSeconds();
+				float DeltaLeghtPath = GetDistanse2Coor(ActivPath[i]->PlayerPathInfo.PointsInPath.Last(), AddedPoint);
+				AddedPoint.PointVelosity = DeltaLeghtPath / DeltaTimePath;
+			}
+			else
+			{
+				AddedPoint.PointVelosity = -1.0;
+			}
+			ActivPath[i]->AddPoint(AddedPoint);
+		}
+	}
+
+	/*
 	AddedPoint.PointID = LastSneakersPathID++;
 	if (ActivSneakersPath->PlayerPathInfo.PointsInPath.Num() != 0)
 	{
@@ -150,6 +168,7 @@ void USpeedup_GeoDataSystem::UpdateLocationSneckers()
 		AddedPoint.PointVelosity = -1.0;
 	}
 	ActivSneakersPath->AddPoint(AddedPoint);
+	*/
 }
 
 bool USpeedup_GeoDataSystem::InitService()
@@ -160,3 +179,14 @@ bool USpeedup_GeoDataSystem::StartService()
 {
 	return false;
 }
+
+//FTimerDelegate TimerDel;
+//FTimerHandle TimerHandle;
+
+//int32 MyInt = 10;
+//float MyFloat = 20.f;
+
+//Binding the function with specific values
+//TimerDel.BindUFunction(this, FName("MyUsefulFunction"), MyInt, MyFloat);
+//Calling MyUsefulFunction after 5 seconds without looping
+//GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);

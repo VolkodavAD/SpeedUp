@@ -62,14 +62,14 @@ public:
 	float GetDistanse2Coor_Implementation(FGeoPointInfo PointStart, FGeoPointInfo PointEnd);
 
 	UFUNCTION(BlueprintCallable)
-	void StartPath(FTimerHandle CurrentTimerH);
+	void StartPath(int PuthN);
 	UFUNCTION(BlueprintCallable)
-	void StopPath(FTimerHandle CurrentTimerH);
+	void StopPath(int PuthN);
 
 	UFUNCTION(BlueprintCallable)
-	void StartPathInSneckers();
+	void StartActivPath01(int PuthN);
 	UFUNCTION(BlueprintCallable)
-	void StopPathInSneckers();
+	void StopActivPath01(int PuthN);
 
 public:
 	
@@ -82,13 +82,15 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
 	//class ULocationServicesImpl* SpeedUp_ULocationServices;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
+	bool ServiceEnable;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
+	bool ServiceInit;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
+	bool ServiceStart;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
-		bool ServiceEnable;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
-		bool ServiceInit;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
-		bool ServiceStart;
+	FTimerHandle PathTimerHandle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
 	FTimerHandle Sneakers_TimerHandle;
@@ -98,24 +100,30 @@ public:
 	FTimerHandle Plane_TimerHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	UGeoPath* ActivSneakersPath;
+	TArray<UGeoPath*> ActivPath;
+
+	UFUNCTION(BlueprintCallable)
+	bool HaveActivePath();
+
+	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	UGeoPath* ActivCarPath;
+	UGeoPath* ActivPath02;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	UGeoPath* ActivPlanePath;
+	UGeoPath* ActivPath03;
+	*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-		int LastSneakersPathID;
+	int LastSneakersPathID;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-		int LastCarPathID;
+	int LastCarPathID;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-		int LastPlanePathID;
+	int LastPlanePathID;
 
 private:
 	UFUNCTION(BlueprintCallable)
-		void SetServiceEnable(bool value);
+	void SetServiceEnable(bool value);
 	UFUNCTION(BlueprintCallable)
-		void SetServiceStart(bool value);
+	void SetServiceStart(bool value);
 	UFUNCTION(BlueprintCallable)
-		void SetServiceInit(bool value);
+	void SetServiceInit(bool value);
 };

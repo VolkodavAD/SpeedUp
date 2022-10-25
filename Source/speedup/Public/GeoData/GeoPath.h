@@ -12,7 +12,6 @@
  * 
  */
 
-
 USTRUCT(BlueprintType)
 struct FGeoPointInfo : public FTableRowBase
 {
@@ -85,7 +84,9 @@ class SPEEDUP_API UGeoPath : public UObject
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	FGeoPathinfo PlayerPathInfo;
-	
+
+	bool PathIsActiv = false;
+
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	UDataTable *DataTable_Puths;
@@ -93,7 +94,6 @@ public:
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	//TArray<FGeoPathinfo> PlayerPointsInfoInPath;
-
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	//TArray<FGeoPointInfo> PointsInPath;
 	
