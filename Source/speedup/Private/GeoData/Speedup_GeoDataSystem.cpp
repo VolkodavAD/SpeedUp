@@ -162,6 +162,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPath()
 				float DeltaLeghtPath = GetDistanse2Coor(ActivPath[i]->PlayerPathInfo.PointsInPath.Last(), AddedPoint);
 				AddedPoint.PointVelosity = DeltaLeghtPath / DeltaTimePath;
 
+				LeghtPath_Today = LeghtPath_Today + DeltaLeghtPath;
 				LeghtPath_Total = LeghtPath_Total + DeltaLeghtPath;
 			}
 			else
