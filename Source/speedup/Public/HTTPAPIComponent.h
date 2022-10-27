@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "Json.h"
+#include "Json.h" 
+#include "UObject/Object.h"
 #include "Interfaces/IHttpRequest.h"
 #include "HTTPAPIComponent.generated.h"
 
@@ -17,16 +18,18 @@ class SPEEDUP_API UHTTPAPIComponent : public UActorComponent
 	void OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedLogOut(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedSendCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
-
 	//void OnResponseReceivedSendCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+	void OnResponseReceivedProfile(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+
 	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
 	const FString LogOutURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
 
 	const FString SendCodeURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/send-code";
-	//токен
 	const FString VerifiURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/verify-code";
+
+	const FString ProfileURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile";
 
 public:
 	UHTTPAPIComponent();
@@ -44,7 +47,12 @@ public:
 	FString Data;
 
 	UPROPERTY(BlueprintReadOnly)
+	TWeakObjectPtr<UObject> ObjectData;
+
+	UPROPERTY(BlueprintReadOnly)
 	FString ClientEmail;
+	UPROPERTY(BlueprintReadOnly)
+	FString ClientTocken;
 	
 	virtual void BeginPlay() override;
 
@@ -65,4 +73,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Verify(const FString CodeFromMail, const FString TokenData);
+
+	UFUNCTION(BlueprintCallable)
+	void Profile(const FString TokenData);
 };
