@@ -17,9 +17,16 @@ class SPEEDUP_API UHTTPAPIComponent : public UActorComponent
 	void OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedLogOut(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
+	//void OnResponseReceivedSendCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+	void OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+
 	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
 	const FString LogOutURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
+
+	const FString SendCodeURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/send-code";
+	//токен
+	const FString VerifiURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/verify-code";
 
 public:
 	UHTTPAPIComponent();
@@ -50,4 +57,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LogoutRequest(const FString DataToken);
 
+	//UFUNCTION(BlueprintCallable)
+	//void SendCode(const FString CodeFromMail, const FString TokenData);
+
+	UFUNCTION(BlueprintCallable)
+	void Verify(const FString CodeFromMail, const FString TokenData);
 };
