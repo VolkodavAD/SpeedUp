@@ -122,7 +122,7 @@ void UHTTPAPIComponent::Verify(const FString CodeFromMail, const FString TokenDa
 
 void UHTTPAPIComponent::Profile(const FString TokenData)
 {
-	const FHttpRequestRef VerifyCode = FHttpModule::Get().CreateRequest();
+	const FHttpRequestRef ProfileCode = FHttpModule::Get().CreateRequest();
 
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
 	//RequestJsonObject->SetStringField("code", CodeFromMail);
@@ -131,13 +131,13 @@ void UHTTPAPIComponent::Profile(const FString TokenData)
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 	FString BearerT = "Bearer ";
-	VerifyCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedVerefi);
-	VerifyCode->SetURL(ProfileURL);
-	VerifyCode->SetVerb("POST");
-	VerifyCode->SetHeader("Content-Type", "application/json");
-	VerifyCode->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
-	VerifyCode->SetContentAsString(RequestBody);
-	VerifyCode->ProcessRequest();
+	ProfileCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedProfile);
+	ProfileCode->SetURL(ProfileURL);
+	ProfileCode->SetVerb("GET");
+	ProfileCode->SetHeader("Content-Type", "application/json");
+	ProfileCode->AppendToHeader("Authorization", BearerT.Append(TokenData));
+	ProfileCode->SetContentAsString(RequestBody);
+	ProfileCode->ProcessRequest();
 }
 
 void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
@@ -223,16 +223,23 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+	
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+	}
 
-	bSuccess = ResponseObject->GetBoolField("success");
 	Message = ResponseObject->GetStringField("message");
+	bSuccess = ResponseObject->GetBoolField("success");
 	Data = ResponseObject->GetStringField("data");
 	//ObjectData = ResponseObject->GetObjectField("data");
 
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
-		UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
-		UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
-		UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("Response : %s"), *Response->GetContentAsString())
+	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
+	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
+	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("Response : %s"), *Response->GetContentAsString())
 }
 
 UHTTPAPIComponent::UHTTPAPIComponent()
