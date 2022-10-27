@@ -46,8 +46,8 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FString Data;
 
-	UPROPERTY(BlueprintReadOnly)
-	TWeakObjectPtr<UObject> ObjectData;
+	//UPROPERTY(BlueprintReadOnly)
+	//TSharedPtr<FJsonObject> ObjectData;
 
 	UPROPERTY(BlueprintReadOnly)
 	FString ClientEmail;

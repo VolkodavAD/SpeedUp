@@ -3,6 +3,8 @@
 #include "HTTPAPIComponent.h"
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
+#include "Kismet/GameplayStatics.h"
+#include "SpeedUpGameInstance.h"
 #include "..\Public\HTTPAPIComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(HTTP_REQUEST_RESPONSE, Log, Log)
@@ -126,17 +128,18 @@ void UHTTPAPIComponent::Profile(const FString TokenData)
 
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
 	//RequestJsonObject->SetStringField("code", CodeFromMail);
-
+	/*
 	FString RequestBody;
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+	*/
 	FString BearerT = "Bearer ";
 	ProfileCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedProfile);
 	ProfileCode->SetURL(ProfileURL);
 	ProfileCode->SetVerb("GET");
 	ProfileCode->SetHeader("Content-Type", "application/json");
-	ProfileCode->AppendToHeader("Authorization", BearerT.Append(TokenData));
-	ProfileCode->SetContentAsString(RequestBody);
+	ProfileCode->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
+	//ProfileCode->SetContentAsString(RequestBody);
 	ProfileCode->ProcessRequest();
 }
 
@@ -230,11 +233,52 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 		Message = "ResponseObject is null";
 		Data = "";
 	}
+	else
+	{
+		UWorld* world = GetWorld();
+		if (world)
+		{
+			USpeedUpGameInstance* gameInstance = Cast<USpeedUpGameInstance>(world->GetGameInstance());
 
-	Message = ResponseObject->GetStringField("message");
-	bSuccess = ResponseObject->GetBoolField("success");
-	Data = ResponseObject->GetStringField("data");
-	//ObjectData = ResponseObject->GetObjectField("data");
+			if (gameInstance)
+			{
+				//gameInstance->GetSaveManager()->FlushCachedSaveData();
+				//UGameplayStatics::OpenLevel(world, FName(*world->GetName()));
+
+
+				//UGameplayStatics::GetGameInstance()
+
+				//TSharedPtr<FJsonObject> ObjectResult;
+
+				Message = ResponseObject->GetStringField("message");
+				bSuccess = ResponseObject->GetBoolField("success");
+				//Data = ResponseObject->GetStringField("data");
+
+				TSharedPtr<FJsonObject> nested = ResponseObject->GetObjectField("data");
+				FString Profile_Name = nested->GetStringField("email");
+				int Profile_id = nested->GetIntegerField("id");
+				bool Profile_email_confirmed = nested->GetBoolField("email_confirmed");
+								
+				gameInstance->UserInfo.email = Profile_Name;
+				gameInstance->UserInfo.email_confirmed = Profile_email_confirmed;
+				gameInstance->UserInfo.id = Profile_id;
+
+				TSharedPtr<FJsonObject> balances = nested->GetObjectField("balances");
+				FString balances_dks_wallet = balances->GetStringField("dks_wallet");
+				int balances_dks_balance = balances->GetIntegerField("dks_balance");
+				int balances_internal_balance = balances->GetIntegerField("internal_balance");
+
+				TSharedPtr<FJsonObject> energy = nested->GetObjectField("energy");
+				int user_id = energy->GetIntegerField("energy");
+				uint8 capacity = energy->GetIntegerField("capacity"); // Byte
+				uint8 spend_part = energy->GetIntegerField("spend_part");  // Byte
+				FString updated_at = energy->GetStringField("updated_at");
+				bool active = energy->GetBoolField("active");
+
+				//ObjectData = ResponseObject->GetObjectField("data");
+			}
+		}
+	}
 
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
