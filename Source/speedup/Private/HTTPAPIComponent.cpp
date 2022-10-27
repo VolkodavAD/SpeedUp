@@ -3,6 +3,7 @@
 #include "HTTPAPIComponent.h"
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
+#include "..\Public\HTTPAPIComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(HTTP_REQUEST_RESPONSE, Log, Log)
 
@@ -77,6 +78,27 @@ void UHTTPAPIComponent::LogoutRequest(const FString DataToken)
 	Request->ProcessRequest();
 }
 
+void UHTTPAPIComponent::CodeRequestFromServer(const FString DataToken)
+{
+	const FHttpRequestRef RequestSendCode = FHttpModule::Get().CreateRequest();
+
+	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+	RequestJsonObject->SetStringField("data", DataToken);
+
+	FString RequestBody;
+	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+	FString BearerT = "Bearer_";
+	RequestSendCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedSendCode);
+	RequestSendCode->SetURL(SendCodeURL);
+	RequestSendCode->SetVerb("POST");
+	RequestSendCode->SetHeader("Content-Type", "application/json");
+	RequestSendCode->AppendToHeader("Authorization", BearerT.Append(DataToken));
+	RequestSendCode->SetContentAsString(RequestBody);
+	RequestSendCode->ProcessRequest();
+
+}
+
 void UHTTPAPIComponent::Verify(const FString CodeFromMail, const FString TokenData)
 {
 	const FHttpRequestRef VerifyCode = FHttpModule::Get().CreateRequest();
@@ -126,6 +148,21 @@ void UHTTPAPIComponent::OnResponseReceivedLogOut(FHttpRequestPtr Request, FHttpR
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("Response : %s"), *Response->GetContentAsString())
+}
+
+void UHTTPAPIComponent::OnResponseReceivedSendCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
+{
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+	bSuccess = ResponseObject->GetBoolField("success");
+	Message = ResponseObject->GetStringField("message");
+	Data = ResponseObject->GetStringField("data");
+
+	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
+		UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
+		UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
+		UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("Response : %s"), *Response->GetContentAsString())
 }
 
 void UHTTPAPIComponent::OnResponseReceivedSignUP(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)

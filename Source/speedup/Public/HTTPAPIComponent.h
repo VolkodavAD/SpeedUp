@@ -16,10 +16,10 @@ class SPEEDUP_API UHTTPAPIComponent : public UActorComponent
 	void OnResponseReceivedSignUP(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedLogOut(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+	void OnResponseReceivedSendCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
 	//void OnResponseReceivedSendCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
-
 	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
 	const FString LogOutURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
@@ -56,6 +56,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LogoutRequest(const FString DataToken);
+
+	UFUNCTION(BlueprintCallable)
+	void CodeRequestFromServer(const FString DataToken);
 
 	//UFUNCTION(BlueprintCallable)
 	//void SendCode(const FString CodeFromMail, const FString TokenData);
