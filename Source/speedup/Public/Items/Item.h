@@ -100,4 +100,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LevelUp();
+
+	UFUNCTION(BlueprintCallable)
+	void SetItemStatus(StatusItem NewItemStatus);
 };

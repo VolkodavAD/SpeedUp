@@ -38,3 +38,8 @@ void UItem::LevelUp()
 {
 	ItemInfo.ItemLevel++;
 }
+
+void UItem::SetItemStatus(StatusItem NewItemStatus)
+{
+	ItemInfo.ItemStatus = NewItemStatus;
+}
