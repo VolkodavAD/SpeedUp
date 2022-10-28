@@ -3,21 +3,52 @@
 #include "Items/ItemManager.h"
 #include "GeoData/Speedup_GeoDataSystem.h"
 
+UItemManager::UItemManager()
+{}
+// Called when the game starts
+void UItemManager::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+// Called every frame
+void UItemManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	// ...
+}
+
 void UItemManager::InitItemManager()
 {
 	PostFromBack_SlotsStats();
 	PostFromBack_AllItems();
 }
 
-
-void UItemManager::ActiveItem(int ItemID, int SlotID)
+void UItemManager::Start_TimerItemCheck()
 {
+}
+
+void UItemManager::Stop_TimerItemCheck()
+{
+}
+
+bool UItemManager::ActiveItem(int ItemID, int SlotID, int& ErrorID)
+{
+	if (!ItemsSlot[SlotID].IsUnlock)
+	return false;
+
+	bool bTempFind = false;
+	for (int i = 0; i < MyItems.Num(); i++)
+	{
+		if (MyItems[i]->GetItemID() == ItemID) bTempFind = true;
+	}
+	if (!bTempFind) return false;
 
 	for (int i = 0; i < MyItems.Num(); i++)
 	{
-		if (MyItems[ItemID]->GetItemID() == -1)
+		if (MyItems[i]->GetItemID() == ItemID)
 		{
-			MyItems[ItemID]->SetItemStatus(StatusItem::Deactive);
+			MyItems[i]->SetItemStatus(StatusItem::Active);
 		}
 	}
 
@@ -28,9 +59,22 @@ void UItemManager::ActiveItem(int ItemID, int SlotID)
 		// получаем ID пути и запускаем его в компоненте
 		Start_TimerItemCheck();
 	}
+	return true;
 }
-void UItemManager::DeactiveItem(int ItemID, int SlotID)
+
+bool UItemManager::DeactiveItem(int ItemID, int SlotID, int& ErrorID)
 {
+	if (!ItemsSlot[SlotID].IsUnlock)
+		return false;
+
+	for (int i = 0; i < MyItems.Num(); i++)
+	{
+		if (MyItems[i]->GetItemID() == ItemID)
+		{
+			MyItems[i]->SetItemStatus(StatusItem::Deactive);
+		}
+	}
+
 	if (ItemsSlot[SlotID].IsUnlock)
 	{
 		ItemsSlot[SlotID].ItemID = -1;
@@ -39,13 +83,7 @@ void UItemManager::DeactiveItem(int ItemID, int SlotID)
 		}
 		Stop_TimerItemCheck();
 	}
-}
-
-void UItemManager::Start_TimerItemCheck()
-{
-}
-void UItemManager::Stop_TimerItemCheck()
-{
+	return true;
 }
 
 //----------------------------------- ЗАГЛУШКИ ПО БЭКУ ---------------------------------------
@@ -63,20 +101,17 @@ void UItemManager::PostFromBack_SlotsStats()
 //получаем все предметы из бека, тут же проверяем есть ли активные
 void UItemManager::PostFromBack_AllItems()
 {
-	for (int i = 0; i < 4; i++)
-	{
-		UItem* AddedItem = NewObject<UItem>();
-		FBaseItemInfo AddedItemInfi;
-		AddedItemInfi.ItemID = i;
-		AddedItemInfi.ItemLevel = 1;
-		AddedItemInfi.ItemName = "TestSnikers";
-		AddedItemInfi.ItemStatus = StatusItem::Deactive;
-		AddedItemInfi.LevelRare = ItemLevelRare::Common;
-		AddedItemInfi.Type = ItemType::Sneakers;
-		AddedItem->SetItemInfo(AddedItemInfi);
+	UItem* AddedItem = NewObject<UItem>();
+	FBaseItemInfo AddedItemInfi;
+	AddedItemInfi.ItemID = 1;
+	AddedItemInfi.ItemLevel = 1;
+	AddedItemInfi.ItemName = "TestSnikers";
+	AddedItemInfi.ItemStatus = StatusItem::Deactive;
+	AddedItemInfi.LevelRare = ItemLevelRare::Common;
+	AddedItemInfi.Type = ItemType::Sneakers;
+	AddedItem->SetItemInfo(AddedItemInfi);
 
-		MyItems.Add(AddedItem);
-	}
+	MyItems.Add(AddedItem);
 }
 
 void UItemManager::PostFromBack_ActiveItem(int ItemID, int PathID)

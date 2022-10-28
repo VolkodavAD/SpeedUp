@@ -100,15 +100,16 @@ class SPEEDUP_API USpeedUpGameInstance : public UGameInstance
 
 public:
     UPROPERTY(BlueprintReadWrite)
-       UWidgetManager* widgetManager;    
+       UWidgetManager* widgetManager;
 
+    //UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "BaseData")
+        //bool email_confirmed;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "BaseData")
-        bool email_confirmed;
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "BaseData")
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "User")
         FUserInfo UserInfo;
 
-    FString FFF = "FFF";
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item")
+        bool IsActivItem;
 
     UFUNCTION(BlueprintImplementableEvent)
         void InitWidgetManager();

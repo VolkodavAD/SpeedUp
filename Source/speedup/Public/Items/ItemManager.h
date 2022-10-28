@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
 #include "UObject/NoExportTypes.h"
 #include "Items/Item.h"
 //#include "/Geodata/Geopath.h"
@@ -27,10 +28,26 @@ struct FItemSlot : public FTableRowBase
 	bool IsUnlock = false;
 };
 
-UCLASS()
-class SPEEDUP_API UItemManager : public UObject
+UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class SPEEDUP_API UItemManager : public UActorComponent
 {
 	GENERATED_BODY()
+
+public:
+	// Sets default values for this component's properties
+	UItemManager();
+
+
+protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
+
+
+public:
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMyBindableEvent);
 
 private:
 
@@ -50,7 +67,9 @@ private:
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Timer")
 	FTimerHandle Items_TimerHandle;
 
+	UFUNCTION(BlueprintCallable)
 	void Start_TimerItemCheck();
+	UFUNCTION(BlueprintCallable)
 	void Stop_TimerItemCheck();
 
 public:
@@ -58,7 +77,8 @@ public:
 	TArray<FItemSlot> ItemsSlot;
 	TArray<UItem*> MyItems;
 
-	void ActiveItem(int ItemID, int SlotID);
-	void DeactiveItem(int ItemID, int SlotID);
-
+	UFUNCTION(BlueprintCallable)
+	bool ActiveItem(int ItemID, int SlotID, int& ErrorID);
+	UFUNCTION(BlueprintCallable)
+	bool DeactiveItem(int ItemID, int SlotID, int& ErrorID);
 };

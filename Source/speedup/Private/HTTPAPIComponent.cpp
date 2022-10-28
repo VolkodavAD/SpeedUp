@@ -149,10 +149,20 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
-	bSuccess = ResponseObject->GetBoolField("success");
-	Message = ResponseObject->GetStringField("message");
-	ClientTocken = ResponseObject->GetStringField("data");
-
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		bSuccess = ResponseObject->GetBoolField("success");
+		Message = ResponseObject->GetStringField("message");
+		ClientTocken = ResponseObject->GetStringField("data");
+	}
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"));
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"));
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"));
@@ -178,10 +188,21 @@ void UHTTPAPIComponent::OnResponseReceivedSendCode(FHttpRequestPtr Request, FHtt
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
-	bSuccess = ResponseObject->GetBoolField("success");
-	Message = ResponseObject->GetStringField("message");
-	//Data = ResponseObject->GetStringField("data");
 
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		bSuccess = ResponseObject->GetBoolField("success");
+		Message = ResponseObject->GetStringField("message");
+		//Data = ResponseObject->GetStringField("data");
+	}
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
 	//(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
@@ -194,10 +215,20 @@ void UHTTPAPIComponent::OnResponseReceivedSignUP(FHttpRequestPtr Request, FHttpR
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
-	bSuccess = ResponseObject->GetBoolField("success");
-	Message = ResponseObject->GetStringField("message");
-	Data = ResponseObject->GetStringField("data");
-	
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		bSuccess = ResponseObject->GetBoolField("success");
+		Message = ResponseObject->GetStringField("message");
+		Data = ResponseObject->GetStringField("data");
+	}
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
@@ -210,11 +241,21 @@ void UHTTPAPIComponent::OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpR
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
-	bSuccess = ResponseObject->GetBoolField("success");
-	Message = ResponseObject->GetStringField("message");
-	Data = ResponseObject->GetStringField("data");
-	ClientTocken = ResponseObject->GetStringField("data");
-
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		bSuccess = ResponseObject->GetBoolField("success");
+		Message = ResponseObject->GetStringField("message");
+		Data = ResponseObject->GetStringField("data");
+		ClientTocken = ResponseObject->GetStringField("data");
+	}
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
@@ -232,6 +273,8 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 		bSuccess = false;
 		Message = "ResponseObject is null";
 		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
 	}
 	else
 	{
@@ -258,10 +301,7 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 				FString Profile_Name = nested->GetStringField("email");
 				int Profile_id = nested->GetIntegerField("id");
 				bool Profile_email_confirmed = nested->GetBoolField("email_confirmed");
-								
-				gameInstance->UserInfo.email = Profile_Name;
-				gameInstance->UserInfo.email_confirmed = Profile_email_confirmed;
-				gameInstance->UserInfo.id = Profile_id;
+
 
 				TSharedPtr<FJsonObject> balances = nested->GetObjectField("balances");
 				FString balances_dks_wallet = balances->GetStringField("dks_wallet");
@@ -275,10 +315,21 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 				FString updated_at = energy->GetStringField("updated_at");
 				bool active = energy->GetBoolField("active");
 
+				//ObjectData = ResponseObject->GetObjectField("data");
+
+
+				gameInstance->UserInfo.email = Profile_Name;
+				gameInstance->UserInfo.email_confirmed = Profile_email_confirmed;
+				gameInstance->UserInfo.id = Profile_id;
+
 				gameInstance->UserInfo.Balance.dks_wallet = balances_dks_wallet;
 				gameInstance->UserInfo.Balance.dks_balance = balances_dks_balance;
 				gameInstance->UserInfo.Balance.internal_balance = balances_internal_balance;
-				//ObjectData = ResponseObject->GetObjectField("data");
+
+				gameInstance->UserInfo.Energy.capacity = capacity;
+				gameInstance->UserInfo.Energy.spend_part = spend_part;
+				gameInstance->UserInfo.Energy.updated_at = updated_at;
+				gameInstance->UserInfo.Energy.active = active;
 			}
 		}
 	}

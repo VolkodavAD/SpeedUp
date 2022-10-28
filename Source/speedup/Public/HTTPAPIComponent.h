@@ -50,6 +50,10 @@ public:
 	//TSharedPtr<FJsonObject> ObjectData;
 
 	UPROPERTY(BlueprintReadOnly)
+	int ErrorID;
+	UPROPERTY(BlueprintReadOnly)
+	FString ErrorText;
+	UPROPERTY(BlueprintReadOnly)
 	FString ClientEmail;
 	UPROPERTY(BlueprintReadOnly)
 	FString ClientTocken;
