@@ -26,6 +26,8 @@ struct FItemSlot : public FTableRowBase
 	UGeoPath* PathForItem;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
 	bool IsUnlock = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
+	FTimerHandle Items_TimerHandle;
 };
 
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -77,9 +79,9 @@ public:
 	TArray<UItem*> MyItems;
 
 	UFUNCTION(BlueprintCallable)
-	bool ActiveItem(int ItemID, int SlotID, int& ErrorID);
+	bool ActivateItem(int ItemID, int SlotID, int& ErrorID);
 	UFUNCTION(BlueprintCallable)
-	bool DeactiveItem(int ItemID, int SlotID, int& ErrorID);
+	bool DeactivateItem(int ItemID, int SlotID, int& ErrorID);
 
 	UFUNCTION(BlueprintCallable)
 	UItem* GetMyItem(int ItemID);

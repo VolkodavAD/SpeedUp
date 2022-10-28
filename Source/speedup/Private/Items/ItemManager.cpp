@@ -9,6 +9,8 @@ UItemManager::UItemManager()
 void UItemManager::BeginPlay()
 {
 	Super::BeginPlay();
+	PostFromBack_SlotsStats();
+	PostFromBack_AllItems();
 }
 
 // Called every frame
@@ -26,7 +28,16 @@ void UItemManager::InitItemManager()
 
 UItem* UItemManager::GetMyItem(int ItemID)
 {
-	return MyItems[ItemID];
+	//UItem* FindedItems;
+	for (int i = 0; i < MyItems.Num(); i++)
+	{
+		if (MyItems[i]->GetItemInfo().ItemID == ItemID)
+		{
+			return MyItems[i];
+			//return FindedItems;
+		}
+	}
+	return nullptr;
 }
 
 /*
@@ -43,7 +54,7 @@ void UItemManager::Stop_TimerItemCheck()
 {
 }
 
-bool UItemManager::ActiveItem(int ItemID, int SlotID, int& ErrorID)
+bool UItemManager::ActivateItem(int ItemID, int SlotID, int& ErrorID)
 {
 	if (!ItemsSlot[SlotID].IsUnlock)
 	return false;
@@ -73,7 +84,7 @@ bool UItemManager::ActiveItem(int ItemID, int SlotID, int& ErrorID)
 	return true;
 }
 
-bool UItemManager::DeactiveItem(int ItemID, int SlotID, int& ErrorID)
+bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 {
 	if (!ItemsSlot[SlotID].IsUnlock)
 		return false;
@@ -102,11 +113,21 @@ bool UItemManager::DeactiveItem(int ItemID, int SlotID, int& ErrorID)
 //получаем состояние слотов из бэка
 void UItemManager::PostFromBack_SlotsStats()
 {
-	ItemsSlot.Reset(3);
-	ItemsSlot[0].IsUnlock = true;
-	ItemsSlot[0].ItemID = -1;
-	ItemsSlot[1].IsUnlock = false;
-	ItemsSlot[2].IsUnlock = false;
+	//ItemsSlot.Reset(3);
+	//ItemsSlot[0].IsUnlock = true;
+	//ItemsSlot[0].ItemID = -1;
+	//ItemsSlot[1].IsUnlock = false;
+	//ItemsSlot[2].IsUnlock = false;
+
+	FItemSlot AddedSlot;
+	AddedSlot.IsUnlock = true;
+	AddedSlot.ItemID = -1;
+	AddedSlot.Items_TimerHandle = Items_TimerHandle;
+	ItemsSlot.Add(AddedSlot);
+
+	AddedSlot.IsUnlock = false;
+	ItemsSlot.Add(AddedSlot);
+	ItemsSlot.Add(AddedSlot);
 }
 
 //получаем все предметы из бека, тут же проверяем есть ли активные
@@ -121,7 +142,7 @@ void UItemManager::PostFromBack_AllItems()
 	AddedItemInfi.LevelRare = ItemLevelRare::Common;
 	AddedItemInfi.Type = ItemType::Sneakers;
 	AddedItem->SetItemInfo(AddedItemInfi);
-	AddedItem->MaxEnergy = 3;
+	AddedItem->Energy = 3;
 
 	MyItems.Add(AddedItem);
 }

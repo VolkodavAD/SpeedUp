@@ -83,8 +83,8 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
 	//UTexture2D* ItemIcon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
-	StatusItem Status = StatusItem::Deactive;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
+	//StatusItem Status = StatusItem::Deactive;
 
 	UFUNCTION(BlueprintCallable)
 	void SetItemInfo(FBaseItemInfo NewItemInfo);
