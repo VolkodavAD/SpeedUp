@@ -102,8 +102,8 @@ public:
     UPROPERTY(BlueprintReadWrite)
        UWidgetManager* widgetManager;
 
-    //UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "BaseData")
-        //bool email_confirmed;
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "BaseData")
+        bool email_confirmed;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "User")
         FUserInfo UserInfo;
