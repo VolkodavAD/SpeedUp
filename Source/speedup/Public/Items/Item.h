@@ -64,26 +64,26 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	FBaseItemInfo ItemInfo;
 
-	int TimePowerRestore = 0;
+	int TimeEnergyRestore = 0;
 
 	UItem();
 
 public:
 	// For test is 3 variable is public.
 	UPROPERTY(EditDefaultsOnly, Category = "ItemState")
-	int MaxPower = 3;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power")
-	int Power = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power")
-	int CurrentTimeToPowerRestore = 0;
+	int MaxEnergy = 3;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
+	int Energy = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
+	int CurrentTimeToEnergyRestore = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
 	UTexture2D* ItemImage;
 	// image for review
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power")
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
 	//UTexture2D* ItemIcon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
 	StatusItem Status = StatusItem::Deactive;
 
 	UFUNCTION(BlueprintCallable)

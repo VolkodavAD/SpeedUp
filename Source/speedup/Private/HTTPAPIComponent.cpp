@@ -199,6 +199,8 @@ void UHTTPAPIComponent::OnResponseReceivedSendCode(FHttpRequestPtr Request, FHtt
 	}
 	else
 	{
+		ErrorID = 0;
+		ErrorText = "";
 		bSuccess = ResponseObject->GetBoolField("success");
 		Message = ResponseObject->GetStringField("message");
 		//Data = ResponseObject->GetStringField("data");
@@ -225,6 +227,8 @@ void UHTTPAPIComponent::OnResponseReceivedSignUP(FHttpRequestPtr Request, FHttpR
 	}
 	else
 	{
+		ErrorID = 0;
+		ErrorText = "";
 		bSuccess = ResponseObject->GetBoolField("success");
 		Message = ResponseObject->GetStringField("message");
 		Data = ResponseObject->GetStringField("data");
@@ -251,6 +255,8 @@ void UHTTPAPIComponent::OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpR
 	}
 	else
 	{
+		ErrorID = 0;
+		ErrorText = "";
 		bSuccess = ResponseObject->GetBoolField("success");
 		Message = ResponseObject->GetStringField("message");
 		Data = ResponseObject->GetStringField("data");
@@ -293,6 +299,8 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 
 				//TSharedPtr<FJsonObject> ObjectResult;
 
+				ErrorID = 0;
+				ErrorText = "";
 				Message = ResponseObject->GetStringField("message");
 				bSuccess = ResponseObject->GetBoolField("success");
 				//Data = ResponseObject->GetStringField("data");

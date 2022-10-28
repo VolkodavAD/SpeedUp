@@ -24,6 +24,17 @@ void UItemManager::InitItemManager()
 	PostFromBack_AllItems();
 }
 
+UItem* UItemManager::GetMyItem(int ItemID)
+{
+	return MyItems[ItemID];
+}
+
+/*
+FItemSlot UItemManager::GetItemSlot(int SlotID);
+{
+	return ItemsSlot[SlotID];
+}*/
+
 void UItemManager::Start_TimerItemCheck()
 {
 }
@@ -105,11 +116,12 @@ void UItemManager::PostFromBack_AllItems()
 	FBaseItemInfo AddedItemInfi;
 	AddedItemInfi.ItemID = 1;
 	AddedItemInfi.ItemLevel = 1;
-	AddedItemInfi.ItemName = "TestSnikers";
+	AddedItemInfi.ItemName = "Snikers";
 	AddedItemInfi.ItemStatus = StatusItem::Deactive;
 	AddedItemInfi.LevelRare = ItemLevelRare::Common;
 	AddedItemInfi.Type = ItemType::Sneakers;
 	AddedItem->SetItemInfo(AddedItemInfi);
+	AddedItem->MaxEnergy = 3;
 
 	MyItems.Add(AddedItem);
 }

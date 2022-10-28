@@ -51,7 +51,6 @@ public:
 
 private:
 
-
 	void InitItemManager();
 
 	//получаем состояние слотов из сервере
@@ -81,4 +80,10 @@ public:
 	bool ActiveItem(int ItemID, int SlotID, int& ErrorID);
 	UFUNCTION(BlueprintCallable)
 	bool DeactiveItem(int ItemID, int SlotID, int& ErrorID);
+
+	UFUNCTION(BlueprintCallable)
+	UItem* GetMyItem(int ItemID);
+
+	//UFUNCTION(BlueprintCallable)
+	//FItemSlot GetItemSlot(int SlotID);
 };
