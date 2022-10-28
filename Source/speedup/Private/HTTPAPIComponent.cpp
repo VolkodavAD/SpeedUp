@@ -275,6 +275,9 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 				FString updated_at = energy->GetStringField("updated_at");
 				bool active = energy->GetBoolField("active");
 
+				gameInstance->UserInfo.Balance.dks_wallet = balances_dks_wallet;
+				gameInstance->UserInfo.Balance.dks_balance = balances_dks_balance;
+				gameInstance->UserInfo.Balance.internal_balance = balances_internal_balance;
 				//ObjectData = ResponseObject->GetObjectField("data");
 			}
 		}
