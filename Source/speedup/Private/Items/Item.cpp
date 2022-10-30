@@ -13,7 +13,7 @@ void UItem::SetItemInfo(FBaseItemInfo NewItemInfo)
 	ItemInfo.ItemID = NewItemInfo.ItemID;
 	ItemInfo.ItemName = NewItemInfo.ItemName;
 	ItemInfo.ItemLevel = NewItemInfo.ItemLevel;
-	ItemInfo.LevelRare = NewItemInfo.LevelRare;
+	ItemInfo.ItemRarity = NewItemInfo.ItemRarity;
 	ItemInfo.Type = NewItemInfo.Type;
 	ItemInfo.ItemStatus = NewItemInfo.ItemStatus;
 }

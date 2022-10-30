@@ -86,6 +86,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UItem* GetMyItem(int ItemID);
 
+	UFUNCTION(BlueprintCallable)
+	void AddItem(UItem* AddedItem);
+
 	//UFUNCTION(BlueprintCallable)
 	//FItemSlot GetItemSlot(int SlotID);
 };

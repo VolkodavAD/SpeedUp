@@ -8,7 +8,7 @@ void UItemBaseWidget::NativeOnInitialized()
 	FBaseItemInfo NewItemInfo;
 	SetItemName(NewItemInfo.ItemName);
 	SetNFTtype(NewItemInfo.Type);
-	SetNFTrare(NewItemInfo.LevelRare);
+	SetNFTrare(NewItemInfo.ItemRarity);
 	SetNFTactiveStatus(NewItemInfo.ItemStatus);
 }
 
@@ -27,7 +27,7 @@ void UItemBaseWidget::SetNFTtype(ItemType NFTtype)
 	}
 }
 
-void UItemBaseWidget::SetNFTrare(ItemLevelRare NFTrare)
+void UItemBaseWidget::SetNFTrare(ItemLevelRarity NFTrare)
 {
 	if (NFTlevelRareTextBlock) {
 		NFTlevelRareTextBlock->SetText(UEnum::GetDisplayValueAsText(NFTrare));

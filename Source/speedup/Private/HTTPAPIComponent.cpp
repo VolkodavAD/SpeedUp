@@ -2,9 +2,12 @@
 
 #include "HTTPAPIComponent.h"
 #include "HttpModule.h"
+#include "Items/Item.h"
+#include "JsonObjectConverter.h"
 #include "Interfaces/IHttpResponse.h"
 #include "Kismet/GameplayStatics.h"
-#include "SpeedUpGameInstance.h"
+#include "SpeedUpGameInstance.h" 
+#include "..\speedupGameModeBase.h"
 #include "..\Public\HTTPAPIComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(HTTP_REQUEST_RESPONSE, Log, Log)
@@ -108,14 +111,16 @@ void UHTTPAPIComponent::NFTreceiptRequest(const FString TokenData)
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
 	
 	FString BearerT = "Bearer ";
-	ProfileCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedNFTreceipt);
-	ProfileCode->SetURL(NFTreceiptRequestURL);
-	ProfileCode->SetVerb("GET");
-	ProfileCode->SetHeader("Content-Type", "application/json");
+	NFTget->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedNFTreceipt);
+	NFTget->SetURL(NFTreceiptRequestURL);
+	NFTget->SetVerb("GET");
+	NFTget->SetHeader("Content-Type", "application/json");
+	NFTget->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
 	
-	ProfileCode->ProcessRequest();
+	NFTget->ProcessRequest();
 }
 
+/*
 void UHTTPAPIComponent::NFTactivationRequest()
 {
 	const FHttpRequestRef RequestNFTactivation = FHttpModule::Get().CreateRequest();
@@ -129,14 +134,15 @@ void UHTTPAPIComponent::NFTactivationRequest()
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 
-	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedActivation);
-	Request->SetURL(ActivateNftURL);
+	RequestNFTactivation->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedActivation);
+	RequestNFTactivation->SetURL(ActivateNftURL);
 	//Request->SetVerb("POST");
-	Request->SetHeader("Content-Type", "application/json");
-	Request->SetContentAsString(RequestBody);
-	Request->ProcessRequest();
+	RequestNFTactivation->SetHeader("Content-Type", "application/json");
+	RequestNFTactivation->SetContentAsString(RequestBody);
+	RequestNFTactivation->ProcessRequest();
 
 }
+*/
 
 void UHTTPAPIComponent::Verify(const FString CodeFromMail, const FString TokenData)
 {
@@ -305,97 +311,12 @@ void UHTTPAPIComponent::OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpR
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("Response : %s"), *Response->GetContentAsString())
 }
 
-/*void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
-{
-	TSharedPtr<FJsonObject> ResponseObject;
-	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
-
-	if (ResponseObject == nullptr)
-	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
-	}
-	else
-	{
-		UWorld* world = GetWorld();
-		if (world)
-		{
-			USpeedUpGameInstance* gameInstance = Cast<USpeedUpGameInstance>(world->GetGameInstance());
-
-			if (gameInstance)
-			{
-			
-
-				ErrorID = 0;
-				ErrorText = "";
-				Message = ResponseObject->GetStringField("message");
-				bSuccess = ResponseObject->GetBoolField("success");
-				
-
-				TSharedPtr<FJsonObject> nested = ResponseObject->GetObjectField("data");
-
-				TArray<TSharedPtr<FJsonValue>> sneakers = ResponseObject->GetArrayField("Sneaker");
-				
-			
-			
-				int Profile_id = sneakers->GetIntegerField("id");
-				int type = nested->GetIntegerField("type");
-				int collectionId = nested->GetIntegerField("collection_id");
-				bool minted = nested->GetBoolField("minted");
-
-
-				TSharedPtr<FJsonObject> balances = nested->GetObjectField("balances");
-				FString balances_dks_wallet = balances->GetStringField("dks_wallet");
-				int balances_dks_balance = balances->GetIntegerField("dks_balance");
-				int balances_internal_balance = balances->GetIntegerField("internal_balance");
-
-				TSharedPtr<FJsonObject> energy = nested->GetObjectField("energy");
-				int user_id = energy->GetIntegerField("energy");
-				uint8 capacity = energy->GetIntegerField("capacity"); // Byte
-				uint8 spend_part = energy->GetIntegerField("spend_part");  // Byte
-				FString updated_at = energy->GetStringField("updated_at");
-				bool active = energy->GetBoolField("active");
-
-				//ObjectData = ResponseObject->GetObjectField("data");
-
-
-				gameInstance->UserInfo.email = Profile_Name;
-				gameInstance->UserInfo.email_confirmed = Profile_email_confirmed;
-				gameInstance->UserInfo.id = Profile_id;
-
-				gameInstance->UserInfo.Balance.dks_wallet = balances_dks_wallet;
-				gameInstance->UserInfo.Balance.dks_balance = balances_dks_balance;
-				gameInstance->UserInfo.Balance.internal_balance = balances_internal_balance;
-
-				gameInstance->UserInfo.Energy.capacity = capacity;
-				gameInstance->UserInfo.Energy.spend_part = spend_part;
-				gameInstance->UserInfo.Energy.updated_at = updated_at;
-				gameInstance->UserInfo.Energy.active = active;
-			}
-		}
-
-
-}*/
-
-void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
-{
-	TSharedPtr<FJsonObject> ResponseObject;
-	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
-
-
-}
-
 void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
 {
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
-	
+
 	if (ResponseObject == nullptr)
 	{
 		bSuccess = false;
@@ -465,11 +386,190 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 	}
 
 	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
-	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
-	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
-	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("Response : %s"), *Response->GetContentAsString())
+		UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
+		UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
+		//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("Response : %s"), *Response->GetContentAsString())
 }
 
+
+//{
+//	"success": true,
+//		"message" : "Success",
+//		"data" : {
+//		"Sneaker": [
+//		{
+//			"id": 2,
+//			"image_url" : "",
+//			"type" : 1,
+//			"collection_id" : 0,
+//			"chain_id" : 0,
+//			"level" : 1,
+//			"rarity" : 0,
+//			"meta" : {},
+//			"minted" : false
+//		}
+//		]
+//	}
+//}
+
+void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
+{
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		UWorld* world = GetWorld();
+		if (world)
+		{
+			USpeedUpGameInstance* gameInstance = Cast<USpeedUpGameInstance>(world->GetGameInstance());
+
+			if (gameInstance)
+			{
+				ErrorID = 0;
+				ErrorText = "";
+				Message = ResponseObject->GetStringField("message");
+				bSuccess = ResponseObject->GetBoolField("success");
+
+				//TSharedPtr<FJsonObject> nested = ResponseObject->GetObjectField("data");
+				//FString Profile_Name = nested->GetStringField("email");
+				//int Profile_id = nested->GetIntegerField("id");
+				//bool Profile_email_confirmed = nested->GetBoolField("email_confirmed");
+
+				//FJsonObjectConverter::
+
+				TSharedPtr<FJsonObject> NFT = ResponseObject->GetObjectField("data");
+				//TArray<TSharedPtr<FJsonValue>> sneakers = ResponseObject->GetArrayField("Sneaker");
+				//ResponseObject->GetArrayField("data");
+
+				TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapNFT = NFT->Values;
+
+				TArray<TSharedPtr<FJsonValue>> Points = NFT->GetArrayField(TEXT("Sneaker"));
+				FBaseItemInfo NFTItem;
+				for (int32 i = 0; i < Points.Num(); ++i)
+				{
+					TSharedPtr<FJsonObject> PointsObject = Points[i]->AsObject();
+					NFTItem.ItemID = PointsObject->GetIntegerField("id");
+					NFTItem.Type = static_cast<ItemType>(PointsObject->GetIntegerField("type"));
+					NFTItem.CollectionID = PointsObject->GetIntegerField("collection_id");
+					NFTItem.Minted = PointsObject->GetBoolField("minted");
+					NFTItem.ItemImage = PointsObject->GetStringField("image_url");
+					NFTItem.ItemLevel = PointsObject->GetIntegerField("level");
+					NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
+
+					AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+					UItem* AddedItem = NewObject<UItem>();
+					AddedItem->SetItemInfo(NFTItem);
+					GameMode->GetNFTItemManager()->AddItem(AddedItem);
+
+					//AGameModeBase
+					//NFTItem.Type = static_cast<ItemType>(PointsObject->GetIntegerField("type"));
+					/*
+					FVector2D Coords;
+					if (PointsObject->HasTypedField<EJson::Number>(TEXT("x")))
+					{
+						Coords.X = PointsObject->TryGetNumberField(TEXT("x"));
+					}
+					if (PointsObject->HasTypedField<EJson::Number>(TEXT("y")))
+					{
+						Coords.Y = PointsObject->TryGetNumberField(TEXT("y"));
+					}
+					etc etc
+					*/
+				}
+
+				Points = NFT->GetArrayField(TEXT("Car"));
+
+				for (int32 i = 0; i < Points.Num(); ++i)
+				{
+					TSharedPtr<FJsonObject> PointsObject = Points[i]->AsObject();
+					NFTItem.ItemID = PointsObject->GetIntegerField("id");
+					NFTItem.Type = static_cast<ItemType>(PointsObject->GetIntegerField("type"));
+					NFTItem.CollectionID = PointsObject->GetIntegerField("collection_id");
+					NFTItem.Minted = PointsObject->GetBoolField("minted");
+					NFTItem.ItemImage = PointsObject->GetStringField("image_url");
+					NFTItem.ItemLevel = PointsObject->GetIntegerField("level");
+					NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
+
+					AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+					UItem* AddedItem = NewObject<UItem>();
+					AddedItem->SetItemInfo(NFTItem);
+					GameMode->GetNFTItemManager()->AddItem(AddedItem);
+
+					//NFTItem.Type = static_cast<ItemType>(PointsObject->GetIntegerField("type"));
+					/*
+					FVector2D Coords;
+					if (PointsObject->HasTypedField<EJson::Number>(TEXT("x")))
+					{
+						Coords.X = PointsObject->TryGetNumberField(TEXT("x"));
+					}
+					if (PointsObject->HasTypedField<EJson::Number>(TEXT("y")))
+					{
+						Coords.Y = PointsObject->TryGetNumberField(TEXT("y"));
+					}
+					etc etc
+					*/
+				}
+
+				/*
+				NFTItem.ItemID = NFTValues[i]->GetIntegerField("id");
+				NFTItem.Type = static_cast<ItemType>(NFTValues[i]->GetIntegerField("type"));
+				NFTItem.CollectionID = NFTValues[i]->GetIntegerField("collection_id");
+				NFTItem.Minted = NFTValues[i]->GetBoolField("minted");
+				NFTItem.ItemImage = NFTValues[i]->GetStringField("minted");
+				NFTItem.ItemLevel = NFTValues[i]->GetIntegerField("minted");
+				NFTItem.ItemRarity = static_cast<ItemLevelRarity>(NFTValues[i]->GetIntegerField("rarity"));
+				*/
+
+				//TSharedPtr<FJsonObject> balances = nested->GetObjectField("balances");
+				//FString balances_dks_wallet = balances->GetStringField("dks_wallet");
+				//int balances_dks_balance = balances->GetIntegerField("dks_balance");
+				//int balances_internal_balance = balances->GetIntegerField("internal_balance");
+
+				//TSharedPtr<FJsonObject> energy = nested->GetObjectField("energy");
+				//int user_id = energy->GetIntegerField("energy");
+				//uint8 capacity = energy->GetIntegerField("capacity"); // Byte
+				//uint8 spend_part = energy->GetIntegerField("spend_part");  // Byte
+				//FString updated_at = energy->GetStringField("updated_at");
+				//bool active = energy->GetBoolField("active");
+
+				//ObjectData = ResponseObject->GetObjectField("data");
+
+				/*
+				gameInstance->UserInfo.email = Profile_Name;
+				gameInstance->UserInfo.email_confirmed = Profile_email_confirmed;
+				gameInstance->UserInfo.id = Profile_id;
+
+				gameInstance->UserInfo.Balance.dks_wallet = balances_dks_wallet;
+				gameInstance->UserInfo.Balance.dks_balance = balances_dks_balance;
+				gameInstance->UserInfo.Balance.internal_balance = balances_internal_balance;
+
+				gameInstance->UserInfo.Energy.capacity = capacity;
+				gameInstance->UserInfo.Energy.spend_part = spend_part;
+				gameInstance->UserInfo.Energy.updated_at = updated_at;
+				gameInstance->UserInfo.Energy.active = active;
+				*/
+			}
+		}
+	}
+}
+
+void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
+{
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
+}
 
 
 UHTTPAPIComponent::UHTTPAPIComponent()

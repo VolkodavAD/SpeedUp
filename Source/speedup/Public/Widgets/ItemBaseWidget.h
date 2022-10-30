@@ -28,7 +28,7 @@ class SPEEDUP_API UItemBaseWidget : public UUserWidget
 		void SetNFTtype(ItemType ItemType);
 
 	UFUNCTION(BlueprintCallable)
-		void SetNFTrare(ItemLevelRare ItemRare);
+		void SetNFTrare(ItemLevelRarity ItemRare);
 
 	UFUNCTION(BlueprintCallable)
 		void SetNFTactiveStatus(StatusItem ItemStatus);

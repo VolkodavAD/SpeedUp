@@ -76,7 +76,11 @@ struct FGeoPathinfo : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 		TArray<FGeoPointInfo> PointsInPath;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "BaseData")
+		int TestUproperty;
 };
+
 
 UCLASS(Blueprintable)
 class SPEEDUP_API UGeoPath : public UObject
