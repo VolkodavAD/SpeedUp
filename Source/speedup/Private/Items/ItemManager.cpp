@@ -114,7 +114,6 @@ bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 void UItemManager::PostFromBack_SlotsStats()
 {
 
-	/*
 	FItemSlot AddedSlot;
 	AddedSlot.IsUnlock = true;
 	AddedSlot.ItemID = -1;
@@ -124,12 +123,12 @@ void UItemManager::PostFromBack_SlotsStats()
 	AddedSlot.IsUnlock = false;
 	ItemsSlot.Add(AddedSlot);
 	ItemsSlot.Add(AddedSlot);
-	*/
 }
 
 //получаем все предметы из бека, тут же проверяем есть ли активные
 void UItemManager::PostFromBack_AllItems()
 {
+	/*
 	UItem* AddedItem = NewObject<UItem>();
 	FBaseItemInfo AddedItemInfi;
 	AddedItemInfi.ItemID = 1;
@@ -140,8 +139,9 @@ void UItemManager::PostFromBack_AllItems()
 	AddedItemInfi.Type = ItemType::Sneakers;
 	AddedItem->SetItemInfo(AddedItemInfi);
 	AddedItem->Energy = 3;
-
+	
 	MyItems.Add(AddedItem);
+	*/
 }
 
 void UItemManager::PostFromBack_ActiveItem(int ItemID, int PathID)

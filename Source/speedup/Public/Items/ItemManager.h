@@ -75,7 +75,9 @@ private:
 
 public:
 	//слоты инвенторя и список имеющихся на аккаунте предметов
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
 	TArray<FItemSlot> ItemsSlot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	TArray<UItem*> MyItems;
 
 	UFUNCTION(BlueprintCallable)
@@ -85,6 +87,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UItem* GetMyItem(int ItemID);
+
 
 	UFUNCTION(BlueprintCallable)
 	void AddItem(UItem* AddedItem);
