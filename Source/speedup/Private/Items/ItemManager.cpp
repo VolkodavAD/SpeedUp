@@ -147,3 +147,8 @@ void UItemManager::AddItem(UItem* AddedItem)
 {
 	MyItems.Add(AddedItem);
 }
+
+void UItemManager::ClearItemArray()
+{
+	MyItems.Empty(0);
+}

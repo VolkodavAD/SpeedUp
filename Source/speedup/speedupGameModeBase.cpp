@@ -5,7 +5,7 @@
 
 AspeedupGameModeBase::AspeedupGameModeBase()
 {
-	NFTItemManager = CreateDefaultSubobject<UItemManager>(TEXT("ItemManager"), 0); 
+	NFTItemManager = CreateDefaultSubobject<UItemManager>(TEXT("ItemManager")); 
 	//NFTItemManager->AddToRoot();
 	//MeshBody = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
 	//NFTItemManager->RegisterComponent();
