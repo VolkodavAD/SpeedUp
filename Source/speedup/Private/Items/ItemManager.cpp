@@ -54,33 +54,21 @@ void UItemManager::Stop_TimerItemCheck()
 {
 }
 
-bool UItemManager::ActivateItem(int ItemID, int SlotID, int& ErrorID)
+bool UItemManager::ActivateItem(int ItemID, int SlotID, int PathID, int& ErrorID)
 {
 	if (!ItemsSlot[SlotID].IsUnlock)
 	return false;
 
-	bool bTempFind = false;
-	for (int i = 0; i < MyItems.Num(); i++)
-	{
-		if (MyItems[i]->GetItemID() == ItemID) bTempFind = true;
-	}
-	if (!bTempFind) return false;
+	UItem* ItemByID = GetMyItem(ItemID);
+	if (ItemByID == nullptr) { return false; }
 
-	for (int i = 0; i < MyItems.Num(); i++)
-	{
-		if (MyItems[i]->GetItemID() == ItemID)
-		{
-			MyItems[i]->SetItemStatus(StatusItem::Active);
-		}
-	}
+	if (ItemByID->Energy > 0) {
 
-	if (ItemsSlot[SlotID].IsUnlock)
-	{
-		ItemsSlot[SlotID].ItemID = ItemID;
-
-		// получаем ID пути и запускаем его в компоненте
-		Start_TimerItemCheck();
+		int l_ItemEnergy = GetMyItem(ItemID)->Energy = ItemByID->Energy - 1;
 	}
+	ItemByID->SetItemStatus(StatusItem::Active);
+
+	Start_TimerItemCheck();
 	return true;
 }
 
@@ -89,22 +77,15 @@ bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 	if (!ItemsSlot[SlotID].IsUnlock)
 		return false;
 
-	for (int i = 0; i < MyItems.Num(); i++)
-	{
-		if (MyItems[i]->GetItemID() == ItemID)
-		{
-			MyItems[i]->SetItemStatus(StatusItem::Deactive);
-		}
-	}
+	UItem* ItemByID = GetMyItem(ItemID);
+	if (ItemByID == nullptr) { return false; }
 
-	if (ItemsSlot[SlotID].IsUnlock)
-	{
-		ItemsSlot[SlotID].ItemID = -1;
-		for (int i = 0; ItemsSlot.Num(); i++)
-		{
-		}
-		Stop_TimerItemCheck();
-	}
+	ItemByID->SetItemStatus(StatusItem::Deactive);
+
+	ItemsSlot[SlotID].ItemID = -1;
+
+	Stop_TimerItemCheck();
+
 	return true;
 }
 
@@ -113,7 +94,6 @@ bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 //получаем состояние слотов из бэка
 void UItemManager::PostFromBack_SlotsStats()
 {
-
 	FItemSlot AddedSlot;
 	AddedSlot.IsUnlock = true;
 	AddedSlot.ItemID = -1;
@@ -145,11 +125,23 @@ void UItemManager::PostFromBack_AllItems()
 }
 
 void UItemManager::PostFromBack_ActiveItem(int ItemID, int PathID)
-{}
+{
+	UItem* ItemByID = GetMyItem(ItemID);
+	if (ItemByID->Energy > 0)
+	{
+
+		int l_ItemEnergy = GetMyItem(ItemID)->Energy = ItemByID->Energy - 1;
+	}
+	ItemByID->SetItemStatus(StatusItem::Active);
+
+}
 void UItemManager::PostFromBack_CheckActiveItem(int ItemID)
 {}
 void UItemManager::PostFromBack_DeactiveItem(int ItemID, int PathID)
-{}
+{
+	UItem* ItemByID = GetMyItem(ItemID);
+	ItemByID->SetItemStatus(StatusItem::Deactive);
+}
 
 void UItemManager::AddItem(UItem* AddedItem)
 {

@@ -109,6 +109,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void NFTactivationRequest(const int ActivNFDId);
 
+	UFUNCTION(BlueprintCallable)
+	void NFTdeactivationRequest(const int DeactivNFDId);
 	//UFUNCTION(BlueprintCallable)
 	//	void NFTactivationRequest(const FString TokenData);
 

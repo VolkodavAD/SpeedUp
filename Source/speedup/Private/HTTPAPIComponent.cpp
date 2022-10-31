@@ -145,6 +145,44 @@ void UHTTPAPIComponent::NFTactivationRequest(const int NFDId)
 
 }
 
+void UHTTPAPIComponent::NFTdeactivationRequest(const int DeactivNFDId)
+{
+
+	USpeedUpGameInstance* GameIst = (USpeedUpGameInstance*)GetWorld()->GetGameInstance();
+	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+	UItem* DeactivNFDIdItem = GameMode->GetNFTItemManager()->GetMyItem(DeactivNFDId);
+
+	const FHttpRequestRef RequestActiveNFT = FHttpModule::Get().CreateRequest();
+
+	const TSharedRef<FJsonObject> NFTJsonObject = MakeShared<FJsonObject>();
+	NFTJsonObject->SetNumberField("id", DeactivNFDId);
+	NFTJsonObject->SetNumberField("Type", (int)DeactivNFDIdItem->GetType());
+
+	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+	RequestJsonObject->SetNumberField("id", GameIst->UserInfo.id);
+	RequestJsonObject->SetObjectField("nft_id", NFTJsonObject);
+
+	NFTJsonObject->SetNumberField("avg_velosity", 4);
+	NFTJsonObject->SetNumberField("avg_distanse", 50);
+
+	//токен
+	//RequestJsonObject->SetStringField("token", Password);
+	FString RequestBody;
+	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+
+	FString BearerT = "Bearer ";
+	RequestActiveNFT->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedActivation);
+	RequestActiveNFT->SetURL(NFTDeactiveRequestURL);
+	RequestActiveNFT->SetVerb("POST");
+	RequestActiveNFT->SetHeader("Content-Type", "application/json");
+	RequestActiveNFT->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
+	RequestActiveNFT->SetContentAsString(RequestBody);
+
+	RequestActiveNFT->ProcessRequest();
+
+}
+
 void UHTTPAPIComponent::Verify(const FString CodeFromMail, const FString TokenData)
 {
 	const FHttpRequestRef VerifyCode = FHttpModule::Get().CreateRequest();
@@ -497,13 +535,12 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 				GameIst->UserInfo.Energy.spend_part = GameIst->UserInfo.Energy.spend_part - 1;
 			}
 
+			int ErrorActivation;
 			AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
-			int l_ItemEnergy = GameMode->GetNFTItemManager()->GetMyItem(ActivationItem)->Energy;
-			if (l_ItemEnergy > 0)
-				{
-					GameMode->GetNFTItemManager()->GetMyItem(ActivationItem)->Energy = l_ItemEnergy - 1;
-				}
+			GameMode->GetNFTItemManager()->ActivateItem(ActivationItem, PathID, 0, ErrorActivation);
+
 			ActivationItem = -1;
+
 		}
 	}
 }

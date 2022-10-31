@@ -81,7 +81,7 @@ public:
 	TArray<UItem*> MyItems;
 
 	UFUNCTION(BlueprintCallable)
-	bool ActivateItem(int ItemID, int SlotID, int& ErrorID);
+	bool ActivateItem(int ItemID, int SlotID, int PathID, int& ErrorID);
 	UFUNCTION(BlueprintCallable)
 	bool DeactivateItem(int ItemID, int SlotID, int& ErrorID);
 
