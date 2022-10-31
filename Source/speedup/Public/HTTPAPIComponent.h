@@ -31,14 +31,18 @@ class SPEEDUP_API UHTTPAPIComponent : public UActorComponent
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
 	const FString LogOutURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
 
-	const FString SendCodeURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/send-code";
-	const FString VerifiURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/verify-code";
+	const FString SendCodeURL =	"https://m2e-backend-auth.production.bc.gotbitgames.co/auth/send-code";
+	const FString VerifiURL =	"https://m2e-backend-auth.production.bc.gotbitgames.co/auth/verify-code";
 
-	//const FString ProfileURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile";
-	const FString ProfileURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile";
+	//const FString ProfileURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/profile";
+	const FString ProfileURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/profile";
 	
-	const FString NFTreceiptRequestURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/nfts";
+	const FString NFTreceiptRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/profile/nfts";
+	const FString NFTActiveRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/start";
+	const FString NFTDeactiveRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/stop";
 	//NFTreceiptRequestURL
+
+	int ActivationItem = -1;
 
 public:
 	UHTTPAPIComponent();
@@ -54,6 +58,9 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly)
 	FString Data;
+
+	UPROPERTY(BlueprintReadOnly)
+	int PathID;
 
 	/*USTRUCT(BlueprintType)
 		struct FItemFromData 
@@ -97,7 +104,10 @@ public:
 	void CodeRequestFromServer(const FString DataToken);
 
 	UFUNCTION(BlueprintCallable)
-		void NFTreceiptRequest(const FString TokenData);
+	void NFTreceiptRequest(const FString TokenData);
+
+	UFUNCTION(BlueprintCallable)
+	void NFTactivationRequest(const int ActivNFDId);
 
 	//UFUNCTION(BlueprintCallable)
 	//	void NFTactivationRequest(const FString TokenData);
