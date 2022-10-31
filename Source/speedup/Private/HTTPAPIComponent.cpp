@@ -499,6 +499,24 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					AddedItem->SetItemInfo(NFTItem);
 					GameMode->GetNFTItemManager()->AddItem(AddedItem);
 				}
+				/*Points = NFT->GetArrayField(TEXT("Plane"));
+
+				for (int32 i = 0; i < Points.Num(); ++i)
+				{
+					TSharedPtr<FJsonObject> PointsObject = Points[i]->AsObject();
+					NFTItem.ItemID = PointsObject->GetIntegerField("id");
+					NFTItem.Type = static_cast<ItemType>(PointsObject->GetIntegerField("type"));
+					NFTItem.CollectionID = PointsObject->GetIntegerField("collection_id");
+					NFTItem.Minted = PointsObject->GetBoolField("minted");
+					NFTItem.ItemImage = PointsObject->GetStringField("image_url");
+					NFTItem.ItemLevel = PointsObject->GetIntegerField("level");
+					NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
+
+					AspeedupGameModeBase* GameMode = (AspeedupGameModeBase)GetWorld()->GetAuthGameMode();
+					UItem AddedItem = NewObject<UItem>();
+					AddedItem->SetItemInfo(NFTItem);
+					GameMode->GetNFTItemManager()->AddItem(AddedItem);
+				}*/
 			}
 		}
 	}
