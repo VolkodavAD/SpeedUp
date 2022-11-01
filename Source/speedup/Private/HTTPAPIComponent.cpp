@@ -50,30 +50,6 @@ void UHTTPAPIComponent::SignUpRequest(const FString Email, const FString Passwor
 	ClientEmail = Email;
 }
 
-void UHTTPAPIComponent::ChangeLoginRequest(const FString OldPassword, const FString NewPassword)
-{
-	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
-
-	const FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
-
-	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
-	RequestJsonObject->SetStringField("old_password", OldPassword);
-	RequestJsonObject->SetStringField("new_password", NewPassword);
-
-	FString BearerT = "Bearer ";
-	FString RequestBody;
-
-	const TSharedRef<TJsonWriter<>> JsonWriter =TJsonWriterFactory<>::Create(&RequestBody);
-	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
-	//Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedSignIN);
-	Request->SetURL(ChangePasswordURL);
-	Request->SetVerb("POST");
-	Request->SetHeader("Content-Type", "application/json");
-	Request->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));
-	Request->SetContentAsString(RequestBody);
-	Request->ProcessRequest();
-}
-
 void UHTTPAPIComponent::SignInRequest(const FString Email, const FString Password)
 {
 	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
@@ -96,6 +72,27 @@ void UHTTPAPIComponent::SignInRequest(const FString Email, const FString Passwor
 	Request->ProcessRequest();
 	
 	ClientEmail = Email;
+}
+
+void UHTTPAPIComponent::ChangePassword(const FString OldPassword, const FString NewPassword, const FString TokenData)
+{
+	const FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
+
+	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+	RequestJsonObject->SetStringField("old_password", OldPassword);
+	RequestJsonObject->SetStringField("new_password", NewPassword);
+
+	FString RequestBody;
+	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+	FString BearerT = "Bearer ";
+	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedChangePassword);
+	Request->SetURL(ChangePasswordURL);
+	Request->SetVerb("POST");
+	Request->SetHeader("Content-Type", "application/json");
+	Request->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
+	Request->SetContentAsString(RequestBody);
+	Request->ProcessRequest();
 }
 
 void UHTTPAPIComponent::LogoutRequest(const FString DataToken)
@@ -396,6 +393,22 @@ void UHTTPAPIComponent::OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpR
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("Response : %s"), *Response->GetContentAsString())
+}
+
+void UHTTPAPIComponent::OnResponseReceivedChangePassword(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
+{
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
+	int Code = Response->GetResponseCode();
+	if (Code != 200)
+	{
+		Message = "Wrong Password";
+		return;
+	}
+
+
 }
 
 void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)

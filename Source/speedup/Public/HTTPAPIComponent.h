@@ -25,6 +25,8 @@ private:
 	void OnResponseReceivedSendCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	//void OnResponseReceivedSendCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+	void OnResponseReceivedChangePassword(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+
 
 	void OnResponseReceivedProfile(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedActivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
@@ -33,7 +35,7 @@ private:
 	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
 	const FString LogOutURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
-	const FString ChangePasswordURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
+	const FString ChangePasswordURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/change-password";
 
 	const FString SendCodeURL =	"https://m2e-backend-auth.production.bc.gotbitgames.co/auth/send-code";
 	const FString VerifiURL =	"https://m2e-backend-auth.production.bc.gotbitgames.co/auth/verify-code";
@@ -106,7 +108,7 @@ public:
 	void SignInRequest(const FString Email, const FString Password);
 
 	UFUNCTION(BlueprintCallable)
-	void ChangeLoginRequest(const FString OldPassword, const FString NewPassword);
+	void ChangePassword(const FString OldPassword, const FString NewPassword, const FString TokenData);
 
 	UFUNCTION(BlueprintCallable)
 	void LogoutRequest(const FString DataToken);
