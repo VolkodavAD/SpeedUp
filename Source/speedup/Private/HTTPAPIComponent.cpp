@@ -408,7 +408,22 @@ void UHTTPAPIComponent::OnResponseReceivedChangePassword(FHttpRequestPtr Request
 		return;
 	}
 
-
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		ErrorID = 0;
+		ErrorText = "";
+		bSuccess = ResponseObject->GetBoolField("success");
+		//Message = ResponseObject->GetStringField("message");
+		//Data = ResponseObject->GetStringField("data");
+	}
 }
 
 void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
