@@ -6,44 +6,79 @@
 #include "JsonObjectConverter.h"
 #include "Interfaces/IHttpResponse.h"
 #include "Kismet/GameplayStatics.h"
-#include "SpeedUpGameInstance.h" 
+#include "..\Public\SpeedUpGameInstance.h" 
 #include "..\speedupGameModeBase.h"
 #include "..\Public\HTTPAPIComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(HTTP_REQUEST_RESPONSE, Log, Log)
 
+
 void UHTTPAPIComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 	bSuccess = false;
+}
+
+void UHTTPAPIComponent::InitComponent()
+{
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+	ClientEmail = SpeedUpGI->UserInfo.email;
+	ClientTocken = SpeedUpGI->UserInfo.UserToken;
 }
 
 void UHTTPAPIComponent::SignUpRequest(const FString Email, const FString Password)
 {
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+
 	const FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
 
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
 	RequestJsonObject->SetStringField("email", Email);
 	RequestJsonObject->SetStringField("password", Password);
-	//токен
-	//RequestJsonObject->SetStringField("token", Password);
+
 	FString RequestBody;
 	const TSharedRef<TJsonWriter<>> JsonWriter =TJsonWriterFactory<>::Create(&RequestBody);
-	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
-	
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);	
 	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedSignUP);
 	Request->SetURL(SignUPURL);
 	Request->SetVerb("POST");
 	Request->SetHeader("Content-Type", "application/json");
 	Request->SetContentAsString(RequestBody);
 	Request->ProcessRequest();
-	
+
+	SpeedUpGI->UserInfo.email = Email;
 	ClientEmail = Email;
+}
+
+void UHTTPAPIComponent::ChangeLoginRequest(const FString OldPassword, const FString NewPassword)
+{
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+
+	const FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
+
+	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+	RequestJsonObject->SetStringField("old_password", OldPassword);
+	RequestJsonObject->SetStringField("new_password", NewPassword);
+
+	FString BearerT = "Bearer ";
+	FString RequestBody;
+
+	const TSharedRef<TJsonWriter<>> JsonWriter =TJsonWriterFactory<>::Create(&RequestBody);
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+	//Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedSignIN);
+	Request->SetURL(ChangePasswordURL);
+	Request->SetVerb("POST");
+	Request->SetHeader("Content-Type", "application/json");
+	Request->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));
+	Request->SetContentAsString(RequestBody);
+	Request->ProcessRequest();
 }
 
 void UHTTPAPIComponent::SignInRequest(const FString Email, const FString Password)
 {
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+	SpeedUpGI->UserInfo.email = Email;
+
 	const FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
 
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
@@ -52,8 +87,7 @@ void UHTTPAPIComponent::SignInRequest(const FString Email, const FString Passwor
 
 	FString RequestBody;
 	const TSharedRef<TJsonWriter<>> JsonWriter =TJsonWriterFactory<>::Create(&RequestBody);
-	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
-	
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);	
 	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedSignIN);
 	Request->SetURL(SignINURL);
 	Request->SetVerb("POST");
@@ -72,9 +106,9 @@ void UHTTPAPIComponent::LogoutRequest(const FString DataToken)
 	RequestJsonObject->SetStringField("data", DataToken);
 
 	FString RequestBody;
+
 	const TSharedRef<TJsonWriter<>> JsonWriter =TJsonWriterFactory<>::Create(&RequestBody);
-	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
-	
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);	
 	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedLogOut);
 	Request->SetURL(LogOutURL);
 	Request->SetVerb("POST");
@@ -90,10 +124,12 @@ void UHTTPAPIComponent::CodeRequestFromServer(const FString DataToken)
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
 	//RequestJsonObject->SetStringField("data", ClientTocken);
 
+
+	FString BearerT = "Bearer ";
 	FString RequestBody;
+
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
-	FString BearerT = "Bearer ";
 	RequestSendCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedSendCode);
 	RequestSendCode->SetURL(SendCodeURL);
 	RequestSendCode->SetVerb("POST");
@@ -106,17 +142,18 @@ void UHTTPAPIComponent::CodeRequestFromServer(const FString DataToken)
 
 void UHTTPAPIComponent::NFTreceiptRequest(const FString TokenData)
 {
-	const FHttpRequestRef NFTget = FHttpModule::Get().CreateRequest();
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
 
-	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
-	
 	FString BearerT = "Bearer ";
+
+	const FHttpRequestRef NFTget = FHttpModule::Get().CreateRequest();
+	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+
 	NFTget->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedNFTreceipt);
 	NFTget->SetURL(NFTreceiptRequestURL);
 	NFTget->SetVerb("GET");
 	NFTget->SetHeader("Content-Type", "application/json");
-	NFTget->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
-	
+	NFTget->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));	
 	NFTget->ProcessRequest();
 }
 
@@ -231,19 +268,25 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
-	if (ResponseObject == nullptr)
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+	if (SpeedUpGI)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
-	}
-	else
-	{
-		bSuccess = ResponseObject->GetBoolField("success");
-		Message = ResponseObject->GetStringField("message");
-		ClientTocken = ResponseObject->GetStringField("data");
+		if (ResponseObject == nullptr)
+		{
+			bSuccess = false;
+			Message = "ResponseObject is null";
+			Data = "";
+			ErrorID = 101;
+			ErrorText = "Response is null";
+		}
+		else
+		{
+			bSuccess = ResponseObject->GetBoolField("success");
+			Message = ResponseObject->GetStringField("message");
+			ClientTocken = ResponseObject->GetStringField("data");
+			SpeedUpGI->UserInfo.UserToken = ClientTocken;
+
+		}
 	}
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"));
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"));
@@ -327,22 +370,27 @@ void UHTTPAPIComponent::OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpR
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
-	if (ResponseObject == nullptr)
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+	if (SpeedUpGI)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
-	}
-	else
-	{
-		ErrorID = 0;
-		ErrorText = "";
-		bSuccess = ResponseObject->GetBoolField("success");
-		Message = ResponseObject->GetStringField("message");
-		Data = ResponseObject->GetStringField("data");
-		ClientTocken = ResponseObject->GetStringField("data");
+		if (ResponseObject == nullptr)
+		{
+			bSuccess = false;
+			Message = "ResponseObject is null";
+			Data = "";
+			ErrorID = 101;
+			ErrorText = "Response is null";
+		}
+		else
+		{
+			ErrorID = 0;
+			ErrorText = "";
+			bSuccess = ResponseObject->GetBoolField("success");
+			Message = ResponseObject->GetStringField("message");
+			Data = ResponseObject->GetStringField("data");
+			ClientTocken = ResponseObject->GetStringField("data");
+			SpeedUpGI->UserInfo.UserToken = ClientTocken;
+		}
 	}
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
@@ -352,6 +400,8 @@ void UHTTPAPIComponent::OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpR
 
 void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
 {
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
@@ -366,61 +416,55 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 	}
 	else
 	{
-		UWorld* world = GetWorld();
-		if (world)
+		if (SpeedUpGI)
 		{
-			USpeedUpGameInstance* gameInstance = Cast<USpeedUpGameInstance>(world->GetGameInstance());
-
-			if (gameInstance)
-			{
-				//gameInstance->GetSaveManager()->FlushCachedSaveData();
-				//UGameplayStatics::OpenLevel(world, FName(*world->GetName()));
+			//gameInstance->GetSaveManager()->FlushCachedSaveData();
+			//UGameplayStatics::OpenLevel(world, FName(*world->GetName()));
 
 
-				//UGameplayStatics::GetGameInstance()
+			//UGameplayStatics::GetGameInstance()
 
-				//TSharedPtr<FJsonObject> ObjectResult;
+			//TSharedPtr<FJsonObject> ObjectResult;
 
-				ErrorID = 0;
-				ErrorText = "";
-				Message = ResponseObject->GetStringField("message");
-				bSuccess = ResponseObject->GetBoolField("success");
-				//Data = ResponseObject->GetStringField("data");
+			ErrorID = 0;
+			ErrorText = "";
+			Message = ResponseObject->GetStringField("message");
+			bSuccess = ResponseObject->GetBoolField("success");
+			//Data = ResponseObject->GetStringField("data");
 
-				TSharedPtr<FJsonObject> nested = ResponseObject->GetObjectField("data");
-				FString Profile_Name = nested->GetStringField("email");
-				int Profile_id = nested->GetIntegerField("id");
-				bool Profile_email_confirmed = nested->GetBoolField("email_confirmed");
-
-
-				TSharedPtr<FJsonObject> balances = nested->GetObjectField("balances");
-				FString balances_dks_wallet = balances->GetStringField("dks_wallet");
-				int balances_dks_balance = balances->GetIntegerField("dks_balance");
-				int balances_internal_balance = balances->GetIntegerField("internal_balance");
-
-				TSharedPtr<FJsonObject> energy = nested->GetObjectField("energy");
-				int user_id = energy->GetIntegerField("energy");
-				uint8 capacity = energy->GetIntegerField("capacity"); // Byte
-				uint8 spend_part = energy->GetIntegerField("spend_part");  // Byte
-				FString updated_at = energy->GetStringField("updated_at");
-				bool active = energy->GetBoolField("active");
-
-				//ObjectData = ResponseObject->GetObjectField("data");
+			TSharedPtr<FJsonObject> nested = ResponseObject->GetObjectField("data");
+			FString Profile_Name = nested->GetStringField("email");
+			int Profile_id = nested->GetIntegerField("id");
+			bool Profile_email_confirmed = nested->GetBoolField("email_confirmed");
 
 
-				gameInstance->UserInfo.email = Profile_Name;
-				gameInstance->UserInfo.email_confirmed = Profile_email_confirmed;
-				gameInstance->UserInfo.id = Profile_id;
+			TSharedPtr<FJsonObject> balances = nested->GetObjectField("balances");
+			FString balances_dks_wallet = balances->GetStringField("dks_wallet");
+			int balances_dks_balance = balances->GetIntegerField("dks_balance");
+			int balances_internal_balance = balances->GetIntegerField("internal_balance");
 
-				gameInstance->UserInfo.Balance.dks_wallet = balances_dks_wallet;
-				gameInstance->UserInfo.Balance.dks_balance = balances_dks_balance;
-				gameInstance->UserInfo.Balance.internal_balance = balances_internal_balance;
+			TSharedPtr<FJsonObject> energy = nested->GetObjectField("energy");
+			int user_id = energy->GetIntegerField("energy");
+			uint8 capacity = energy->GetIntegerField("capacity"); // Byte
+			uint8 spend_part = energy->GetIntegerField("spend_part");  // Byte
+			FString updated_at = energy->GetStringField("updated_at");
+			bool active = energy->GetBoolField("active");
 
-				gameInstance->UserInfo.Energy.capacity = capacity;
-				gameInstance->UserInfo.Energy.spend_part = spend_part;
-				gameInstance->UserInfo.Energy.updated_at = updated_at;
-				gameInstance->UserInfo.Energy.active = active;
-			}
+			//ObjectData = ResponseObject->GetObjectField("data");
+
+			SpeedUpGI->UserInfo.email = Profile_Name;
+			SpeedUpGI->UserInfo.email_confirmed = Profile_email_confirmed;
+			SpeedUpGI->UserInfo.id = Profile_id;
+			SpeedUpGI->UserInfo.UserToken = ClientTocken;
+
+			SpeedUpGI->UserInfo.Balance.dks_wallet = balances_dks_wallet;
+			SpeedUpGI->UserInfo.Balance.dks_balance = balances_dks_balance;
+			SpeedUpGI->UserInfo.Balance.internal_balance = balances_internal_balance;
+
+			SpeedUpGI->UserInfo.Energy.capacity = capacity;
+			SpeedUpGI->UserInfo.Energy.spend_part = spend_part;
+			SpeedUpGI->UserInfo.Energy.updated_at = updated_at;
+			SpeedUpGI->UserInfo.Energy.active = active;
 		}
 	}
 

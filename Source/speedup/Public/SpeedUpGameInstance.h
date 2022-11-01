@@ -85,6 +85,8 @@ struct FUserInfo : public FTableRowBase
         FString email;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
         bool email_confirmed;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        FString UserToken;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
         Fbalances  Balance;

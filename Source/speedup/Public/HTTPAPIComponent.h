@@ -10,12 +10,15 @@
 
 class UActorComponent;
 class AspeedupGameModeBase;
+class USpeedUpGameInstance;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SPEEDUP_API UHTTPAPIComponent : public UActorComponent
 {
 	GENERATED_BODY()
-	
+
+private:
+
 	void OnResponseReceivedSignUP(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedLogOut(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
@@ -30,6 +33,7 @@ class SPEEDUP_API UHTTPAPIComponent : public UActorComponent
 	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
 	const FString LogOutURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
+	const FString ChangePasswordURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
 
 	const FString SendCodeURL =	"https://m2e-backend-auth.production.bc.gotbitgames.co/auth/send-code";
 	const FString VerifiURL =	"https://m2e-backend-auth.production.bc.gotbitgames.co/auth/verify-code";
@@ -37,9 +41,9 @@ class SPEEDUP_API UHTTPAPIComponent : public UActorComponent
 	//const FString ProfileURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/profile";
 	const FString ProfileURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/profile";
 	
-	const FString NFTreceiptRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/profile/nfts";
-	const FString NFTActiveRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/start";
-	const FString NFTDeactiveRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/stop";
+	const FString NFTreceiptRequestURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/nfts";
+	const FString NFTActiveRequestURL =	 "https://m2e-backend-core.production.bc.gotbitgames.co/start";
+	const FString NFTDeactiveRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/stop";
 	//NFTreceiptRequestURL
 
 	int ActivationItem = -1;
@@ -62,6 +66,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	int PathID;
 
+	USpeedUpGameInstance* GI;
 	/*USTRUCT(BlueprintType)
 		struct FItemFromData 
 	{
@@ -92,10 +97,16 @@ public:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
+	void InitComponent();
+
+	UFUNCTION(BlueprintCallable)
 	void SignUpRequest(const FString Email, const FString Password);
 
 	UFUNCTION(BlueprintCallable)
 	void SignInRequest(const FString Email, const FString Password);
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeLoginRequest(const FString OldPassword, const FString NewPassword);
 
 	UFUNCTION(BlueprintCallable)
 	void LogoutRequest(const FString DataToken);
