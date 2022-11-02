@@ -38,9 +38,22 @@ public:
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMyBindableEvent);
 
+	FTimerDelegate TimerDelegatePuth01;
+	FTimerDelegate TimerDelegatePuth02;
+	FTimerDelegate TimerDelegatePuth03;
+
+	FTimerHandle PathTimerHandle01;
+	FTimerHandle PathTimerHandle02;
+	FTimerHandle PathTimerHandle03;
 
 	UPROPERTY(BlueprintAssignable)
 	FMyBindableEvent OnAwesomeness;
+
+	UFUNCTION(BlueprintCallable, Category = "GeoData")
+	void UpdateCurrentPath(int PuthN);
+
+	UFUNCTION(BlueprintCallable, Category = "GeoData")
+	void UpdateLocationInPathID(int PathID);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "GeoData")
 	void UpdateLocation();

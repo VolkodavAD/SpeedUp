@@ -3,32 +3,45 @@
 
 void UGeotPoint::SetGeoPointInfo(FGeoPointInfo AddedGeoPointInfo)
 {
-	PointID = AddedGeoPointInfo.PointID;
-	PointLocation = AddedGeoPointInfo.PointLocation;
-	PointVelosity = AddedGeoPointInfo.PointVelosity;
-	CurrentTime = AddedGeoPointInfo.CurrentTime;
-	PointDistance = AddedGeoPointInfo.PointDistance;
+	Pointinfo = AddedGeoPointInfo;
+	//Pointinfo.PointID = AddedGeoPointInfo.PointID;
+	//Pointinfo.PointLocation = AddedGeoPointInfo.PointLocation;
+	//Pointinfo.PointVelosity = AddedGeoPointInfo.PointVelosity;
+	//Pointinfo.CurrentTime = AddedGeoPointInfo.CurrentTime;
+	//Pointinfo.PointDistance = AddedGeoPointInfo.PointDistance;
 }
 
 FGeoPointInfo UGeotPoint::GetGeoPointInfo()
 {
 	FGeoPointInfo ReturnedGeoPoints;
-	ReturnedGeoPoints.PointID = PointID;
-	ReturnedGeoPoints.PointLocation = PointLocation;
-	ReturnedGeoPoints.PointVelosity = PointVelosity;
-	ReturnedGeoPoints.CurrentTime = CurrentTime;
+	ReturnedGeoPoints.PointID = Pointinfo.PointID;
+	ReturnedGeoPoints.PointLocation = Pointinfo.PointLocation;
+	ReturnedGeoPoints.PointVelosity = Pointinfo.PointVelosity;
+	ReturnedGeoPoints.CurrentTime = Pointinfo.CurrentTime;
 
 	return ReturnedGeoPoints;
 }
+// ------------------------------------------------------------------------PATH ---------------------------------------------------
+void UGeoPath::SetStatusActive(bool NewStatusActive)
+{
+	PathIsActiv = NewStatusActive;
+}
+bool UGeoPath::GetStatusActive()
+{
+	return PathIsActiv;
+}
+
 
 void UGeoPath::AddPoint(const FGeoPointInfo AddedPoint)
 {
-	//FGeoPointInfo PreviewPointInfo = PlayerPathInfo.PointsInPath.Last();
+	//FGeoPointInfo PreviewPointInfo = UserPathInfo.PointsInPath.Last();
 
 	UGeotPoint* NewGeotPoint = NewObject<UGeotPoint>();
 	NewGeotPoint->SetGeoPointInfo(AddedPoint);
 	//NewGeotPoint->PointDistance = DistanceBet
-	PlayerPathInfo.PointsInPath.Add(NewGeotPoint->GetGeoPointInfo());
+	PointsInPath.Add(NewGeotPoint->GetGeoPointInfo());
+	UserPathInfo.PathLength += AddedPoint.PointDistance;
+	//UserPathInfo.FDateTime += AddedPoint;
 }
 
 void UGeoPath::AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const float AddedPointVelosity, const FDateTime CurrentTime)
@@ -52,7 +65,7 @@ bool UGeoPath::SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths)
 	FGeoPointInfo AddedRow;
 	AddedRow.Name = "A1";
 
-	new_struct = this->PlayerPathInfo;
+	new_struct = this->UserPathInfo;
 	if (DataTable_Puths->IsValidLowLevel())
 	{
 		DataTable_Puths->AddRow(FName(FString::FromInt(NewRawName)), new_struct);
@@ -63,21 +76,6 @@ bool UGeoPath::SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths)
 	}
 	return false;
 }
-
-bool UGeoPath::GetPoint(int IndexPoint, UGeotPoint& ResultPoit)
-{
-	FDateTime DefaultDT;
-	ResultPoit.PointID = 0;
-	ResultPoit.CurrentTime = DefaultDT;
-	ResultPoit.PointLocation = FVector2D(0.0f, 0.0f);
-	ResultPoit.PointVelosity = 0.0f;
-	return false;
-
-	//FGeoPointInfo AddedRow;
-	//AddedRow.Name = "A1";
-	//DataTable_Puths.AddRow(FName("001"), AddedRow);
-}
-
 
 /*
 FMovePoint* UGeoPath::GetPoint(int IndexPoint)

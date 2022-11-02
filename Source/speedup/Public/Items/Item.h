@@ -62,7 +62,7 @@ struct FBaseItemInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		bool Minted = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
-		int capacity = 3;
+		int capacity = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		int spendPart = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")

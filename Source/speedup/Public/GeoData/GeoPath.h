@@ -28,6 +28,8 @@ struct FGeoPointInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FDateTime  CurrentTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FDateTime DeltaTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FString Name = "Path";
 };
 
@@ -38,18 +40,22 @@ class SPEEDUP_API UGeotPoint : public UObject
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGeoPointInfo Pointinfo;
+
+	/*
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int PointID = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointLocation;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PointVelosity;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float PointDistance;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FDateTime CurrentTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FDateTime DeltaTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FString Name = "Path";
-
+	*/
 	void SetGeoPointInfo(FGeoPointInfo AddedGeoPointInfo);
 	FGeoPointInfo GetGeoPointInfo();
 };
@@ -73,12 +79,8 @@ struct FGeoPathinfo : public FTableRowBase
 		float minVelosity = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velocity")
 		float maxVelosity = 0.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-		TArray<FGeoPointInfo> PointsInPath;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "BaseData")
-		int TestUproperty;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velocity")
+		float AverageVelosity = 0.0f;
 };
 
 
@@ -88,8 +90,17 @@ class SPEEDUP_API UGeoPath : public UObject
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "BaseData")
+	FGeoPathinfo UserPathInfo;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	FGeoPathinfo PlayerPathInfo;
+	TArray<FGeoPointInfo> PointsInPath;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+	TArray<FGeoPathinfo> PartsOfPath;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+	TArray<FGeoPathinfo> OneThirdPath;
 
 	bool PathIsActiv = false;
 
@@ -102,7 +113,12 @@ public:
 	//TArray<FGeoPathinfo> PlayerPointsInfoInPath;
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	//TArray<FGeoPointInfo> PointsInPath;
-	
+
+	UFUNCTION(BlueprintCallable)
+	void SetStatusActive(bool NewStatusActive);
+	UFUNCTION(BlueprintCallable)
+	bool GetStatusActive();
+
 	UFUNCTION(BlueprintCallable)
 	void AddPoint(const FGeoPointInfo AddedPoint);
 
