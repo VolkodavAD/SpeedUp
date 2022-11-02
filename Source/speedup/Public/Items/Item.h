@@ -57,10 +57,16 @@ struct FBaseItemInfo : public FTableRowBase
 		FString ItemImage = "image_url";
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		int CollectionID = 0;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		int	Chain_ID = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		bool Minted = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int capacity = 3;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int spendPart = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		bool active = false;
 };
 
 UCLASS(Blueprintable)

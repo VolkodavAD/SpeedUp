@@ -464,19 +464,19 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 			FString Profile_Name = nested->GetStringField("email");
 			int Profile_id = nested->GetIntegerField("id");
 			bool Profile_email_confirmed = nested->GetBoolField("email_confirmed");
-
+			int Allowed_slots = nested->GetIntegerField("allowed_slots");
 
 			TSharedPtr<FJsonObject> balances = nested->GetObjectField("balances");
 			FString balances_dks_wallet = balances->GetStringField("dks_wallet");
 			int balances_dks_balance = balances->GetIntegerField("dks_balance");
 			int balances_internal_balance = balances->GetIntegerField("internal_balance");
 
-			TSharedPtr<FJsonObject> energy = nested->GetObjectField("energy");
-			int user_id = energy->GetIntegerField("energy");
-			uint8 capacity = energy->GetIntegerField("capacity"); // Byte
-			uint8 spend_part = energy->GetIntegerField("spend_part");  // Byte
-			FString updated_at = energy->GetStringField("updated_at");
-			bool active = energy->GetBoolField("active");
+			//TSharedPtr<FJsonObject> energy = nested->GetObjectField("energy");
+			//int user_id = energy->GetIntegerField("energy");
+			//uint8 capacity = energy->GetIntegerField("capacity"); // Byte
+			//uint8 spend_part = energy->GetIntegerField("spend_part");  // Byte
+			//FString updated_at = energy->GetStringField("updated_at");
+			//bool active = energy->GetBoolField("active");
 
 			//ObjectData = ResponseObject->GetObjectField("data");
 
@@ -489,10 +489,10 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 			SpeedUpGI->UserInfo.Balance.dks_balance = balances_dks_balance;
 			SpeedUpGI->UserInfo.Balance.internal_balance = balances_internal_balance;
 
-			SpeedUpGI->UserInfo.Energy.capacity = capacity;
-			SpeedUpGI->UserInfo.Energy.spend_part = spend_part;
-			SpeedUpGI->UserInfo.Energy.updated_at = updated_at;
-			SpeedUpGI->UserInfo.Energy.active = active;
+			//SpeedUpGI->UserInfo.Energy.capacity = capacity;
+			//SpeedUpGI->UserInfo.Energy.spend_part = spend_part;
+			//SpeedUpGI->UserInfo.Energy.updated_at = updated_at;
+			//SpeedUpGI->UserInfo.Energy.active = active;
 		}
 	}
 
@@ -555,6 +555,10 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.ItemLevel = PointsObject->GetIntegerField("level");
 					NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
 
+					TSharedPtr<FJsonObject> energy = PointsObject->GetObjectField("energy");
+					NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
+					NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
+					NFTItem.active = energy->GetBoolField("active");
 					UItem* AddedItem = NewObject<UItem>();
 					AddedItem->SetItemInfo(NFTItem);
 					GameMode->GetNFTItemManager()->AddItem(AddedItem);
@@ -572,7 +576,10 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.ItemImage = PointsObject->GetStringField("image_url");
 					NFTItem.ItemLevel = PointsObject->GetIntegerField("level");
 					NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
-
+					TSharedPtr<FJsonObject> energy = PointsObject->GetObjectField("energy");
+					NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
+					NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
+					NFTItem.active = energy->GetBoolField("active");
 					UItem* AddedItem = NewObject<UItem>();
 					AddedItem->SetItemInfo(NFTItem);
 					GameMode->GetNFTItemManager()->AddItem(AddedItem);
@@ -590,7 +597,10 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.ItemImage = PointsObject->GetStringField("image_url");
 					NFTItem.ItemLevel = PointsObject->GetIntegerField("level");
 					NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
-
+					TSharedPtr<FJsonObject> energy = PointsObject->GetObjectField("energy");
+					NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
+					NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
+					NFTItem.active = energy->GetBoolField("active");
 					UItem* AddedItem = NewObject<UItem>();
 					AddedItem->SetItemInfo(NFTItem);
 					GameMode->GetNFTItemManager()->AddItem(AddedItem);
