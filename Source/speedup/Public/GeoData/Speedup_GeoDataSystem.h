@@ -47,13 +47,16 @@ public:
 	FTimerHandle PathTimerHandle03;
 
 	UPROPERTY(BlueprintAssignable)
-	FMyBindableEvent OnAwesomeness;
+	FMyBindableEvent SendPartPath;
+
+	UPROPERTY(BlueprintAssignable)
+	FMyBindableEvent SendFinalPath;
 
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void UpdateCurrentPath(int PuthN);
 
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
-	void UpdateLocationInPathID(int PathID);
+	void UpdateLocationInPathID(int PathID, bool FinalPath = false);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "GeoData")
 	void UpdateLocation();

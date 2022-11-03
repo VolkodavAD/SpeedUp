@@ -188,17 +188,11 @@ void USpeedup_GeoDataSystem::StopTrackPath(int PuthN)
 		break;
 	}
 
-	/*
-	if (PathTimerHandle.IsValid())
-	{
-		if (GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle) && !HaveActivePath())
-		{
-			GetWorld()->GetTimerManager().ClearTimer(PathTimerHandle);
-		}
-	}
-	*/
+	UpdateLocationInPathID(PuthN, true);
+	//ActivPath[PuthN]->PointsInPath.Empty();
 
-	ActivPath[PuthN]->PointsInPath.Empty();
+	SendFinalPath.Broadcast();
+
 }
 
 void USpeedup_GeoDataSystem::UpdateLocationInPath()
@@ -257,7 +251,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPath()
 	*/
 }
 
-void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID)
+void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 {
 	FGeoLocationInfo LastLocation = GetLastLocation();
 	FGeoPointInfo AddedPoint;
@@ -294,7 +288,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID)
 		ActivPath[PathID]->AddPoint(AddedPoint);
 	}
 
-	if (ActivPath[PathID]->UserPathInfo.PathTime > 6)
+	if ((ActivPath[PathID]->UserPathInfo.PathTime > 6) ||(FinalPath))
 	{
 		float SumVelocity = 0.0f;
 		float MinVelocity = 0.0f;
@@ -316,9 +310,8 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID)
 
 		ActivPath[PathID]->UserPathInfo.AverageVelosity = SumVelocity / ActivPath[PathID]->PointsInPath.Num();
 		ActivPath[PathID]->PointsInPath.Empty();
-
-		OnAwesomeness.Broadcast();
 	}
+	if (!FinalPath) SendPartPath.Broadcast();
 }
 
 // Called every frame
