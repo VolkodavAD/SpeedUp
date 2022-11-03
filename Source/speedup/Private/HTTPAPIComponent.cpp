@@ -646,7 +646,6 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 			GameMode->GetNFTItemManager()->ActivateItem(ActivationItem, PathID, 0, ErrorActivation);
 
 			ActivationItem = -1;
-
 		}
 	}
 }
