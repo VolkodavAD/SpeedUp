@@ -54,13 +54,11 @@ void USpeedup_GeoDataSystem::BeginPlay()
 	}
 }
 
-FGeoPointInfo USpeedup_GeoDataSystem::GetLastLocation_Implementation()
+FGeoLocationInfo USpeedup_GeoDataSystem::GetLastLocation_Implementation()
 {
-	FGeoPointInfo CurrentPoint;
-	CurrentPoint.Name = "0";
-	CurrentPoint.CurrentTime = 0.0f;
+	FGeoLocationInfo CurrentPoint;
 	CurrentPoint.PointLocation = FVector2D();
-	CurrentPoint.PointVelosity = 0.0f;
+	CurrentPoint.TimeStamp;
 	return CurrentPoint;
 }
 float USpeedup_GeoDataSystem::GetDistanse2Coor_Implementation(FGeoPointInfo PointStart, FGeoPointInfo PointEnd)
@@ -207,7 +205,11 @@ void USpeedup_GeoDataSystem::UpdateLocationInPath()
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("UpdateLocationInPath")));
 
-	FGeoPointInfo AddedPoint = GetLastLocation();
+	FGeoLocationInfo LastLocation = GetLastLocation();
+	FGeoPointInfo AddedPoint;
+	AddedPoint.PointID = 0;
+	AddedPoint.PointLocation = LastLocation.PointLocation;
+	AddedPoint.TimeStamp = LastLocation.TimeStamp;
 
 	for (int32 i = 0; i < ActivPath.Num(); ++i)
 	{
@@ -225,12 +227,15 @@ void USpeedup_GeoDataSystem::UpdateLocationInPath()
 
 				LeghtPath_Today = LeghtPath_Today + DeltaLeghtPath;
 				LeghtPath_Total = LeghtPath_Total + DeltaLeghtPath;
+
+				ActivPath[i]->UserPathInfo.PathLength += DeltaLeghtPath;
+				ActivPath[i]->UserPathInfo.PathTime += DeltaTimePath;
 			}
 			else
 			{
-				AddedPoint.PointVelosity = -1.0f;
+				AddedPoint.DeltaTime = 0.0f;
 				AddedPoint.PointDistance = 0.0f;
-				AddedPoint.DeltaTime  = 0.0f;
+				AddedPoint.PointVelosity = -1.0f;
 			}
 			ActivPath[i]->AddPoint(AddedPoint);
 		}
@@ -254,7 +259,14 @@ void USpeedup_GeoDataSystem::UpdateLocationInPath()
 
 void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID)
 {
-	FGeoPointInfo AddedPoint = GetLastLocation();
+	FGeoLocationInfo LastLocation = GetLastLocation();
+	FGeoPointInfo AddedPoint;
+	AddedPoint.PointID = ActivPath[PathID]->PointsInPath.Num();
+	AddedPoint.PointLocation = LastLocation.PointLocation;
+	AddedPoint.TimeStamp = LastLocation.TimeStamp;
+	AddedPoint.CurrentTime = FDateTime::Now();
+	AddedPoint.DeltaTime = FDateTime::Now();
+
 	if (ActivPath[PathID]->PathIsActiv == true)
 	{
 		AddedPoint.PointID = ActivPath[PathID]->PointsInPath.Num();
@@ -262,19 +274,50 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID)
 		{
 			float DeltaTimePath = (AddedPoint.CurrentTime - ActivPath[PathID]->PointsInPath.Last().CurrentTime).GetSeconds();
 			float DeltaLeghtPath = GetDistanse2Coor(ActivPath[PathID]->PointsInPath.Last(), AddedPoint);
-			
+
+			AddedPoint.DeltaTime = DeltaTimePath;
 			AddedPoint.PointDistance = DeltaLeghtPath;
 			AddedPoint.PointVelosity = DeltaLeghtPath / DeltaTimePath;
 
 			LeghtPath_Today = LeghtPath_Today + DeltaLeghtPath;
 			LeghtPath_Total = LeghtPath_Total + DeltaLeghtPath;
+
+			ActivPath[PathID]->UserPathInfo.PathLength += DeltaLeghtPath;
+			ActivPath[PathID]->UserPathInfo.PathTime += DeltaTimePath;
 		}
 		else
 		{
-			AddedPoint.PointVelosity = -1.0;
-		}
-		
+			AddedPoint.DeltaTime = 0.0f;
+			AddedPoint.PointDistance = 0.0f;
+			AddedPoint.PointVelosity = -1.0f;
+		}		
 		ActivPath[PathID]->AddPoint(AddedPoint);
+	}
+
+	if (ActivPath[PathID]->UserPathInfo.PathTime > 6)
+	{
+		float SumVelocity = 0.0f;
+		float MinVelocity = 0.0f;
+		float MaxVelocity = 0.0f;
+		for (int32 i = 0; i < ActivPath[PathID]->PointsInPath.Num(); ++i)
+		{
+			if (i == 0)
+			{
+				MinVelocity = ActivPath[PathID]->PointsInPath[i].PointVelosity;
+				MaxVelocity = ActivPath[PathID]->PointsInPath[i].PointVelosity;
+			}
+			else
+			{
+				MinVelocity = MinVelocity > ActivPath[PathID]->PointsInPath[i].PointVelosity ? ActivPath[PathID]->PointsInPath[i].PointVelosity: MinVelocity;
+				MaxVelocity = MaxVelocity < ActivPath[PathID]->PointsInPath[i].PointVelosity ? ActivPath[PathID]->PointsInPath[i].PointVelosity: MaxVelocity;
+			}
+			SumVelocity += ActivPath[PathID]->PointsInPath[i].PointVelosity;
+		}
+
+		ActivPath[PathID]->UserPathInfo.AverageVelosity = SumVelocity / ActivPath[PathID]->PointsInPath.Num();
+		ActivPath[PathID]->PointsInPath.Empty();
+
+		OnAwesomeness.Broadcast();
 	}
 }
 

@@ -36,10 +36,11 @@ void UGeoPath::AddPoint(const FGeoPointInfo AddedPoint)
 {
 	//FGeoPointInfo PreviewPointInfo = UserPathInfo.PointsInPath.Last();
 
-	UGeotPoint* NewGeotPoint = NewObject<UGeotPoint>();
-	NewGeotPoint->SetGeoPointInfo(AddedPoint);
-	//NewGeotPoint->PointDistance = DistanceBet
-	PointsInPath.Add(NewGeotPoint->GetGeoPointInfo());
+	//UGeotPoint* NewGeotPoint = NewObject<UGeotPoint>();
+	//NewGeotPoint->SetGeoPointInfo(AddedPoint);
+	//PointsInPath.Add(NewGeotPoint->GetGeoPointInfo());
+
+	PointsInPath.Add(AddedPoint);
 	UserPathInfo.PathLength += AddedPoint.PointDistance;
 	//UserPathInfo.FDateTime += AddedPoint;
 }

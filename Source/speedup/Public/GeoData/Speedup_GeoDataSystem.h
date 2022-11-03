@@ -67,8 +67,8 @@ public:
 	void ReInitServis_Implementation(); 
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
-	FGeoPointInfo GetLastLocation();
-	FGeoPointInfo GetLastLocation_Implementation();
+	FGeoLocationInfo GetLastLocation();
+	FGeoLocationInfo GetLastLocation_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
 	float GetDistanse2Coor(FGeoPointInfo PointStart, FGeoPointInfo PointEnd);
@@ -80,6 +80,7 @@ public:
 	void StopTrackPath(int PuthN);
 
 public:
+
 
 	float LeghtPath_Today;
 	float LeghtPath_Weekly;

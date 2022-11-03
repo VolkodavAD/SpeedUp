@@ -8,16 +8,15 @@
 #include "Misc/DateTime.h"
 #include "GeoPath.generated.h"
 
-/**
+/*
  * 
  */
-
 USTRUCT(BlueprintType)
 struct FGeoPointInfo : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int PointID = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointLocation;
@@ -26,11 +25,24 @@ struct FGeoPointInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PointDistance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float TimeStamp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FDateTime  CurrentTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FDateTime DeltaTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FString Name = "Path";
+};
+
+USTRUCT(BlueprintType)
+struct FGeoLocationInfo : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FVector2D PointLocation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float TimeStamp;
 };
 
 UCLASS(Blueprintable)
@@ -73,7 +85,7 @@ struct FGeoPathinfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 		float PathLength = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-		int FDateTime = 0;
+		int PathTime = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velocity")
 		float minVelosity = 0.0f;
@@ -96,14 +108,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	TArray<FGeoPointInfo> PointsInPath;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TrevelPath")
 	TArray<FGeoPathinfo> PartsOfPath;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	TArray<FGeoPathinfo> OneThirdPath;
 
 	bool PathIsActiv = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FDateTime StartPathTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FDateTime StopPathTime;
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	UDataTable *DataTable_Puths;
