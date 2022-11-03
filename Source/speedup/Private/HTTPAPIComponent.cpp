@@ -626,30 +626,39 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 	}
 	else
 	{
+		ErrorID = Response->GetResponseCode();
 		bSuccess = true;
-		ErrorID = 0;
 
-		Message = ResponseObject->GetStringField("message");
-		bSuccess = ResponseObject->GetBoolField("success");
-		if (bSuccess == true)
+		if (ErrorID == 200)
 		{
-			PathID = ResponseObject->GetNumberField("data");
-
-			USpeedUpGameInstance* GameIst = (USpeedUpGameInstance*)GetWorld()->GetGameInstance();
-			if (GameIst->UserInfo.Energy.spend_part > 0)
+			Message = ResponseObject->GetStringField("message");
+			bSuccess = ResponseObject->GetBoolField("success");
+			if (bSuccess == true)
 			{
-				GameIst->UserInfo.Energy.spend_part = GameIst->UserInfo.Energy.spend_part - 1;
+				PathID = ResponseObject->GetNumberField("data");
+
+				USpeedUpGameInstance* GameIst = (USpeedUpGameInstance*)GetWorld()->GetGameInstance();
+				if (GameIst->UserInfo.Energy.spend_part > 0)
+				{
+					GameIst->UserInfo.Energy.spend_part = GameIst->UserInfo.Energy.spend_part - 1;
+				}
+
+				int ErrorActivation;
+				AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+				GameMode->GetNFTItemManager()->ActivateItem(ActivationItem, PathID, 0, ErrorActivation);
+
+				StartPath(ActivationItem, PathID);
+
+				ActivationItem = -1;
 			}
-
-			int ErrorActivation;
-			AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
-			GameMode->GetNFTItemManager()->ActivateItem(ActivationItem, PathID, 0, ErrorActivation);
-
-			ActivationItem = -1;
 		}
 	}
 }
 
+void UHTTPAPIComponent::StartPath_Implementation(int ItemID, int StartPathID)
+{}
+void UHTTPAPIComponent::StotPath_Implementation(int ItemID, int StopPathID)
+{}
 
 UHTTPAPIComponent::UHTTPAPIComponent()
 {
