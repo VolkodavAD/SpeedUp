@@ -226,31 +226,34 @@ void UHTTPAPIComponent::NFTUpdateRequest(const int DeactivePathID, const int Dea
 	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
 	UItem* DeactivNFDIdItem = GameMode->GetNFTItemManager()->GetMyItem(DeactivNFDId);
 
-	const FHttpRequestRef RequestActiveNFT = FHttpModule::Get().CreateRequest();
+	if (DeactivNFDIdItem)
+	{
+		const FHttpRequestRef RequestActiveNFT = FHttpModule::Get().CreateRequest();
 
-	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
-	RequestJsonObject->SetNumberField("id", DeactivePathID);
-	RequestJsonObject->SetNumberField("user_id", GameIst->UserInfo.id);
-	RequestJsonObject->SetNumberField("nft_id", DeactivNFDId);
-	RequestJsonObject->SetNumberField("nft_type", (float)DeactivNFDIdItem->GetType());
-	RequestJsonObject->SetNumberField("avg_Speed", avg_velocity);
-	RequestJsonObject->SetNumberField("avg_distanse", avg_distance);
+		const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+		RequestJsonObject->SetNumberField("id", DeactivePathID);
+		RequestJsonObject->SetNumberField("user_id", GameIst->UserInfo.id);
+		RequestJsonObject->SetNumberField("nft_id", DeactivNFDId);
+		RequestJsonObject->SetNumberField("nft_type", (float)DeactivNFDIdItem->GetType());
+		RequestJsonObject->SetNumberField("avg_Speed", avg_velocity);
+		RequestJsonObject->SetNumberField("avg_distanse", avg_distance);
 
-	//токен
-	//RequestJsonObject->SetStringField("token", Password);
-	FString RequestBody;
-	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
-	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+		//токен
+		//RequestJsonObject->SetStringField("token", Password);
+		FString RequestBody;
+		const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
+		FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 
-	FString BearerT = "Bearer ";
-	RequestActiveNFT->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedActivation);
-	RequestActiveNFT->SetURL(NFTUpdateRequestURL);
-	RequestActiveNFT->SetVerb("POST");
-	RequestActiveNFT->SetHeader("Content-Type", "application/json");
-	RequestActiveNFT->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
-	RequestActiveNFT->SetContentAsString(RequestBody);
+		FString BearerT = "Bearer ";
+		RequestActiveNFT->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedActivation);
+		RequestActiveNFT->SetURL(NFTUpdateRequestURL);
+		RequestActiveNFT->SetVerb("POST");
+		RequestActiveNFT->SetHeader("Content-Type", "application/json");
+		RequestActiveNFT->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
+		RequestActiveNFT->SetContentAsString(RequestBody);
 
-	RequestActiveNFT->ProcessRequest();
+		RequestActiveNFT->ProcessRequest();
+	}
 }
 
 void UHTTPAPIComponent::Verify(const FString CodeFromMail, const FString TokenData)
