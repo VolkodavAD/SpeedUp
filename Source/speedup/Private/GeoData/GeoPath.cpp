@@ -1,5 +1,6 @@
 //#include "LocationServicesBPLibrary.h"
 #include "..\..\Public\GeoData\GeoPath.h"
+#include "Misc/DateTime.h"
 
 void UGeotPoint::SetGeoPointInfo(FGeoPointInfo AddedGeoPointInfo)
 {

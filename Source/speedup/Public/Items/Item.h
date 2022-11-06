@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
+#include "Misc/DateTime.h"
 #include "Item.generated.h"
 
 /**
@@ -69,6 +70,34 @@ struct FBaseItemInfo : public FTableRowBase
 		bool active = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		int last_trip_id = 0;
+};
+
+USTRUCT(BlueprintType)
+struct FItemStatistic : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int id = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int user_id = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int nft = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		ItemType Type = ItemType::Sneakers;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		ItemLevelRarity ItemRarity = ItemLevelRarity::Common;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int ItemLevel = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int avg_velocity = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int avg_distance = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		//FDateTime started_at = 0;
+		FString started_at = "";
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		FString ended_at = "";
 };
 
 UCLASS(Blueprintable)

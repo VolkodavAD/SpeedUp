@@ -5,9 +5,9 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
-#include "Misc/DateTime.h"
 #include "GeoPath.generated.h"
 
+struct FDateTime;
 /*
  * 
  */
@@ -16,7 +16,7 @@ struct FGeoPointInfo : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int PointID = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointLocation;
@@ -79,6 +79,8 @@ struct FGeoPathinfo : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 		int PathID = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+		int ItemID = 0;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	//TArray<FMovePoint> PointInPath;

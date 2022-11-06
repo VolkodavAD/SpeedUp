@@ -339,6 +339,37 @@ void UHTTPAPIComponent::Profile(const FString TokenData)
 	ProfileCode->ProcessRequest();
 }
 
+void UHTTPAPIComponent::StatisticRequest(const ItemType StatItemType, const int Period)
+{
+	const FHttpRequestRef ProfileCode = FHttpModule::Get().CreateRequest();
+
+	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+	RequestJsonObject->SetNumberField("nft_type", (float)StatItemType);
+	RequestJsonObject->SetNumberField("period", Period);
+
+	FString BearerT = "Bearer ";
+	FString RequestBody;
+	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+	ProfileCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedPathStatistick);
+	ProfileCode->SetURL(StatisticURL);
+	ProfileCode->SetVerb("POST");
+	ProfileCode->SetHeader("Content-Type", "application/json");
+	ProfileCode->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
+	ProfileCode->SetContentAsString(RequestBody);
+	ProfileCode->ProcessRequest();
+
+	//FString RequestBody;
+	//const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
+	//FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+	//Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedSignUP);
+	//Request->SetURL(SignUPURL);
+	//Request->SetVerb("POST");
+	//Request->SetHeader("Content-Type", "application/json");
+	//Request->SetContentAsString(RequestBody);
+	//Request->ProcessRequest();
+}
+
 void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
 {
 	TSharedPtr<FJsonObject> ResponseObject;
@@ -832,6 +863,170 @@ void UHTTPAPIComponent::OnResponseReceivedRecoveryCode(FHttpRequestPtr Request, 
 		bSuccess = ResponseObject->GetBoolField("success");
 		Message = ResponseObject->GetStringField("message");
 		//Data = ResponseObject->GetStringField("data");
+	}
+}
+
+void UHTTPAPIComponent::OnResponseReceivedPathStatistick(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
+{
+	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = Response->GetResponseCode();
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		if (SpeedUpGI)
+		{
+			//gameInstance->GetSaveManager()->FlushCachedSaveData();
+			//UGameplayStatics::OpenLevel(world, FName(*world->GetName()));
+			//UGameplayStatics::GetGameInstance()
+			//TSharedPtr<FJsonObject> ObjectResult;
+
+			ErrorID = Response->GetResponseCode();
+			ErrorText = "";
+			Message = ResponseObject->GetStringField("message");
+			bSuccess = ResponseObject->GetBoolField("success");
+
+			//TSharedPtr<FJsonObject> NFT = ResponseObject->GetObjectField("data");
+			//TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapNFT = NFT->Values;
+			//TArray<TSharedPtr<FJsonValue>> Points = NFT->GetArrayField(TEXT("Sneaker"));
+
+			TSharedPtr<FJsonObject> PathData = ResponseObject->GetObjectField("data");
+			TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapStatistic = PathData->Values;
+			TSharedPtr<FJsonObject> tripsObject = MapStatistic["trips"]->AsObject();
+			//TArray<TSharedPtr<FJsonValue>> tripsObject = PathData->GetArrayField(TEXT("trips"));
+			TArray<TSharedPtr<FJsonValue>> SneakerPath = tripsObject->GetArrayField(TEXT("Sneaker"));
+			if (SneakerPath.Num() > 0)
+			{
+				for (int32 i = 0; i < SneakerPath.Num(); ++i)
+				{
+					FItemStatistic ItemStat;
+					TSharedPtr<FJsonObject> PointsObject = SneakerPath[i]->AsObject();
+
+					ItemStat.id = PointsObject->GetIntegerField("id");
+					ItemStat.user_id = PointsObject->GetIntegerField("user_id");
+
+					TSharedPtr<FJsonObject> nft = PointsObject->GetObjectField("nft");
+					ItemStat.nft = nft->GetIntegerField("id");
+					ItemStat.Type = static_cast<ItemType>(nft->GetIntegerField("type"));
+					ItemStat.ItemLevel = nft->GetIntegerField("level");
+					ItemStat.ItemRarity = static_cast<ItemLevelRarity>(nft->GetIntegerField("rarity"));
+
+					ItemStat.avg_velocity = PointsObject->GetIntegerField("avg_velocity");
+					ItemStat.avg_distance = PointsObject->GetIntegerField("avg_distance");
+					ItemStat.started_at = PointsObject->GetStringField("started_at");
+					ItemStat.ended_at = PointsObject->GetStringField("ended_at");
+
+					GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
+				}
+			}
+
+			TArray<TSharedPtr<FJsonValue>> CarPath = tripsObject->GetArrayField(TEXT("Car"));
+			if (CarPath.Num() > 0)
+			{
+				for (int32 i = 0; i < CarPath.Num(); ++i)
+				{
+					FItemStatistic ItemStat;
+					TSharedPtr<FJsonObject> PointsObject = CarPath[i]->AsObject();
+
+					ItemStat.id = PointsObject->GetIntegerField("id");
+					ItemStat.user_id = PointsObject->GetIntegerField("user_id");
+
+					TSharedPtr<FJsonObject> nft = PointsObject->GetObjectField("nft");
+					ItemStat.nft = nft->GetIntegerField("id");
+					ItemStat.Type = static_cast<ItemType>(nft->GetIntegerField("type"));
+					ItemStat.ItemLevel = nft->GetIntegerField("level");
+					ItemStat.ItemRarity = static_cast<ItemLevelRarity>(nft->GetIntegerField("rarity"));
+
+					ItemStat.avg_velocity = PointsObject->GetIntegerField("avg_velocity");
+					ItemStat.avg_distance = PointsObject->GetIntegerField("avg_distance");
+					ItemStat.started_at = PointsObject->GetStringField("started_at");
+					ItemStat.ended_at = PointsObject->GetStringField("ended_at");
+
+					GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
+				}
+			}
+
+			TArray<TSharedPtr<FJsonValue>> PlanePath = tripsObject->GetArrayField(TEXT("Car"));
+			if (PlanePath.Num() > 0)
+			{
+				for (int32 i = 0; i < PlanePath.Num(); ++i)
+				{
+					FItemStatistic ItemStat;
+					TSharedPtr<FJsonObject> PointsObject = PlanePath[i]->AsObject();
+
+					ItemStat.id = PointsObject->GetIntegerField("id");
+					ItemStat.user_id = PointsObject->GetIntegerField("user_id");
+
+					TSharedPtr<FJsonObject> nft = PointsObject->GetObjectField("nft");
+					ItemStat.nft = nft->GetIntegerField("id");
+					ItemStat.Type = static_cast<ItemType>(nft->GetIntegerField("type"));
+					ItemStat.ItemLevel = nft->GetIntegerField("level");
+					ItemStat.ItemRarity = static_cast<ItemLevelRarity>(nft->GetIntegerField("rarity"));
+
+					ItemStat.avg_velocity = PointsObject->GetIntegerField("avg_velocity");
+					ItemStat.avg_distance = PointsObject->GetIntegerField("avg_distance");
+					ItemStat.started_at = PointsObject->GetStringField("started_at");
+					ItemStat.ended_at = PointsObject->GetStringField("ended_at");
+
+					GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
+				}
+			}
+
+			//TSharedPtr<FJsonObject> tripsObjectCar = trips[1]->AsObject();
+			//TArray<TSharedPtr<FJsonValue>> Car = tripsObjectCar->GetArrayField(TEXT("Car"));
+
+			//TSharedPtr<FJsonObject> tripsObjectPlane = trips[2]->AsObject();
+			//TArray<TSharedPtr<FJsonValue>> Plane = tripsObjectPlane->GetArrayField(TEXT("Plane"));
+
+				//Tarray<TSharedPtr<FJsonObject>> trips = Data->GetArrayField("trips");
+
+				/*
+				"id": 7,
+				"user_id": 43,
+				"nft": {
+				"id": 11,
+				"image_url": "",
+				"type": 1,
+				"collection_id": 0,
+				"chain_id": 0,
+				"level": 1,
+				"rarity": 0,
+				"meta": {},
+				"minted": false,
+				"last_trip_id": 0,
+				"energy": {
+						   "capacity": 0,
+						   "spend_part": 0,
+						   "active": false
+				  }
+						},
+						"spent_energy": 0,
+						"avg_velocity": 0,
+						"avg_distance": 0,
+						"started_at": "2022-11-05T16:48:42.809994Z",
+						"ended_at": "2022-11-05T17:15:37.104547Z",
+						"time": 0,
+						"earned_dks": 0,
+						"earned_internal": 0
+				*/
+
+
+				//FString Profile_Name = Sneaker->GetStringField("email");
+				//int Profile_id = Sneaker->GetIntegerField("id");
+				//bool Profile_email_confirmed = Sneaker->GetBoolField("email_confirmed");
+				//int Allowed_slots = Sneaker->GetIntegerField("allowed_slots");
+		}
 	}
 }
 

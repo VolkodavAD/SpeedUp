@@ -6,9 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "UObject/NoExportTypes.h"
 #include "Items/Item.h"
+#include "TimerManager.h"
 //#include "/Geodata/Geopath.h"
 //#include "..\..\Public\GeoData\GeoPath.h"
-#include "TimerManager.h"
+//#include "TimerManager.h"
 #include "ItemManager.generated.h"
 
 /**
@@ -35,6 +36,7 @@ struct FItemSlot : public FTableRowBase
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SPEEDUP_API UItemManager : public UActorComponent
 {
+
 	GENERATED_BODY()
 
 public:
@@ -80,6 +82,8 @@ public:
 	TArray<FItemSlot> ItemsSlot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	TArray<UItem*> MyItems;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	TArray<FItemStatistic> MyItemStatistic;
 
 	UFUNCTION(BlueprintCallable)
 	bool ActivateItem(int ItemID, int SlotID, int PathID, int& ErrorID);
