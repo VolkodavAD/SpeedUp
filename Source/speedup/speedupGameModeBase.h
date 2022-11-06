@@ -29,8 +29,12 @@ protected:
 
 public:
 
+	UFUNCTION(BlueprintCallable)
 	void ActiveItem(int ItemID, int SlotID, int PathID);
+	UFUNCTION(BlueprintCallable)
 	void DeactiveItem(int ItemID, int SlotID, int PathID);
+	UFUNCTION(BlueprintCallable)
+	void UpdateItem(int ItemID, int SlotID, int PathID);
 
 	//FORCEINLINE class USkeletalMeshComponent* GetMesh() const { return Mesh; }
 	//UFUNCTION(BlueprintNativeEvent, Category = "mesh")

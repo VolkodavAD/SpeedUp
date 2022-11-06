@@ -111,7 +111,6 @@ void USpeedup_GeoDataSystem::StartTrackPath(int PuthN)
 	if (!GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle))
 	{
 		//PathTimerHandle.IsValid() ? STR_IsValid = "STR_IsValid is valid": STR_IsValid = "STR_IsValid is not valid";
-
 		//UE_LOG(LogTemp, Warning, TEXT("PathTimerHandle.IsValid : %d"), PathTimerHandle.IsValid());
 		//UE_LOG(LogTemp, Warning, TEXT("IsTimerActive : %s"), GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle))
 		//GetWorld()->GetTimerManager().SetTimer(PathTimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocation, 6.0f, true, 2.0f);
@@ -264,6 +263,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 	if (ActivPath[PathID]->PathIsActiv == true)
 	{
 		AddedPoint.PointID = ActivPath[PathID]->PointsInPath.Num();
+
 		if (ActivPath[PathID]->PointsInPath.Num() > 0)
 		{
 			float DeltaTimePath = (AddedPoint.CurrentTime - ActivPath[PathID]->PointsInPath.Last().CurrentTime).GetSeconds();
@@ -273,8 +273,8 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 			AddedPoint.PointDistance = DeltaLeghtPath;
 			AddedPoint.PointSpeed = DeltaLeghtPath / DeltaTimePath;
 
-			LeghtPath_Today = LeghtPath_Today + DeltaLeghtPath;
-			LeghtPath_Total = LeghtPath_Total + DeltaLeghtPath;
+			//LeghtPath_Today = LeghtPath_Today + DeltaLeghtPath;
+			//LeghtPath_Total = LeghtPath_Total + DeltaLeghtPath;
 
 			ActivPath[PathID]->UserPathInfo.PathLength += DeltaLeghtPath;
 			ActivPath[PathID]->UserPathInfo.PathTime += DeltaTimePath;
@@ -284,34 +284,58 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 			AddedPoint.DeltaTime = 0.0f;
 			AddedPoint.PointDistance = 0.0f;
 			AddedPoint.PointSpeed = -1.0f;
-		}		
+		}
 		ActivPath[PathID]->AddPoint(AddedPoint);
 	}
 
-	if ((ActivPath[PathID]->UserPathInfo.PathTime > 120) ||(FinalPath))
+	if ((ActivPath[PathID]->UserPathInfo.PathTime > 120) || (FinalPath))
 	{
-		float SumVelocity = 0.0f;
-		float MinVelocity = 0.0f;
-		float MaxVelocity = 0.0f;
+		float PathSumSpeed = 0.0f;
+		float PathMinSpeed = 0.0f;
+		float PathMaxSpeed = 0.0f;
+		float PathAverageSpeed = 0.0f;
+		float PathDistance = 0.0f;
+
 		for (int32 i = 0; i < ActivPath[PathID]->PointsInPath.Num(); ++i)
 		{
 			if (i == 0)
 			{
-				MinVelocity = ActivPath[PathID]->PointsInPath[i].PointSpeed;
-				MaxVelocity = ActivPath[PathID]->PointsInPath[i].PointSpeed;
+				PathMinSpeed = ActivPath[PathID]->PointsInPath[i].PointSpeed;
+				PathMaxSpeed = ActivPath[PathID]->PointsInPath[i].PointSpeed;
 			}
 			else
 			{
-				MinVelocity = MinVelocity > ActivPath[PathID]->PointsInPath[i].PointSpeed ? ActivPath[PathID]->PointsInPath[i].PointSpeed: MinVelocity;
-				MaxVelocity = MaxVelocity < ActivPath[PathID]->PointsInPath[i].PointSpeed ? ActivPath[PathID]->PointsInPath[i].PointSpeed: MaxVelocity;
+				PathMinSpeed = PathMinSpeed > ActivPath[PathID]->PointsInPath[i].PointSpeed ? ActivPath[PathID]->PointsInPath[i].PointSpeed : PathMinSpeed;
+				PathMaxSpeed = PathMaxSpeed < ActivPath[PathID]->PointsInPath[i].PointSpeed ? ActivPath[PathID]->PointsInPath[i].PointSpeed : PathMaxSpeed;
 			}
-			SumVelocity += ActivPath[PathID]->PointsInPath[i].PointSpeed;
+			PathSumSpeed += ActivPath[PathID]->PointsInPath[i].PointSpeed;
 		}
+		PathAverageSpeed = PathSumSpeed / ActivPath[PathID]->PointsInPath.Num();
 
-		ActivPath[PathID]->UserPathInfo.AverageSpeed = SumVelocity / ActivPath[PathID]->PointsInPath.Num();
+		ActivPath[PathID]->UserPathInfo.AverageSpeed = PathSumSpeed / ActivPath[PathID]->PointsInPath.Num();
 		ActivPath[PathID]->PointsInPath.Empty();
+
+		FGeoPathinfo AddedPathPart;
+
+		AddedPathPart.PathID = PathID;
+		AddedPathPart.AverageSpeed = ActivPath[PathID]->UserPathInfo.AverageSpeed;
+		AddedPathPart.PathLength = ActivPath[PathID]->UserPathInfo.PathLength;
+		AddedPathPart.PathTime = ActivPath[PathID]->UserPathInfo.PathTime;
+		AddedPathPart.maxSpeed = ActivPath[PathID]->UserPathInfo.maxSpeed;
+		AddedPathPart.minSpeed = ActivPath[PathID]->UserPathInfo.minSpeed;
+
+		ActivPath[PathID]->PartsOfPath.Add(AddedPathPart);
 	}
-	if (!FinalPath) SendPartPath.Broadcast();
+
+	//PartsOfPath
+	if (FinalPath)
+	{
+		SendPartPath.Broadcast();
+	}
+	else
+	{
+		SendFinalPath.Broadcast();
+	}
 }
 
 // Called every frame

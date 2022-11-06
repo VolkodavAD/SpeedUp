@@ -54,7 +54,6 @@ public:
 	//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMyBindableEvent);
 
 private:
-
 	void InitItemManager();
 
 	//получаем состояние слотов из сервере
@@ -94,7 +93,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UItem* GetMyItem(int ItemID);
-
 
 	UFUNCTION(BlueprintCallable)
 	void AddItem(UItem* AddedItem);

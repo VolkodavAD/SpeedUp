@@ -35,7 +35,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMyBindableEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdateBindableEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FFinalBindableEvent);
 
 	FTimerDelegate TimerDelegatePuth01;
 	FTimerDelegate TimerDelegatePuth02;
@@ -46,7 +47,9 @@ public:
 	FTimerHandle PathTimerHandle03;
 
 	UPROPERTY(BlueprintAssignable)
-	FMyBindableEvent SendPartPath;
+	FUpdateBindableEvent SendPartPath;
+	UPROPERTY(BlueprintAssignable)
+	FFinalBindableEvent SendFinalPath;
 
 	//UPROPERTY(BlueprintAssignable)
 	//FMyBindableEvent SendFinalPath;
@@ -82,7 +85,6 @@ public:
 	void StopTrackPath(int PuthN);
 
 public:
-
 
 	float LeghtPath_Today;
 	float LeghtPath_Weekly;
