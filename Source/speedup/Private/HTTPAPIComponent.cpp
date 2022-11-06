@@ -95,25 +95,45 @@ void UHTTPAPIComponent::ChangePassword(const FString OldPassword, const FString 
 	Request->ProcessRequest();
 }
 
-void UHTTPAPIComponent::RepairPassword(const FString NewPassword, const FString TokenData)
+void UHTTPAPIComponent::RepairPassword(const FString NewPassword, const FString RecoveryCode, const FString Email)
 {
 	const FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
 
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
 	
 	RequestJsonObject->SetStringField("new_password", NewPassword);
+	RequestJsonObject->SetStringField("code", RecoveryCode);
+	RequestJsonObject->SetStringField("email", Email);
 
 	FString RequestBody;
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
-	FString BearerT = "Bearer ";
 	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedRepairPassword);
 	Request->SetURL(PasswordRepairURL);
 	Request->SetVerb("POST");
 	Request->SetHeader("Content-Type", "application/json");
-	Request->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
 	Request->SetContentAsString(RequestBody);
 	Request->ProcessRequest();
+}
+
+void UHTTPAPIComponent::SendRecoveryCode(const FString Email)
+{
+	const FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
+
+	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+
+	RequestJsonObject->SetStringField("email", Email);
+
+	FString RequestBody;
+	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedRecoveryCode);
+	Request->SetURL(SendRecoveryCodeURL);
+	Request->SetVerb("POST");
+	Request->SetHeader("Content-Type", "application/json");
+	Request->SetContentAsString(RequestBody);
+	Request->ProcessRequest();
+
 }
 
 void UHTTPAPIComponent::LogoutRequest(const FString DataToken)
@@ -753,6 +773,38 @@ void UHTTPAPIComponent::OnResponseReceivedUpdate(FHttpRequestPtr Request, FHttpR
 }
 
 void UHTTPAPIComponent::OnResponseReceivedRepairPassword(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
+{
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
+	int Code = Response->GetResponseCode();
+	if (Code != 200)
+	{
+		Message = "Wrong Password";
+		return;
+	}
+
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	//if (Code = 500)
+	else
+	{
+		ErrorID = 0;
+		ErrorText = "";
+		bSuccess = ResponseObject->GetBoolField("success");
+		//Message = ResponseObject->GetStringField("message");
+		//Data = ResponseObject->GetStringField("data");
+	}
+}
+
+void UHTTPAPIComponent::OnResponseReceivedRecoveryCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
 {
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
