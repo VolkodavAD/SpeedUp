@@ -7,7 +7,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Items/Item.h"
 //#include "/Geodata/Geopath.h"
-#include "..\..\Public\GeoData\GeoPath.h"
+//#include "..\..\Public\GeoData\GeoPath.h"
 #include "TimerManager.h"
 #include "ItemManager.generated.h"
 
@@ -23,14 +23,16 @@ struct FItemSlot : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
 	int ItemID = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
-	UGeoPath* PathForItem;
+	//UGeoPath* PathForItem;
+	int PathForItem;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
 	bool IsUnlock = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
 	FTimerHandle Items_TimerHandle;
 };
 
-UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+//UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SPEEDUP_API UItemManager : public UActorComponent
 {
 	GENERATED_BODY()
@@ -49,7 +51,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMyBindableEvent);
+	//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMyBindableEvent);
 
 private:
 
@@ -84,6 +86,11 @@ public:
 	bool ActivateItem(int ItemID, int SlotID, int PathID, int& ErrorID);
 	UFUNCTION(BlueprintCallable)
 	bool DeactivateItem(int ItemID, int SlotID, int& ErrorID);
+	UFUNCTION(BlueprintCallable)
+	bool UpdateItem(int ItemID, int SlotID, int& ErrorID);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateLastPathID(int ItemID, int PathID);
 
 	UFUNCTION(BlueprintCallable)
 	UItem* GetMyItem(int ItemID);

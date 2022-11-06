@@ -7,6 +7,7 @@ AspeedupGameModeBase::AspeedupGameModeBase()
 {
 	NFTItemManager = CreateDefaultSubobject<UItemManager>(TEXT("ItemManager"));
 	GeoDataSystemCPP = CreateDefaultSubobject<USpeedup_GeoDataSystem>(TEXT("GeoDataSystemCPP"));
+	//GeoDataSystemCPP->SetupAttachment(RootComponent);
 	//NFTItemManager->AddToRoot();
 	//MeshBody = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
 	//NFTItemManager->RegisterComponent();

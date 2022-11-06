@@ -27,10 +27,10 @@ private:
 	void OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedChangePassword(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
-
 	void OnResponseReceivedProfile(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedActivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+	void OnResponseReceivedUpdate(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
 	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
@@ -43,9 +43,11 @@ private:
 	//const FString ProfileURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/profile";
 	const FString ProfileURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/profile";
 	
-	const FString NFTreceiptRequestURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/nfts";
-	const FString NFTActiveRequestURL =	 "https://m2e-backend-core.production.bc.gotbitgames.co/start";
+	const FString NFTreceiptRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/profile/nfts";
+	const FString NFTActiveRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/start";
 	const FString NFTDeactiveRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/stop";
+	const FString NFTUpdateRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/update-params";
+	///update-params
 	//NFTreceiptRequestURL
 
 	int ActivationItem = -1;
@@ -126,7 +128,10 @@ public:
 	void NFTactivationRequest(const int ActivNFDId);
 
 	UFUNCTION(BlueprintCallable)
-	void NFTdeactivationRequest(const int DeactivNFDId);
+	void NFTdeactivationRequest(const int DeactivePathID, const int DeactivNFDId, const int avg_velocity, const int avg_distance);
+
+	UFUNCTION(BlueprintCallable)
+	void NFTUpdateRequest(const int DeactivePathID, const int DeactivNFDId, const int avg_velocity, const int avg_distance);
 	//UFUNCTION(BlueprintCallable)
 	//	void NFTactivationRequest(const FString TokenData);
 
@@ -142,7 +147,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Verify(const FString CodeFromMail, const FString TokenData);
-
 	UFUNCTION(BlueprintCallable)
 	void Profile(const FString TokenData);
 };

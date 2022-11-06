@@ -9,8 +9,10 @@ UItemManager::UItemManager()
 void UItemManager::BeginPlay()
 {
 	Super::BeginPlay();
+	//PostFromBack_SlotsStats();
+	//PostFromBack_AllItems();
+
 	PostFromBack_SlotsStats();
-	PostFromBack_AllItems();
 }
 
 // Called every frame
@@ -40,6 +42,11 @@ UItem* UItemManager::GetMyItem(int ItemID)
 	return nullptr;
 }
 
+void UItemManager::UpdateLastPathID(int ItemID, int PathID)
+{
+	GetMyItem(ItemID)->UpdateLastPathID(PathID);
+}
+
 /*
 FItemSlot UItemManager::GetItemSlot(int SlotID);
 {
@@ -48,6 +55,7 @@ FItemSlot UItemManager::GetItemSlot(int SlotID);
 
 void UItemManager::Start_TimerItemCheck()
 {
+	//GetWorld()->GetTimerManager().SetTimer(Items_TimerHandle, , 6.0f, true, 0.1f);
 }
 
 void UItemManager::Stop_TimerItemCheck()
@@ -56,6 +64,9 @@ void UItemManager::Stop_TimerItemCheck()
 
 bool UItemManager::ActivateItem(int ItemID, int SlotID, int PathID, int& ErrorID)
 {
+	if (ItemsSlot.Num() <= SlotID)
+	return false;
+
 	if (!ItemsSlot[SlotID].IsUnlock)
 	return false;
 
@@ -67,6 +78,11 @@ bool UItemManager::ActivateItem(int ItemID, int SlotID, int PathID, int& ErrorID
 		int l_ItemEnergy = GetMyItem(ItemID)->Energy = ItemByID->Energy - 1;
 	}
 	ItemByID->SetItemStatus(StatusItem::Active);
+
+
+	ItemsSlot[0].ItemID = ItemID;
+	ItemsSlot[0].PathForItem = PathID;
+	ItemsSlot[0].IsUnlock = true;
 
 	Start_TimerItemCheck();
 	return true;
@@ -86,6 +102,11 @@ bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 
 	Stop_TimerItemCheck();
 
+	return true;
+}
+
+bool UItemManager::UpdateItem(int ItemID, int SlotID, int& ErrorID)
+{
 	return true;
 }
 

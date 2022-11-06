@@ -21,7 +21,7 @@ struct FGeoPointInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointLocation;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float PointVelosity;
+		float PointSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PointDistance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -60,7 +60,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D PointLocation;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float PointVelosity;
+		float PointSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FDateTime CurrentTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -88,11 +88,11 @@ struct FGeoPathinfo : public FTableRowBase
 		int PathTime = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velocity")
-		float minVelosity = 0.0f;
+		float minSpeed = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velocity")
-		float maxVelosity = 0.0f;
+		float maxSpeed = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velocity")
-		float AverageVelosity = 0.0f;
+		float AverageSpeed = 0.0f;
 };
 
 
@@ -100,6 +100,8 @@ UCLASS(Blueprintable)
 class SPEEDUP_API UGeoPath : public UObject
 {
 	GENERATED_BODY()
+
+	UGeoPath();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "BaseData")
@@ -114,9 +116,9 @@ public:
 	bool PathIsActiv = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FDateTime StartPathTime;
+	FDateTime StartPathTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FDateTime StopPathTime;
+	FDateTime StopPathTime;
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	UDataTable *DataTable_Puths;
@@ -136,10 +138,10 @@ public:
 	void AddPoint(const FGeoPointInfo AddedPoint);
 
 	UFUNCTION(BlueprintCallable)
-	void AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const float AddedPointVelosity, const FDateTime CurrentTime);
+	void AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const float AddedPointSpeed, const FDateTime CurrentTime);
 
 	//UFUNCTION(BlueprintCallable, BlueprintPure)
-	bool GetPoint(int IndexPoint, UGeotPoint &ResultPoit);
+	//bool GetPoint(int IndexPoint, UGeotPoint &ResultPoit);
 
 	UFUNCTION(BlueprintCallable)
 	bool SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths);

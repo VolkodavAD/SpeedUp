@@ -67,6 +67,8 @@ struct FBaseItemInfo : public FTableRowBase
 		int spendPart = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		bool active = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int last_trip_id = 0;
 };
 
 UCLASS(Blueprintable)
@@ -91,8 +93,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
 	int CurrentTimeToEnergyRestore = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
-	UTexture2D* ItemImage;
+	UFUNCTION(BlueprintCallable)
+	void UpdateLastPathID(int PathID);
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
+	//UTexture2D* ItemImage;
+
 	// image for review
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
 	//UTexture2D* ItemIcon;

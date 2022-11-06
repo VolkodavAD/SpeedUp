@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "..\Public\HTTPAPIComponent.h"
+#include "Items/ItemManager.h"
+#include "GeoData/Speedup_GeoDataSystem.h"
 #include "LoginGameModeBase.generated.h"
 
 /**
@@ -22,10 +24,13 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UHTTPAPIComponent* HTTP;
-	//class USkeletalMeshComponent* MeshBody;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	//	class UItemManager* NFTItemManager;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	//	class USpeedup_GeoDataSystem* GeoDataSystemCPP;
 
 public:
-	//FORCEINLINE class USkeletalMeshComponent* GetMesh() const { return Mesh; }
-	//UFUNCTION(BlueprintNativeEvent, Category = "mesh")
 	FORCEINLINE class UHTTPAPIComponent* GeHTTP() const { return HTTP; }
+	//FORCEINLINE class UItemManager* GetNFTItemManager() const { return NFTItemManager; }
+	//FORCEINLINE class USpeedup_GeoDataSystem* GetGeoDataSystemCPP() const { return GeoDataSystemCPP; }
 };

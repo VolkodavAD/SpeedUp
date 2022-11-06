@@ -176,28 +176,65 @@ void UHTTPAPIComponent::NFTactivationRequest(const int NFDId)
 
 	ActivationItem = NFDId;
 	RequestActiveNFT->ProcessRequest();
-
 }
 
-void UHTTPAPIComponent::NFTdeactivationRequest(const int DeactivNFDId)
-{
+//{
+//"id" :0,
+//"user_id" : 0,
+//"nft_id" : 0,
+//"nft_type" : 0,
+//"avg_velocity" : 0.00,
+//"avg_distance:0.00"
+//}
 
+void UHTTPAPIComponent::NFTdeactivationRequest(const int DeactivePathID, const int DeactivNFDId, const int avg_velocity, const int avg_distance)
+{
 	USpeedUpGameInstance* GameIst = (USpeedUpGameInstance*)GetWorld()->GetGameInstance();
 	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
 	UItem* DeactivNFDIdItem = GameMode->GetNFTItemManager()->GetMyItem(DeactivNFDId);
 
 	const FHttpRequestRef RequestActiveNFT = FHttpModule::Get().CreateRequest();
 
-	const TSharedRef<FJsonObject> NFTJsonObject = MakeShared<FJsonObject>();
-	NFTJsonObject->SetNumberField("id", DeactivNFDId);
-	NFTJsonObject->SetNumberField("Type", (int)DeactivNFDIdItem->GetType());
+	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+	RequestJsonObject->SetNumberField("id", DeactivePathID);
+	RequestJsonObject->SetNumberField("user_id", GameIst->UserInfo.id);
+	RequestJsonObject->SetNumberField("nft_id", DeactivNFDId);
+	RequestJsonObject->SetNumberField("nft_type", (float)DeactivNFDIdItem->GetType());
+	RequestJsonObject->SetNumberField("avg_velocity", avg_velocity);
+	RequestJsonObject->SetNumberField("avg_distance", avg_distance);
+
+	//токен
+	//RequestJsonObject->SetStringField("token", Password);
+	FString RequestBody;
+	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+
+	FString BearerT = "Bearer ";
+	RequestActiveNFT->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedUpdate);
+	RequestActiveNFT->SetURL(NFTDeactiveRequestURL);
+	RequestActiveNFT->SetVerb("POST");
+	RequestActiveNFT->SetHeader("Content-Type", "application/json");
+	RequestActiveNFT->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
+	RequestActiveNFT->SetContentAsString(RequestBody);
+
+	RequestActiveNFT->ProcessRequest();
+}
+
+void UHTTPAPIComponent::NFTUpdateRequest(const int DeactivePathID, const int DeactivNFDId, const int avg_velocity, const int avg_distance)
+{
+	USpeedUpGameInstance* GameIst = (USpeedUpGameInstance*)GetWorld()->GetGameInstance();
+	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+	UItem* DeactivNFDIdItem = GameMode->GetNFTItemManager()->GetMyItem(DeactivNFDId);
+
+	const FHttpRequestRef RequestActiveNFT = FHttpModule::Get().CreateRequest();
 
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
-	RequestJsonObject->SetNumberField("id", GameIst->UserInfo.id);
-	RequestJsonObject->SetObjectField("nft_id", NFTJsonObject);
-
-	NFTJsonObject->SetNumberField("avg_velosity", 4);
-	NFTJsonObject->SetNumberField("avg_distanse", 50);
+	RequestJsonObject->SetNumberField("id", DeactivePathID);
+	RequestJsonObject->SetNumberField("user_id", GameIst->UserInfo.id);
+	RequestJsonObject->SetNumberField("nft_id", DeactivNFDId);
+	RequestJsonObject->SetNumberField("nft_type", (float)DeactivNFDIdItem->GetType());
+	RequestJsonObject->SetNumberField("avg_Speed", avg_velocity);
+	RequestJsonObject->SetNumberField("avg_distanse", avg_distance);
 
 	//токен
 	//RequestJsonObject->SetStringField("token", Password);
@@ -207,14 +244,13 @@ void UHTTPAPIComponent::NFTdeactivationRequest(const int DeactivNFDId)
 
 	FString BearerT = "Bearer ";
 	RequestActiveNFT->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedActivation);
-	RequestActiveNFT->SetURL(NFTDeactiveRequestURL);
+	RequestActiveNFT->SetURL(NFTUpdateRequestURL);
 	RequestActiveNFT->SetVerb("POST");
 	RequestActiveNFT->SetHeader("Content-Type", "application/json");
 	RequestActiveNFT->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
 	RequestActiveNFT->SetContentAsString(RequestBody);
 
 	RequestActiveNFT->ProcessRequest();
-
 }
 
 void UHTTPAPIComponent::Verify(const FString CodeFromMail, const FString TokenData)
@@ -254,7 +290,7 @@ void UHTTPAPIComponent::Profile(const FString TokenData)
 	ProfileCode->SetURL(ProfileURL);
 	ProfileCode->SetVerb("GET");
 	ProfileCode->SetHeader("Content-Type", "application/json");
-	ProfileCode->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
+	ProfileCode->AppendToHeader("Authorization", BearerT.Append(TokenData));
 	//ProfileCode->SetContentAsString(RequestBody);
 	ProfileCode->ProcessRequest();
 }
@@ -278,6 +314,7 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 		}
 		else
 		{
+			ErrorID = Response->GetResponseCode();
 			bSuccess = ResponseObject->GetBoolField("success");
 			Message = ResponseObject->GetStringField("message");
 			ClientTocken = ResponseObject->GetStringField("data");
@@ -454,7 +491,7 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 
 			//TSharedPtr<FJsonObject> ObjectResult;
 
-			ErrorID = 0;
+			ErrorID = Response->GetResponseCode();
 			ErrorText = "";
 			Message = ResponseObject->GetStringField("message");
 			bSuccess = ResponseObject->GetBoolField("success");
@@ -468,8 +505,8 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 
 			TSharedPtr<FJsonObject> balances = nested->GetObjectField("balances");
 			FString balances_dks_wallet = balances->GetStringField("dks_wallet");
-			int balances_dks_balance = balances->GetIntegerField("dks_balance");
-			int balances_internal_balance = balances->GetIntegerField("internal_balance");
+			float balances_dks_balance = balances->GetNumberField("dks_balance");
+			float balances_internal_balance = balances->GetNumberField("internal_balance");
 
 			//TSharedPtr<FJsonObject> energy = nested->GetObjectField("energy");
 			//int user_id = energy->GetIntegerField("energy");
@@ -553,6 +590,7 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.Minted = PointsObject->GetBoolField("minted");
 					NFTItem.ItemImage = PointsObject->GetStringField("image_url");
 					NFTItem.ItemLevel = PointsObject->GetIntegerField("level");
+					NFTItem.last_trip_id = PointsObject->GetIntegerField("last_trip_id");
 					NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
 
 					TSharedPtr<FJsonObject> energy = PointsObject->GetObjectField("energy");
@@ -575,11 +613,14 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.Minted = PointsObject->GetBoolField("minted");
 					NFTItem.ItemImage = PointsObject->GetStringField("image_url");
 					NFTItem.ItemLevel = PointsObject->GetIntegerField("level");
+					NFTItem.last_trip_id = PointsObject->GetIntegerField("last_trip_id");
 					NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
+
 					TSharedPtr<FJsonObject> energy = PointsObject->GetObjectField("energy");
 					NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
 					NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
 					NFTItem.active = energy->GetBoolField("active");
+
 					UItem* AddedItem = NewObject<UItem>();
 					AddedItem->SetItemInfo(NFTItem);
 					GameMode->GetNFTItemManager()->AddItem(AddedItem);
@@ -596,7 +637,9 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.Minted = PointsObject->GetBoolField("minted");
 					NFTItem.ItemImage = PointsObject->GetStringField("image_url");
 					NFTItem.ItemLevel = PointsObject->GetIntegerField("level");
+					NFTItem.last_trip_id = PointsObject->GetIntegerField("last_trip_id");
 					NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
+
 					TSharedPtr<FJsonObject> energy = PointsObject->GetObjectField("energy");
 					NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
 					NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
@@ -628,10 +671,9 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 	{
 		ErrorID = Response->GetResponseCode();
 		bSuccess = true;
-
+		Message = ResponseObject->GetStringField("message");
 		if (ErrorID == 200)
 		{
-			Message = ResponseObject->GetStringField("message");
 			bSuccess = ResponseObject->GetBoolField("success");
 			if (bSuccess == true)
 			{
@@ -645,11 +687,42 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 
 				int ErrorActivation;
 				AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+				int TActivationItem = ActivationItem;
+				int TPathID = PathID;
+				GameMode->GetNFTItemManager()->UpdateLastPathID(ActivationItem, PathID);
 				GameMode->GetNFTItemManager()->ActivateItem(ActivationItem, PathID, 0, ErrorActivation);
-
 				StartPath(ActivationItem, PathID);
 
 				ActivationItem = -1;
+			}
+		}
+	}
+}
+
+void UHTTPAPIComponent::OnResponseReceivedUpdate(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
+{
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		ErrorID = Response->GetResponseCode();
+		bSuccess = true;
+		Message = ResponseObject->GetStringField("message");
+		if (ErrorID == 200)
+		{
+			bSuccess = ResponseObject->GetBoolField("success");
+			if (bSuccess == true)
+			{
 			}
 		}
 	}

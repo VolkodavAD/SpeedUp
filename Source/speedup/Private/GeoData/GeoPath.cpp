@@ -6,7 +6,7 @@ void UGeotPoint::SetGeoPointInfo(FGeoPointInfo AddedGeoPointInfo)
 	Pointinfo = AddedGeoPointInfo;
 	//Pointinfo.PointID = AddedGeoPointInfo.PointID;
 	//Pointinfo.PointLocation = AddedGeoPointInfo.PointLocation;
-	//Pointinfo.PointVelosity = AddedGeoPointInfo.PointVelosity;
+	//Pointinfo.PointSpeed = AddedGeoPointInfo.PointSpeed;
 	//Pointinfo.CurrentTime = AddedGeoPointInfo.CurrentTime;
 	//Pointinfo.PointDistance = AddedGeoPointInfo.PointDistance;
 }
@@ -16,12 +16,16 @@ FGeoPointInfo UGeotPoint::GetGeoPointInfo()
 	FGeoPointInfo ReturnedGeoPoints;
 	ReturnedGeoPoints.PointID = Pointinfo.PointID;
 	ReturnedGeoPoints.PointLocation = Pointinfo.PointLocation;
-	ReturnedGeoPoints.PointVelosity = Pointinfo.PointVelosity;
+	ReturnedGeoPoints.PointSpeed = Pointinfo.PointSpeed;
 	ReturnedGeoPoints.CurrentTime = Pointinfo.CurrentTime;
 
 	return ReturnedGeoPoints;
 }
 // ------------------------------------------------------------------------PATH ---------------------------------------------------
+
+UGeoPath::UGeoPath()
+{}
+
 void UGeoPath::SetStatusActive(bool NewStatusActive)
 {
 	PathIsActiv = NewStatusActive;
@@ -45,12 +49,12 @@ void UGeoPath::AddPoint(const FGeoPointInfo AddedPoint)
 	//UserPathInfo.FDateTime += AddedPoint;
 }
 
-void UGeoPath::AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const float AddedPointVelosity, const FDateTime CurrentTime)
+void UGeoPath::AddPointByLocationVelocity(const int AddedPointID, const FVector2D AddedPointLocation, const float AddedPointSpeed, const FDateTime CurrentTime)
 {
 	FGeoPointInfo NewPoint;
 	NewPoint.PointID = AddedPointID;
 	NewPoint.PointLocation = AddedPointLocation;
-	NewPoint.PointVelosity = AddedPointVelosity;
+	NewPoint.PointSpeed = AddedPointSpeed;
 	NewPoint.CurrentTime = CurrentTime;
 
 	AddPoint(NewPoint);

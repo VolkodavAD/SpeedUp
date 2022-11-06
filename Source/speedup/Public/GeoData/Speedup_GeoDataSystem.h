@@ -26,7 +26,6 @@ public:
 	// Sets default values for this component's properties
 	USpeedup_GeoDataSystem();
 
-
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -49,8 +48,8 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FMyBindableEvent SendPartPath;
 
-	UPROPERTY(BlueprintAssignable)
-	FMyBindableEvent SendFinalPath;
+	//UPROPERTY(BlueprintAssignable)
+	//FMyBindableEvent SendFinalPath;
 
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void UpdateCurrentPath(int PuthN);

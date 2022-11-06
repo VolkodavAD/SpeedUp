@@ -17,11 +17,10 @@ USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	// ...
-	UGeoPath* AddedPath01 = NewObject<UGeoPath>();
-	ActivPath.Init(AddedPath01, 3);
+	//UGeoPath* AddedPath01 = NewObject<UGeoPath>();
+	//ActivPath.Init(AddedPath01, 3);
 	SetComponentTickEnabled(false);
 }
-
 
 void USpeedup_GeoDataSystem::ReInitServis_Implementation()
 {
@@ -48,9 +47,10 @@ void USpeedup_GeoDataSystem::BeginPlay()
 	//GetWorld()->GetTimerManager().SetTimer(Sneakers_TimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocation, 1.0f, true, 2.0f);
 	// ...	
 
-	for (int32 i = 0; i < ActivPath.Num(); ++i)
+	for (int32 i = 0; i < 3; ++i)
 	{
-		ActivPath[i] = NewObject<UGeoPath>();
+		ActivPath.Add(NewObject<UGeoPath>());
+		//ActivPath[i] = NewObject<UGeoPath>();
 	}
 }
 
@@ -191,7 +191,7 @@ void USpeedup_GeoDataSystem::StopTrackPath(int PuthN)
 	UpdateLocationInPathID(PuthN, true);
 	//ActivPath[PuthN]->PointsInPath.Empty();
 
-	SendFinalPath.Broadcast();
+	//SendFinalPath.Broadcast();
 
 }
 
@@ -215,7 +215,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPath()
 				float DeltaTimePath = (AddedPoint.CurrentTime - ActivPath[i]->PointsInPath.Last().CurrentTime).GetSeconds();
 				float DeltaLeghtPath = GetDistanse2Coor(ActivPath[i]->PointsInPath.Last(), AddedPoint);
 				
-				AddedPoint.PointVelosity = DeltaLeghtPath / DeltaTimePath;
+				AddedPoint.PointSpeed = DeltaLeghtPath / DeltaTimePath;
 				AddedPoint.PointDistance = DeltaLeghtPath;
 				AddedPoint.DeltaTime = 0.0f;
 
@@ -229,7 +229,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPath()
 			{
 				AddedPoint.DeltaTime = 0.0f;
 				AddedPoint.PointDistance = 0.0f;
-				AddedPoint.PointVelosity = -1.0f;
+				AddedPoint.PointSpeed = -1.0f;
 			}
 			ActivPath[i]->AddPoint(AddedPoint);
 		}
@@ -241,11 +241,11 @@ void USpeedup_GeoDataSystem::UpdateLocationInPath()
 	{
 		float DeltaTimePath = (AddedPoint.CurrentTime - ActivSneakersPath->UserPathInfo.PointsInPath.Last().CurrentTime).GetSeconds();
 		float DeltaLeghtPath = GetDistanse2Coor(ActivSneakersPath->UserPathInfo.PointsInPath.Last(), AddedPoint);
-		AddedPoint.PointVelosity = DeltaLeghtPath / DeltaTimePath;
+		AddedPoint.PointSpeed = DeltaLeghtPath / DeltaTimePath;
 	}
 	else
 	{
-		AddedPoint.PointVelosity = -1.0;
+		AddedPoint.PointSpeed = -1.0;
 	}
 	ActivSneakersPath->AddPoint(AddedPoint);
 	*/
@@ -271,7 +271,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 
 			AddedPoint.DeltaTime = DeltaTimePath;
 			AddedPoint.PointDistance = DeltaLeghtPath;
-			AddedPoint.PointVelosity = DeltaLeghtPath / DeltaTimePath;
+			AddedPoint.PointSpeed = DeltaLeghtPath / DeltaTimePath;
 
 			LeghtPath_Today = LeghtPath_Today + DeltaLeghtPath;
 			LeghtPath_Total = LeghtPath_Total + DeltaLeghtPath;
@@ -283,12 +283,12 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 		{
 			AddedPoint.DeltaTime = 0.0f;
 			AddedPoint.PointDistance = 0.0f;
-			AddedPoint.PointVelosity = -1.0f;
+			AddedPoint.PointSpeed = -1.0f;
 		}		
 		ActivPath[PathID]->AddPoint(AddedPoint);
 	}
 
-	if ((ActivPath[PathID]->UserPathInfo.PathTime > 6) ||(FinalPath))
+	if ((ActivPath[PathID]->UserPathInfo.PathTime > 120) ||(FinalPath))
 	{
 		float SumVelocity = 0.0f;
 		float MinVelocity = 0.0f;
@@ -297,18 +297,18 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 		{
 			if (i == 0)
 			{
-				MinVelocity = ActivPath[PathID]->PointsInPath[i].PointVelosity;
-				MaxVelocity = ActivPath[PathID]->PointsInPath[i].PointVelosity;
+				MinVelocity = ActivPath[PathID]->PointsInPath[i].PointSpeed;
+				MaxVelocity = ActivPath[PathID]->PointsInPath[i].PointSpeed;
 			}
 			else
 			{
-				MinVelocity = MinVelocity > ActivPath[PathID]->PointsInPath[i].PointVelosity ? ActivPath[PathID]->PointsInPath[i].PointVelosity: MinVelocity;
-				MaxVelocity = MaxVelocity < ActivPath[PathID]->PointsInPath[i].PointVelosity ? ActivPath[PathID]->PointsInPath[i].PointVelosity: MaxVelocity;
+				MinVelocity = MinVelocity > ActivPath[PathID]->PointsInPath[i].PointSpeed ? ActivPath[PathID]->PointsInPath[i].PointSpeed: MinVelocity;
+				MaxVelocity = MaxVelocity < ActivPath[PathID]->PointsInPath[i].PointSpeed ? ActivPath[PathID]->PointsInPath[i].PointSpeed: MaxVelocity;
 			}
-			SumVelocity += ActivPath[PathID]->PointsInPath[i].PointVelosity;
+			SumVelocity += ActivPath[PathID]->PointsInPath[i].PointSpeed;
 		}
 
-		ActivPath[PathID]->UserPathInfo.AverageVelosity = SumVelocity / ActivPath[PathID]->PointsInPath.Num();
+		ActivPath[PathID]->UserPathInfo.AverageSpeed = SumVelocity / ActivPath[PathID]->PointsInPath.Num();
 		ActivPath[PathID]->PointsInPath.Empty();
 	}
 	if (!FinalPath) SendPartPath.Broadcast();
@@ -333,19 +333,6 @@ void USpeedup_GeoDataSystem::UpdateLocation_Implementation()
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("UpdateLocation")));
 	UpdateLocationInPath();
 }
-
-//FTimerDelegate TimerDel;
-//FTimerHandle TimerHandle;
-
-//int32 MyInt = 10;
-//float MyFloat = 20.f;
-
-//Binding the function with specific values
-//TimerDel.BindUFunction(this, FName("MyUsefulFunction"), MyInt, MyFloat);
-//Calling MyUsefulFunction after 5 seconds without looping
-//GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
-
-
 float USpeedup_GeoDataSystem::GetLeghtPath_Today()
 {
 	return LeghtPath_Today;
