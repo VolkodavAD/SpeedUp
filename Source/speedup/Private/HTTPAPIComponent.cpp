@@ -95,6 +95,27 @@ void UHTTPAPIComponent::ChangePassword(const FString OldPassword, const FString 
 	Request->ProcessRequest();
 }
 
+void UHTTPAPIComponent::RepairPassword(const FString NewPassword, const FString TokenData)
+{
+	const FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
+
+	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+	
+	RequestJsonObject->SetStringField("new_password", NewPassword);
+
+	FString RequestBody;
+	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+	FString BearerT = "Bearer ";
+	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedRepairPassword);
+	Request->SetURL(PasswordRepairURL);
+	Request->SetVerb("POST");
+	Request->SetHeader("Content-Type", "application/json");
+	Request->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
+	Request->SetContentAsString(RequestBody);
+	Request->ProcessRequest();
+}
+
 void UHTTPAPIComponent::LogoutRequest(const FString DataToken)
 {
 	const FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
@@ -728,6 +749,37 @@ void UHTTPAPIComponent::OnResponseReceivedUpdate(FHttpRequestPtr Request, FHttpR
 			{
 			}
 		}
+	}
+}
+
+void UHTTPAPIComponent::OnResponseReceivedRepairPassword(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
+{
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
+	int Code = Response->GetResponseCode();
+	if (Code != 200)
+	{
+		Message = "Wrong Password";
+		return;
+	}
+
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		ErrorID = 0;
+		ErrorText = "";
+		bSuccess = ResponseObject->GetBoolField("success");
+		//Message = ResponseObject->GetStringField("message");
+		//Data = ResponseObject->GetStringField("data");
 	}
 }
 
