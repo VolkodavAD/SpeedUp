@@ -34,6 +34,8 @@ private:
 	void OnResponseReceivedRepairPassword(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedRecoveryCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
+	void OnResponseReceivedPathStatistick(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+
 	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
 	const FString LogOutURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
@@ -44,13 +46,13 @@ private:
 	const FString SendCodeURL =	"https://m2e-backend-auth.production.bc.gotbitgames.co/auth/send-code";
 	const FString VerifiURL =	"https://m2e-backend-auth.production.bc.gotbitgames.co/auth/verify-code";
 
-	//const FString ProfileURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/profile";
 	const FString ProfileURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/profile";
+	const FString StatisticURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/stat";
 	
 	const FString NFTreceiptRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/profile/nfts";
 	const FString NFTActiveRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/start";
 	const FString NFTDeactiveRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/stop";
-	const FString NFTUpdateRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/update-params";
+	const FString NFTUpdateRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/update-params";
 	///update-params
 	//NFTreceiptRequestURL
 
@@ -142,6 +144,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void NFTUpdateRequest(const int DeactivePathID, const int DeactivNFDId, const int avg_velocity, const int avg_distance);
+
+	UFUNCTION(BlueprintCallable)
+	void StatisticRequest(const ItemType StatItemType, const int Period);
+	
 	//UFUNCTION(BlueprintCallable)
 	//	void NFTactivationRequest(const FString TokenData);
 
