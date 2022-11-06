@@ -814,7 +814,7 @@ void UHTTPAPIComponent::OnResponseReceivedRecoveryCode(FHttpRequestPtr Request, 
 	if (Code != 200)
 	{
 		Message = "Wrong Password";
-		return;
+		//return;
 	}
 
 	if (ResponseObject == nullptr)
@@ -830,7 +830,7 @@ void UHTTPAPIComponent::OnResponseReceivedRecoveryCode(FHttpRequestPtr Request, 
 		ErrorID = 0;
 		ErrorText = "";
 		bSuccess = ResponseObject->GetBoolField("success");
-		//Message = ResponseObject->GetStringField("message");
+		Message = ResponseObject->GetStringField("message");
 		//Data = ResponseObject->GetStringField("data");
 	}
 }
