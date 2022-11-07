@@ -10,7 +10,6 @@
 //#include "LocationServicesBPLibrary.h"
 //#include "LocationServicesBPLibraryModule.h"
 
-// Sets default values for this component's properties
 USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -61,6 +60,7 @@ FGeoLocationInfo USpeedup_GeoDataSystem::GetLastLocation_Implementation()
 	CurrentPoint.TimeStamp;
 	return CurrentPoint;
 }
+
 float USpeedup_GeoDataSystem::GetDistanse2Coor_Implementation(FGeoPointInfo PointStart, FGeoPointInfo PointEnd)
 {
 	return 0.0f;
@@ -89,13 +89,10 @@ TimerDel.BindUFunction(this, FName("MyUsefulFunction"), MyInt, MyFloat);
 GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
 */
 
-void USpeedup_GeoDataSystem::StartTrackPath(int PuthN)
+void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
 {
-	if ((PuthN < 0) && (PuthN > 2))
-	return;
-
 	ReInitServis();
-
+/*
 	UE_LOG(LogTemp, Warning, TEXT("ServiceEnable : %d"), ServiceEnable);
 
 	if (PathTimerHandle.IsValid())
@@ -107,22 +104,19 @@ void USpeedup_GeoDataSystem::StartTrackPath(int PuthN)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Silver, FString::Printf(TEXT("IsTimerActive - true")));
 	else
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Silver, FString::Printf(TEXT("IsTimerActive - false")));
-
-	if (!GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle))
+*/
+	/*
+	if (ActivPath[SlotID] == nullptr)
 	{
-		//PathTimerHandle.IsValid() ? STR_IsValid = "STR_IsValid is valid": STR_IsValid = "STR_IsValid is not valid";
-		//UE_LOG(LogTemp, Warning, TEXT("PathTimerHandle.IsValid : %d"), PathTimerHandle.IsValid());
-		//UE_LOG(LogTemp, Warning, TEXT("IsTimerActive : %s"), GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle))
-		//GetWorld()->GetTimerManager().SetTimer(PathTimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocation, 6.0f, true, 2.0f);
+		ActivPath[SlotID] = NewObject<UGeoPath>();
 	}
+	*/
+	ActivPath[SlotID] = NewObject<UGeoPath>();
+	ActivPath[SlotID]->SetSlotID(SlotID);
+	ActivPath[SlotID]->SetPathID(PathID);
+	ActivPath[SlotID]->SetStatusActive(true);
 
-	if (ActivPath[PuthN] == nullptr)
-	{
-		ActivPath[PuthN] = NewObject<UGeoPath>();
-	}
-	ActivPath[PuthN]->SetStatusActive(true);
-
-	switch (PuthN)
+	switch (SlotID)
 	{
 	case 0:
 		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 0);
@@ -143,10 +137,10 @@ void USpeedup_GeoDataSystem::StartTrackPath(int PuthN)
 	}
 
 	//GetWorld()->GetTimerManager().SetTimer(PathTimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocationInPath, 6.0f, true, 2.0f);
-	ActivPath[PuthN]->PathIsActiv = true;
+	ActivPath[SlotID]->PathIsActiv = true;
 }
 
-void USpeedup_GeoDataSystem::UpdateCurrentPath(int PuthN)
+void USpeedup_GeoDataSystem::UpdateCurrentPath(int PathID)
 {
 	/*
 	if (ActivPath[PuthN] == nullptr)
@@ -156,13 +150,13 @@ void USpeedup_GeoDataSystem::UpdateCurrentPath(int PuthN)
 	}
 	ActivPath[PuthN]->AddPoint(GetLastLocation());
 	*/
-	UpdateLocationInPath();
-
+	//UpdateLocationInPath();
+	UpdateLocationInPathID(PathID, false);
 }
 
-void USpeedup_GeoDataSystem::StopTrackPath(int PuthN)
+void USpeedup_GeoDataSystem::StopTrackPath(int ItemID, int PathID, int SlotID)
 {
-	switch (PuthN)
+	switch (SlotID)
 	{
 	case 0:
 		if (GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle01) && !HaveActivePath())
@@ -187,9 +181,8 @@ void USpeedup_GeoDataSystem::StopTrackPath(int PuthN)
 		break;
 	}
 
-	UpdateLocationInPathID(PuthN, true);
+	UpdateLocationInPathID(PathID, true);
 	//ActivPath[PuthN]->PointsInPath.Empty();
-
 	//SendFinalPath.Broadcast();
 
 }
@@ -330,11 +323,11 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 	//PartsOfPath
 	if (FinalPath)
 	{
-		SendPartPath.Broadcast();
+		SendPartPath.Broadcast(PathID);
 	}
 	else
 	{
-		SendFinalPath.Broadcast();
+		SendFinalPath.Broadcast(PathID);
 	}
 }
 

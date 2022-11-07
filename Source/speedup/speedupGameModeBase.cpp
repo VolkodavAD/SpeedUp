@@ -13,8 +13,9 @@ AspeedupGameModeBase::AspeedupGameModeBase()
 void AspeedupGameModeBase::ActiveItem(int ItemID, int SlotID, int PathID)
 {
 	int ERR = 0;
+	//void StartTrackPath(int SlotID, int PuthID, int ItemID);
 	GetNFTItemManager()->ActivateItem(ItemID, SlotID, PathID, ERR);
-	GetGeoDataSystemCPP()->StartTrackPath(PathID);
+	GetGeoDataSystemCPP()->StartTrackPath(SlotID, PathID, ItemID);
 }
 
 
@@ -22,7 +23,7 @@ void AspeedupGameModeBase::DeactiveItem(int ItemID, int SlotID, int PathID)
 {
 	int ERR = 0;
 	GetNFTItemManager()->DeactivateItem(ItemID, SlotID, ERR);
-	GetGeoDataSystemCPP()->StopTrackPath(PathID);
+	GetGeoDataSystemCPP()->StopTrackPath(ItemID, PathID, SlotID);
 }
 
 

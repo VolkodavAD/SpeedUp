@@ -48,28 +48,16 @@ void UItemManager::UpdateLastPathID(int ItemID, int PathID)
 	GetMyItem(ItemID)->UpdateLastPathID(PathID);
 }
 
-/*
-FItemSlot UItemManager::GetItemSlot(int SlotID);
-{
-	return ItemsSlot[SlotID];
-}*/
-
-void UItemManager::Start_TimerItemCheck()
-{
-	//GetWorld()->GetTimerManager().SetTimer(Items_TimerHandle, , 6.0f, true, 0.1f);
-}
-
-void UItemManager::Stop_TimerItemCheck()
-{
-}
-
-bool UItemManager::ActivateItem(int ItemID, int SlotID, int PathID, int& ErrorID)
+bool UItemManager::ActivateItem(int ItemID, int PathID, int SlotID, int& ErrorID)
 {
 	if (ItemsSlot.Num() <= SlotID)
 	return false;
 
 	if (!ItemsSlot[SlotID].IsUnlock)
 	return false;
+
+	//if (ItemsSlot[SlotID].ItemID > 0)
+	//return false;
 
 	UItem* ItemByID = GetMyItem(ItemID);
 	if (ItemByID == nullptr) { return false; }
@@ -80,12 +68,11 @@ bool UItemManager::ActivateItem(int ItemID, int SlotID, int PathID, int& ErrorID
 	}
 	ItemByID->SetItemStatus(StatusItem::Active);
 
+	ItemsSlot[SlotID].ItemID = ItemID;
+	ItemsSlot[SlotID].PathForItem = PathID;
 
-	ItemsSlot[0].ItemID = ItemID;
-	ItemsSlot[0].PathForItem = PathID;
-	ItemsSlot[0].IsUnlock = true;
+	UpdateLastPathID(ItemID, PathID);
 
-	Start_TimerItemCheck();
 	return true;
 }
 
@@ -100,8 +87,7 @@ bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 	ItemByID->SetItemStatus(StatusItem::Deactive);
 
 	ItemsSlot[SlotID].ItemID = -1;
-
-	Stop_TimerItemCheck();
+	ItemsSlot[SlotID].PathForItem = -1;
 
 	return true;
 }
@@ -144,25 +130,6 @@ void UItemManager::PostFromBack_AllItems()
 	
 	MyItems.Add(AddedItem);
 	*/
-}
-
-void UItemManager::PostFromBack_ActiveItem(int ItemID, int PathID)
-{
-	UItem* ItemByID = GetMyItem(ItemID);
-	if (ItemByID->Energy > 0)
-	{
-
-		int l_ItemEnergy = GetMyItem(ItemID)->Energy = ItemByID->Energy - 1;
-	}
-	ItemByID->SetItemStatus(StatusItem::Active);
-
-}
-void UItemManager::PostFromBack_CheckActiveItem(int ItemID)
-{}
-void UItemManager::PostFromBack_DeactiveItem(int ItemID, int PathID)
-{
-	UItem* ItemByID = GetMyItem(ItemID);
-	ItemByID->SetItemStatus(StatusItem::Deactive);
 }
 
 void UItemManager::AddItem(UItem* AddedItem)

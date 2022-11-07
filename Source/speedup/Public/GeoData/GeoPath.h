@@ -81,6 +81,8 @@ struct FGeoPathinfo : public FTableRowBase
 		int PathID = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 		int ItemID = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+		int SlotID = 0;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	//TArray<FMovePoint> PointInPath;
@@ -121,6 +123,7 @@ public:
 	FDateTime StartPathTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDateTime StopPathTime;
+
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 	UDataTable *DataTable_Puths;
@@ -135,6 +138,10 @@ public:
 	void SetStatusActive(bool NewStatusActive);
 	UFUNCTION(BlueprintCallable)
 	bool GetStatusActive();
+	UFUNCTION(BlueprintCallable)
+	void SetPathID(int PathID);
+	UFUNCTION(BlueprintCallable)
+	void SetSlotID(int SlotID);
 
 	UFUNCTION(BlueprintCallable)
 	void AddPoint(const FGeoPointInfo AddedPoint);

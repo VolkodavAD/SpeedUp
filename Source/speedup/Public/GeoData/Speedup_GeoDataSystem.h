@@ -35,8 +35,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdateBindableEvent);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FFinalBindableEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateBindableEvent, int, Path);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFinalBindableEvent, int, Path);
 
 	FTimerDelegate TimerDelegatePuth01;
 	FTimerDelegate TimerDelegatePuth02;
@@ -55,7 +55,7 @@ public:
 	//FMyBindableEvent SendFinalPath;
 
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
-	void UpdateCurrentPath(int PuthN);
+	void UpdateCurrentPath(int PathID);
 
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void UpdateLocationInPathID(int PathID, bool FinalPath = false);
@@ -80,9 +80,9 @@ public:
 	float GetDistanse2Coor_Implementation(FGeoPointInfo PointStart, FGeoPointInfo PointEnd);
 
 	UFUNCTION(BlueprintCallable)
-	void StartTrackPath(int PuthN);
+	void StartTrackPath(int ItemID, int PathID, int SlotID);
 	UFUNCTION(BlueprintCallable)
-	void StopTrackPath(int PuthN);
+	void StopTrackPath(int ItemID, int PathID, int SlotID);
 
 public:
 

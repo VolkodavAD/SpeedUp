@@ -83,6 +83,15 @@ bool UGeoPath::SavePuthInDataTable(FString RowName, UDataTable* DataTable_Puths)
 	return false;
 }
 
+void UGeoPath::SetPathID(int PathID)
+{
+	UserPathInfo.PathID = PathID;
+}
+
+void UGeoPath::SetSlotID(int SlotID)
+{
+	UserPathInfo.SlotID = SlotID;
+}
 /*
 FMovePoint* UGeoPath::GetPoint(int IndexPoint)
 {

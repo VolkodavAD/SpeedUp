@@ -63,18 +63,9 @@ private:
 	//получаем все предметы из сервере, тут же проверяем есть ли активные
 	void PostFromBack_AllItems();
 
-	//Активируем, проверяем и деактивируем предмет на сервере
-	void PostFromBack_ActiveItem(int ItemID, int PathID);
-	void PostFromBack_CheckActiveItem(int ItemID);
-	void PostFromBack_DeactiveItem(int ItemID, int PathID);
-
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Timer")
 	FTimerHandle Items_TimerHandle;
 
-	UFUNCTION(BlueprintCallable)
-	void Start_TimerItemCheck();
-	UFUNCTION(BlueprintCallable)
-	void Stop_TimerItemCheck();
 
 public:
 	//слоты инвенторя и список имеющихся на аккаунте предметов
@@ -86,7 +77,7 @@ public:
 	TArray<FItemStatistic> MyItemStatistic;
 
 	UFUNCTION(BlueprintCallable)
-	bool ActivateItem(int ItemID, int SlotID, int PathID, int& ErrorID);
+	bool ActivateItem(int ItemID, int PathID, int SlotID, int& ErrorID);
 	UFUNCTION(BlueprintCallable)
 	bool DeactivateItem(int ItemID, int SlotID, int& ErrorID);
 	UFUNCTION(BlueprintCallable)
