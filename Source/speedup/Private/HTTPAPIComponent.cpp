@@ -759,13 +759,15 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 				{
 					GameIst->UserInfo.Energy.spend_part = GameIst->UserInfo.Energy.spend_part - 1;
 				}
-
-				int ErrorActivation;
+				//int ErrorActivation;
 				AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
 				int TActivationItem = ActivationItem;
-				int TPathID = PathID;
-				GameMode->GetNFTItemManager()->UpdateLastPathID(ActivationItem, PathID);
+				int TPathID = PathID; 
+				int ErrorActivation;
+
+				//GameMode->GetNFTItemManager()->UpdateLastPathID(ActivationItem, PathID);
 				GameMode->GetNFTItemManager()->ActivateItem(ActivationItem, PathID, 0, ErrorActivation);
+				GameMode->GetGeoDataSystemCPP()->StartTrackPath(ActivationItem, PathID, 0);
 				StartPath(ActivationItem, PathID);
 
 				ActivationItem = -1;
