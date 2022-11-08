@@ -36,6 +36,8 @@ private:
 
 	void OnResponseReceivedPathStatistick(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
+	void OnResponseReceivedTransactions(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+
 	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
 	const FString LogOutURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
@@ -48,6 +50,7 @@ private:
 
 	const FString ProfileURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/profile";
 	const FString StatisticURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/stat";
+	const FString TransactionsURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/transactions/%s";
 	
 	const FString NFTreceiptRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/profile/nfts";
 	const FString NFTActiveRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/start";
@@ -147,6 +150,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void StatisticRequest(const ItemType StatItemType, const int Period);
+
+	UFUNCTION(BlueprintCallable)
+	void TransactionsRequest(const FString Timestamp, const FString TokenData);
+
 	
 	//UFUNCTION(BlueprintCallable)
 	//	void NFTactivationRequest(const FString TokenData);

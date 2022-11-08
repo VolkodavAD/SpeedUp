@@ -6,13 +6,13 @@
 
 void UBaseWalletWidget::NativeOnInitialized()
 {
-	RefreshSPDBalance();
+	//RefreshSPDBalance();
 }
 
-void UBaseWalletWidget::RefreshSPDBalance()
-{
-	if (SPDBalance) {
-		SPDBalance->SetText(FText::FromString("0,01"));
-	}
-}
+//void UBaseWalletWidget::RefreshSPDBalance()
+//{
+	//if (SPDBalance) {
+		//SPDBalance->SetText(FText::FromString("0,01"));
+	//}
+//}
 

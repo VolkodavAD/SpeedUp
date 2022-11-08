@@ -3,7 +3,7 @@
 
 #include "Widgets/BaseSpeedUpWidget.h"
 
-void UBaseSpeedUpWidget::Hide()
+/*void UBaseSpeedUpWidget::Hide()
 {
 	HidePrep();
 	SetVisibility(ESlateVisibility::Collapsed);
@@ -14,7 +14,7 @@ void UBaseSpeedUpWidget::Show()
 	ShowPrep();
 	SetVisibility(ESlateVisibility::Visible);
 }
-
+*/
 void UBaseSpeedUpWidget::CopyMessageToClipboard(FString text)
 {
 	FPlatformMisc::ClipboardCopy(*text);

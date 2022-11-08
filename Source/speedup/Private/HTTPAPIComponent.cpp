@@ -370,6 +370,25 @@ void UHTTPAPIComponent::StatisticRequest(const ItemType StatItemType, const int 
 	//Request->ProcessRequest();
 }
 
+void UHTTPAPIComponent::TransactionsRequest(const FString Timestamp, const FString TokenData)
+{
+
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+
+	FString BearerT = "Bearer ";
+
+	const FHttpRequestRef TransactionsRequest = FHttpModule::Get().CreateRequest();
+	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+	RequestJsonObject->SetStringField("%s", Timestamp);
+	TransactionsRequest->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedTransactions);
+	TransactionsRequest->SetURL(TransactionsURL);
+	TransactionsRequest->SetVerb("GET");
+	TransactionsRequest->SetHeader("Content-Type", "application/json");
+	TransactionsRequest->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));
+	TransactionsRequest->ProcessRequest();
+
+}
+
 void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
 {
 	TSharedPtr<FJsonObject> ResponseObject;
@@ -1030,6 +1049,75 @@ void UHTTPAPIComponent::OnResponseReceivedPathStatistick(FHttpRequestPtr Request
 				//int Allowed_slots = Sneaker->GetIntegerField("allowed_slots");
 		}
 	}
+}
+
+void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
+{/*
+	//AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = Response->GetResponseCode();
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		if (SpeedUpGI)
+		{
+			
+			ErrorID = Response->GetResponseCode();
+			ErrorText = "";
+			Message = ResponseObject->GetStringField("message");
+			bSuccess = ResponseObject->GetBoolField("success");
+
+
+			
+			"data": [
+			{
+					"earned_dks": 0,
+					"earned_internal" : 36.6,
+					"date" : "Saturday, 05-Nov-22 18:26:19 GMT",
+					"tx_type" : 0
+			}
+			]
+			*/
+
+
+			/*TSharedPtr<FJsonObject> Transactions = ResponseObject->GetObjectField("data");
+			TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapTransactions = Transactions->Values;
+
+			TArray<TSharedPtr<FJsonValue>> Points = Transactions->GetArrayField();
+			//FBaseItemInfo NFTItem;
+			for (int32 i = 0; i < Points.Num(); ++i)
+			{
+				TSharedPtr<FJsonObject> PointsObject = Points[i]->AsObject();
+				NFTItem.ItemID = PointsObject->GetIntegerField("id");
+				NFTItem.Type = static_cast<ItemType>(PointsObject->GetIntegerField("type"));
+				NFTItem.CollectionID = PointsObject->GetIntegerField("collection_id");
+				NFTItem.Minted = PointsObject->GetBoolField("minted");
+				NFTItem.ItemImage = PointsObject->GetStringField("image_url");
+				NFTItem.ItemLevel = PointsObject->GetIntegerField("level");
+				NFTItem.last_trip_id = PointsObject->GetIntegerField("last_trip_id");
+				NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
+
+				TSharedPtr<FJsonObject> energy = PointsObject->GetObjectField("energy");
+				NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
+				NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
+				NFTItem.active = energy->GetBoolField("active");
+				UItem* AddedItem = NewObject<UItem>();
+				AddedItem->SetItemInfo(NFTItem);
+				GameMode->GetNFTItemManager()->AddItem(AddedItem);
+			}
+
+			Points = NFT->GetArrayField(TEXT("Car"));*/
 }
 
 void UHTTPAPIComponent::StartPath_Implementation(int ItemID, int StartPathID)

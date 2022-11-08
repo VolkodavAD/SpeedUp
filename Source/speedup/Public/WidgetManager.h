@@ -9,17 +9,17 @@
 #include "Widgets/BaseSpeedUpWidget.h"
 #include "WidgetManager.generated.h"
 
-class USpeedUpGameInstance;
+/*class USpeedUpGameInstance;
 
 USTRUCT()
 struct FWidgetInfo {
     GENERATED_USTRUCT_BODY()
 
     UPROPERTY()
-        TSubclassOf<UBaseSpeedUpWidget> widgetClass;
+        //TSubclassOf<UBaseSpeedUpWidget> widgetClass;
 
     UPROPERTY()
-        UBaseSpeedUpWidget* widget;
+        //UBaseSpeedUpWidget* widget;
 
     UPROPERTY()
         int zOrder;
@@ -58,4 +58,4 @@ public:
     UFUNCTION(BlueprintCallable)
         UBaseSpeedUpWidget* CreateTransientWidget(TSubclassOf<UBaseSpeedUpWidget> widgetClass, UWorld* world, FString name);
     
-};
+};*/

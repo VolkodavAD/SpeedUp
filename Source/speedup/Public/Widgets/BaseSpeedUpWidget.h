@@ -22,7 +22,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		USpeedUpGameInstance* gi;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+   /* UPROPERTY(EditAnywhere, BlueprintReadWrite)
         bool needsCaching = false;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -43,7 +43,7 @@ public:
     UFUNCTION(BlueprintCallable)
         void Hide();
     UFUNCTION(BlueprintCallable)
-        void Show();
+        void Show();*/
 
     UFUNCTION(BlueprintCallable, Category = "")
         static void CopyMessageToClipboard(FString text);

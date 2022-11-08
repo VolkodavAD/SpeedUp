@@ -98,11 +98,11 @@ UCLASS()
 class SPEEDUP_API USpeedUpGameInstance : public UGameInstance
 {
     GENERATED_BODY()
-        virtual void Init();
+        //virtual void Init();
 
 public:
-    UPROPERTY(BlueprintReadWrite)
-       UWidgetManager* widgetManager;
+    //UPROPERTY(BlueprintReadWrite)
+      // UWidgetManager* widgetManager;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "BaseData")
         bool email_confirmed;

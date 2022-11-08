@@ -3,7 +3,7 @@
 
 #include "WidgetManager.h"
 
-bool UWidgetManager::AddWidget(FString name, TSubclassOf<UBaseSpeedUpWidget> widgetClass, int zOrder)
+/*bool UWidgetManager::AddWidget(FString name, TSubclassOf<UBaseSpeedUpWidget> widgetClass, int zOrder)
 {
    /* if (!widgetClass)
         return false;
@@ -11,12 +11,12 @@ bool UWidgetManager::AddWidget(FString name, TSubclassOf<UBaseSpeedUpWidget> wid
         return false;
     FWidgetInfo info = { widgetClass, nullptr, zOrder };
     widgets.Add(name, info);
-    return true;*/
+    return true;
     return true;
 }
 
-//void UWidgetManager::InitAndStartCaching(USpeedUpGameInstance* gi)
-//{
+void UWidgetManager::InitAndStartCaching(USpeedUpGameInstance* gi)
+{
 //    for (auto& widget_pair : widgets)
 //    {
 //        auto& widgetInfo = widget_pair.Value;
@@ -42,11 +42,11 @@ bool UWidgetManager::AddWidget(FString name, TSubclassOf<UBaseSpeedUpWidget> wid
 //        if (widgetInfo.widget->needsCaching)
 //        {
 //            widgetInfo.widget->EndCache();
-//        }
-//        if (widgetInfo.widget->hideAfterCache)
-//            widgetInfo.widget->SetVisibility(ESlateVisibility::Collapsed);
-//    }
-//}
+        }
+        if (widgetInfo.widget->hideAfterCache)
+           widgetInfo.widget->SetVisibility(ESlateVisibility::Collapsed);
+    }
+}
 
 bool UWidgetManager::ShowWidget(FString name)
 {
@@ -80,3 +80,4 @@ UBaseSpeedUpWidget* UWidgetManager::CreateTransientWidget(TSubclassOf<UBaseSpeed
 {
     return nullptr;
 }
+*/
