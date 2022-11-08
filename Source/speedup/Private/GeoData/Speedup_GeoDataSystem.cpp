@@ -323,11 +323,11 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 	//PartsOfPath
 	if (FinalPath)
 	{
-		SendPartPath.Broadcast(PathID);
+		SendFinalPath.Broadcast(PathID);
 	}
 	else
 	{
-		SendFinalPath.Broadcast(PathID);
+		SendPartPath.Broadcast(PathID);
 	}
 }
 
