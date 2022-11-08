@@ -1093,17 +1093,21 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 			*/
 
 
-			TSharedPtr<FJsonObject> Transactions = ResponseObject->GetObjectField("data");
-			TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapTransactions = Transactions->Values;
-			TArray<TSharedPtr<FJsonValue>> operations = Transactions->GetArrayField(" ");
+			//TSharedPtr<FJsonObject> Transactions = ResponseObject->GetObjectField("data");
+			//TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapTransactions = Transactions->Values;
+			TArray<TSharedPtr<FJsonValue>> operations = ResponseObject->GetArrayField("data");
 			FWalletTransaction  Transaction;
 			for (int32 i = 0; i < operations.Num(); ++i)
 			{
 				TSharedPtr<FJsonObject> PointsObject = operations[i]->AsObject();
-				Transaction.earnedDKS = PointsObject->GetStringField("earned_dks");
-				Transaction.earnedInternalSPD = PointsObject->GetStringField("earned_internal");
-				//Transaction.dateTransaction = PointsObject->("date");
-				Transaction.TransactionType = PointsObject->GetBoolField("tx_type");
+				Transaction.earnedDKS = PointsObject->GetNumberField("earned_dks");
+				Transaction.earnedInternalSPD = PointsObject->GetNumberField("earned_internal");
+
+				TSharedPtr<FJsonObject> date = PointsObject->GetObjectField("date");
+				//Transaction.dateTransaction = date->;
+				FString Date;
+
+				Transaction.TransactionType = PointsObject->GetIntegerField("tx_type");
 
 				UBaseWalletWidget* AddedTransactions = NewObject<UBaseWalletWidget>();
 				AddedTransactions->SetWalletInfo(Transaction);

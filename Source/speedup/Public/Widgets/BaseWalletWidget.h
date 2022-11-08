@@ -21,12 +21,12 @@ struct FWalletTransaction
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
-		FString earnedDKS;
+		float earnedDKS;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
-		FString earnedInternalSPD;
+		float earnedInternalSPD;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
 		FDateTime dateTransaction;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
 		int TransactionType;
 	
 };
