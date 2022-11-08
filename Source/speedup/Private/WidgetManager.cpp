@@ -5,7 +5,7 @@
 
 /*bool UWidgetManager::AddWidget(FString name, TSubclassOf<UBaseSpeedUpWidget> widgetClass, int zOrder)
 {
-   /* if (!widgetClass)
+    if (!widgetClass)
         return false;
     if (widgets.Contains(name))
         return false;

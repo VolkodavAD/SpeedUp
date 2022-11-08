@@ -57,7 +57,7 @@ FGeoLocationInfo USpeedup_GeoDataSystem::GetLastLocation_Implementation()
 {
 	FGeoLocationInfo CurrentPoint;
 	CurrentPoint.PointLocation = FVector2D();
-	CurrentPoint.TimeStamp;
+	CurrentPoint.TimeStamp = 0.0f;
 	return CurrentPoint;
 }
 
