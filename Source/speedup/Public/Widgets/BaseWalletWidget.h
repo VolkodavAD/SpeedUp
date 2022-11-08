@@ -20,12 +20,12 @@ struct FWalletTransaction
 {
 	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
-		float earnedDKS;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
-		float earnedInternalSPD;
+		FString earnedDKS;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
-		FString dateTransaction;
+		FString earnedInternalSPD;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
+		FDateTime dateTransaction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		int TransactionType;
 	
@@ -40,6 +40,9 @@ class SPEEDUP_API UBaseWalletWidget : public UBaseSpeedUpWidget
 
 	//UFUNCTION(BlueprintCallable)
 	//void RefreshSPDBalance();
+private:
+	UPROPERTY(VisibleAnywhere)
+		FWalletTransaction WalletInfo;
 
 public:
 	//UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -50,6 +53,9 @@ public:
 
 	//UPROPERTY(meta = (BindWidget))
 	//UScrollBox* ScrollBoxSpendingHistory;
+
+	UFUNCTION(BlueprintCallable)
+		void SetWalletInfo(FWalletTransaction NewWalletInfo);
 
 protected:
 

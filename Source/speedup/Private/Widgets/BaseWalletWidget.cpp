@@ -16,3 +16,8 @@ void UBaseWalletWidget::NativeOnInitialized()
 	//}
 //}
 
+
+void UBaseWalletWidget::SetWalletInfo(FWalletTransaction NewWalletInfo)
+{
+	WalletInfo = NewWalletInfo;
+}

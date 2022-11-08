@@ -3,6 +3,7 @@
 #include "HTTPAPIComponent.h"
 #include "HttpModule.h"
 #include "Items/Item.h"
+#include "widgets/BaseWalletWidget.h"
 #include "JsonObjectConverter.h"
 #include "Interfaces/IHttpResponse.h"
 #include "Kismet/GameplayStatics.h"
@@ -777,6 +778,7 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 				if (GameIst->UserInfo.Energy.spend_part > 0)
 				{
 					GameIst->UserInfo.Energy.spend_part = GameIst->UserInfo.Energy.spend_part - 1;
+					GameIst->UserInfo.Energy.capacity -= - 1;
 				}
 				//int ErrorActivation;
 				AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
@@ -1052,7 +1054,7 @@ void UHTTPAPIComponent::OnResponseReceivedPathStatistick(FHttpRequestPtr Request
 }
 
 void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
-{/*
+{
 	//AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
 	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
 
@@ -1072,15 +1074,15 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 	{
 		if (SpeedUpGI)
 		{
-			
+
 			ErrorID = Response->GetResponseCode();
 			ErrorText = "";
 			Message = ResponseObject->GetStringField("message");
 			bSuccess = ResponseObject->GetBoolField("success");
 
 
-			
-			"data": [
+
+			/*"data": [
 			{
 					"earned_dks": 0,
 					"earned_internal" : 36.6,
@@ -1091,35 +1093,28 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 			*/
 
 
-			/*TSharedPtr<FJsonObject> Transactions = ResponseObject->GetObjectField("data");
+			TSharedPtr<FJsonObject> Transactions = ResponseObject->GetObjectField("data");
 			TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapTransactions = Transactions->Values;
-
-			TArray<TSharedPtr<FJsonValue>> Points = Transactions->GetArrayField();
-			//FBaseItemInfo NFTItem;
-			for (int32 i = 0; i < Points.Num(); ++i)
+			TArray<TSharedPtr<FJsonValue>> operations = Transactions->GetArrayField(" ");
+			FWalletTransaction  Transaction;
+			for (int32 i = 0; i < operations.Num(); ++i)
 			{
-				TSharedPtr<FJsonObject> PointsObject = Points[i]->AsObject();
-				NFTItem.ItemID = PointsObject->GetIntegerField("id");
-				NFTItem.Type = static_cast<ItemType>(PointsObject->GetIntegerField("type"));
-				NFTItem.CollectionID = PointsObject->GetIntegerField("collection_id");
-				NFTItem.Minted = PointsObject->GetBoolField("minted");
-				NFTItem.ItemImage = PointsObject->GetStringField("image_url");
-				NFTItem.ItemLevel = PointsObject->GetIntegerField("level");
-				NFTItem.last_trip_id = PointsObject->GetIntegerField("last_trip_id");
-				NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
+				TSharedPtr<FJsonObject> PointsObject = operations[i]->AsObject();
+				Transaction.earnedDKS = PointsObject->GetStringField("earned_dks");
+				Transaction.earnedInternalSPD = PointsObject->GetStringField("earned_internal");
+				//Transaction.dateTransaction = PointsObject->("date");
+				Transaction.TransactionType = PointsObject->GetBoolField("tx_type");
 
-				TSharedPtr<FJsonObject> energy = PointsObject->GetObjectField("energy");
-				NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
-				NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
-				NFTItem.active = energy->GetBoolField("active");
-				UItem* AddedItem = NewObject<UItem>();
-				AddedItem->SetItemInfo(NFTItem);
-				GameMode->GetNFTItemManager()->AddItem(AddedItem);
+				UBaseWalletWidget* AddedTransactions = NewObject<UBaseWalletWidget>();
+				AddedTransactions->SetWalletInfo(Transaction);
+				//GameMode->GetNFTItemManager()->AddItem(AddedItem);
 			}
 
-			Points = NFT->GetArrayField(TEXT("Car"));*/
-}
+			//Points = NFT->GetArrayField(TEXT("Car"));
+		}
 
+	}
+}
 void UHTTPAPIComponent::StartPath_Implementation(int ItemID, int StartPathID)
 {}
 void UHTTPAPIComponent::StotPath_Implementation(int ItemID, int StopPathID)
