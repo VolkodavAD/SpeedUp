@@ -54,6 +54,8 @@ public:
 	//UPROPERTY(meta = (BindWidget))
 	//UScrollBox* ScrollBoxSpendingHistory;
 
+	TArray<FWalletTransaction> MyHistory;
+
 	UFUNCTION(BlueprintCallable)
 		void SetWalletInfo(FWalletTransaction NewWalletInfo);
 

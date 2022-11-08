@@ -40,5 +40,6 @@ public:
 	//UFUNCTION(BlueprintNativeEvent, Category = "mesh")
 	FORCEINLINE class UItemManager* GetNFTItemManager() const { return NFTItemManager; }
 	FORCEINLINE class USpeedup_GeoDataSystem* GetGeoDataSystemCPP() const { return GeoDataSystemCPP; }
+	//FORCEINLINE class BaseWalletWidget* GetWalletInfo()const { return BaseWalletWidget; }
 
 };

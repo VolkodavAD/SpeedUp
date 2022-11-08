@@ -371,21 +371,25 @@ void UHTTPAPIComponent::StatisticRequest(const ItemType StatItemType, const int 
 	//Request->ProcessRequest();
 }
 
-void UHTTPAPIComponent::TransactionsRequest(const FString Timestamp, const FString TokenData)
+void UHTTPAPIComponent::TransactionsRequest(const int Page, const int Limit, const FString TokenData)
 {
 
 	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
-
-	FString BearerT = "Bearer ";
-
-	const FHttpRequestRef TransactionsRequest = FHttpModule::Get().CreateRequest();
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
-	RequestJsonObject->SetStringField("%s", Timestamp);
+	RequestJsonObject->SetNumberField("page", Page);
+	RequestJsonObject->SetNumberField("limit", Limit);
+	FString BearerT = "Bearer ";
+	FString RequestBody;
+	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+	const FHttpRequestRef TransactionsRequest = FHttpModule::Get().CreateRequest();
+	
 	TransactionsRequest->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedTransactions);
-	TransactionsRequest->SetURL(FString::Printf(TEXT("https://m2e-backend-core.production.bc.gotbitgames.co/profile/transactions/%s"), *Timestamp));
-	TransactionsRequest->SetVerb("GET");
+	TransactionsRequest->SetURL(TransactionsURL);
+	TransactionsRequest->SetVerb("POST");
 	TransactionsRequest->SetHeader("Content-Type", "application/json");
 	TransactionsRequest->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));
+	TransactionsRequest->SetContentAsString(RequestBody);
 	TransactionsRequest->ProcessRequest();
 
 }
@@ -1055,7 +1059,9 @@ void UHTTPAPIComponent::OnResponseReceivedPathStatistick(FHttpRequestPtr Request
 
 void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
 {
-	//AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+
+	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+
 	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
 
 	TSharedPtr<FJsonObject> ResponseObject;
@@ -1103,15 +1109,18 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 				Transaction.earnedDKS = PointsObject->GetNumberField("earned_dks");
 				Transaction.earnedInternalSPD = PointsObject->GetNumberField("earned_internal");
 
-				TSharedPtr<FJsonObject> date = PointsObject->GetObjectField("date");
-				//Transaction.dateTransaction = date->;
-				FString Date;
-
+				FString date = PointsObject->GetStringField("date");
+				Transaction.dateTransaction.ParseHttpDate(date, Transaction.dateTransaction);
+				//printf(Transaction.dateTransaction);
 				Transaction.TransactionType = PointsObject->GetIntegerField("tx_type");
 
 				UBaseWalletWidget* AddedTransactions = NewObject<UBaseWalletWidget>();
 				AddedTransactions->SetWalletInfo(Transaction);
-				//GameMode->GetNFTItemManager()->AddItem(AddedItem);
+
+				//GameMode->
+
+					//GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
+					//GameMode->GetNFTItemManager()->AddItem(AddedItem);
 			}
 
 			//Points = NFT->GetArrayField(TEXT("Car"));

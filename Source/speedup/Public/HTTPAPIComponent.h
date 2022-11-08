@@ -50,7 +50,7 @@ private:
 
 	const FString ProfileURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/profile";
 	const FString StatisticURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/stat";
-	const FString TransactionsURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/transactions/%s";
+	const FString TransactionsURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/transactions/history";
 	
 	const FString NFTreceiptRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/profile/nfts";
 	const FString NFTActiveRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/start";
@@ -152,7 +152,7 @@ public:
 	void StatisticRequest(const ItemType StatItemType, const int Period);
 
 	UFUNCTION(BlueprintCallable)
-	void TransactionsRequest(const FString Timestamp, const FString TokenData);
+		void TransactionsRequest(const int Page, const int Limit, const FString TokenData);
 
 	
 	//UFUNCTION(BlueprintCallable)
