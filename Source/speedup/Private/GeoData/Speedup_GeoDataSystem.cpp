@@ -48,7 +48,7 @@ void USpeedup_GeoDataSystem::BeginPlay()
 
 	for (int32 i = 0; i < 3; ++i)
 	{
-		ActivPath.Add(NewObject<UGeoPath>());
+		//ActivPath.Add(NewObject<UGeoPath>());
 		//ActivPath[i] = NewObject<UGeoPath>();
 	}
 }

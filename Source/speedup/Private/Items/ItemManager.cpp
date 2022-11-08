@@ -78,8 +78,8 @@ bool UItemManager::ActivateItem(int ItemID, int PathID, int SlotID, int& ErrorID
 
 bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 {
-	if (!ItemsSlot[SlotID].IsUnlock)
-		return false;
+	//if (!ItemsSlot[SlotID].IsUnlock)
+	//	return false;
 
 	UItem* ItemByID = GetMyItem(ItemID);
 	if (ItemByID == nullptr) { return false; }
