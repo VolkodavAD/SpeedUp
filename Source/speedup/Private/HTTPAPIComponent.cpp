@@ -382,7 +382,7 @@ void UHTTPAPIComponent::TransactionsRequest(const FString Timestamp, const FStri
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
 	RequestJsonObject->SetStringField("%s", Timestamp);
 	TransactionsRequest->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedTransactions);
-	TransactionsRequest->SetURL(TransactionsURL);
+	TransactionsRequest->SetURL(FString::Printf(TEXT("https://m2e-backend-core.production.bc.gotbitgames.co/profile/transactions/%s"), *Timestamp));
 	TransactionsRequest->SetVerb("GET");
 	TransactionsRequest->SetHeader("Content-Type", "application/json");
 	TransactionsRequest->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));
@@ -945,8 +945,8 @@ void UHTTPAPIComponent::OnResponseReceivedPathStatistick(FHttpRequestPtr Request
 					ItemStat.ItemLevel = nft->GetIntegerField("level");
 					ItemStat.ItemRarity = static_cast<ItemLevelRarity>(nft->GetIntegerField("rarity"));
 
-					ItemStat.avg_velocity = PointsObject->GetIntegerField("avg_velocity");
-					ItemStat.avg_distance = PointsObject->GetIntegerField("avg_distance");
+					ItemStat.avg_velocity = PointsObject->GetNumberField("avg_velocity");
+					ItemStat.avg_distance = PointsObject->GetNumberField("avg_distance");
 					ItemStat.started_at = PointsObject->GetStringField("started_at");
 					ItemStat.ended_at = PointsObject->GetStringField("ended_at");
 
@@ -971,8 +971,8 @@ void UHTTPAPIComponent::OnResponseReceivedPathStatistick(FHttpRequestPtr Request
 					ItemStat.ItemLevel = nft->GetIntegerField("level");
 					ItemStat.ItemRarity = static_cast<ItemLevelRarity>(nft->GetIntegerField("rarity"));
 
-					ItemStat.avg_velocity = PointsObject->GetIntegerField("avg_velocity");
-					ItemStat.avg_distance = PointsObject->GetIntegerField("avg_distance");
+					ItemStat.avg_velocity = PointsObject->GetNumberField("avg_velocity");
+					ItemStat.avg_distance = PointsObject->GetNumberField("avg_distance");
 					ItemStat.started_at = PointsObject->GetStringField("started_at");
 					ItemStat.ended_at = PointsObject->GetStringField("ended_at");
 
@@ -997,8 +997,8 @@ void UHTTPAPIComponent::OnResponseReceivedPathStatistick(FHttpRequestPtr Request
 					ItemStat.ItemLevel = nft->GetIntegerField("level");
 					ItemStat.ItemRarity = static_cast<ItemLevelRarity>(nft->GetIntegerField("rarity"));
 
-					ItemStat.avg_velocity = PointsObject->GetIntegerField("avg_velocity");
-					ItemStat.avg_distance = PointsObject->GetIntegerField("avg_distance");
+					ItemStat.avg_velocity = PointsObject->GetNumberField("avg_velocity");
+					ItemStat.avg_distance = PointsObject->GetNumberField("avg_distance");
 					ItemStat.started_at = PointsObject->GetStringField("started_at");
 					ItemStat.ended_at = PointsObject->GetStringField("ended_at");
 

@@ -73,7 +73,7 @@ struct FBaseItemInfo : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct FItemStatistic : public FTableRowBase
+struct FItemStatistic: public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -90,14 +90,32 @@ struct FItemStatistic : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		int ItemLevel = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
-		int avg_velocity = 0;
+		float avg_velocity = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
-		int avg_distance = 0;
+		float avg_distance = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		//FDateTime started_at = 0;
 		FString started_at = "";
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		FString ended_at = "";
+};
+
+USTRUCT(BlueprintType)
+struct FItemStatisticByPath : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		ItemType Type = ItemType::Sneakers;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		float avg_velocity = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		float Total_distance = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		//FDateTime started_at = 0;
+		FDateTime started_at;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		FDateTime ended_at;
 };
 
 UCLASS(Blueprintable)
