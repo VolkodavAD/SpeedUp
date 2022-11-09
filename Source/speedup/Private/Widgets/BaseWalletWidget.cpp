@@ -17,12 +17,12 @@
 //}
 
 
-void UBaseWalletWidget::SetWalletInfo(FWalletTransaction NewWalletInfo)
+void UBaseWalletWidget::SetWalletInfo(UWalletTransaction* NewWalletInfo)
 {
 	WalletInfo = NewWalletInfo;
 }
 
-FWalletTransaction UBaseWalletWidget::GetWalletHistoryInfo()
+UWalletTransaction* UBaseWalletWidget::GetWalletHistoryInfo()
 {
 	return WalletInfo;
 }
@@ -33,8 +33,13 @@ FWalletTransaction UBaseWalletWidget::GetWalletHistoryInfo()
 //}
 
 
-void UBaseWalletWidget::AddTransaction(FWalletTransaction AddedTransaction)
+void UBaseWalletWidget::AddTransaction(UWalletTransaction* AddedTransaction)
 {
 
 	MyHistory.Add(AddedTransaction);
+}
+
+UWalletTransaction::UWalletTransaction()
+{
+
 }

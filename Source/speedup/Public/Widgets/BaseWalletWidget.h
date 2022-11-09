@@ -17,11 +17,16 @@ class UScrollBox;
  * 
  */
 
-USTRUCT(BlueprintType)
-struct FWalletTransaction 
+UCLASS(Blueprintable)
+class SPEEDUP_API UWalletTransaction : public UObject
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
+		
 
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
+		float distance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
 		float earnedDKS;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
@@ -30,10 +35,62 @@ struct FWalletTransaction
 		FString dateTransaction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
 		int TransactionType;
-	
+	UWalletTransaction();
 };
 
+/*UCLASS(Blueprintable)
+class SPEEDUP_API UItem : public UObject
+{
+	GENERATED_BODY()
 
+private:
+	UPROPERTY(VisibleAnywhere)
+		FBaseItemInfo ItemInfo;
+
+	int TimeEnergyRestore = 0;
+
+	UItem();
+
+public:
+	// For test is 3 variable is public.
+	UPROPERTY(EditDefaultsOnly, Category = "ItemState")
+		int MaxEnergy = 3;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
+		int Energy = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
+		int CurrentTimeToEnergyRestore = 0;
+
+	UFUNCTION(BlueprintCallable)
+		void UpdateLastPathID(int PathID);
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
+	//UTexture2D* ItemImage;
+
+	// image for review
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
+	//UTexture2D* ItemIcon;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
+	//StatusItem Status = StatusItem::Deactive;
+
+	UFUNCTION(BlueprintCallable)
+		void SetItemInfo(FBaseItemInfo NewItemInfo);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+		FBaseItemInfo GetItemInfo();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+		int GetItemID();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+		ItemType GetType();
+
+	UFUNCTION(BlueprintCallable)
+		void LevelUp();
+
+	UFUNCTION(BlueprintCallable)
+		void SetItemStatus(StatusItem NewItemStatus);
+};
+*/
 
 UCLASS(Blueprintable)
 class SPEEDUP_API UBaseWalletWidget : public UObject
@@ -44,7 +101,7 @@ class SPEEDUP_API UBaseWalletWidget : public UObject
 	//void RefreshSPDBalance();
 private:
 	UPROPERTY(VisibleAnywhere)
-		FWalletTransaction WalletInfo;
+		UWalletTransaction* WalletInfo;
 
 public:
 	//UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -56,16 +113,16 @@ public:
 	//UPROPERTY(meta = (BindWidget))
 	//UScrollBox* ScrollBoxSpendingHistory;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wallet")
-	TArray<FWalletTransaction> MyHistory;
+	TArray<UWalletTransaction*> MyHistory;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-		FWalletTransaction GetWalletHistoryInfo();
+		UWalletTransaction* GetWalletHistoryInfo();
 
 	UFUNCTION(BlueprintCallable)
-		void SetWalletInfo(FWalletTransaction NewWalletInfo);
+		void SetWalletInfo(UWalletTransaction* NewWalletInfo);
 
 	UFUNCTION(BlueprintCallable)
-		void AddTransaction(FWalletTransaction AddedTransaction);
+		void AddTransaction(UWalletTransaction* AddedTransaction);
 
 protected:
 

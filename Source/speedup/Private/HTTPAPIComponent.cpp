@@ -1102,19 +1102,31 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 			//TSharedPtr<FJsonObject> Transactions = ResponseObject->GetObjectField("data");
 			//TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapTransactions = Transactions->Values;
 			TArray<TSharedPtr<FJsonValue>> operations = ResponseObject->GetArrayField("data");
-			FWalletTransaction  Transaction;
+			
 			for (int32 i = 0; i < operations.Num(); ++i)
 			{
+				//UWalletTransaction Transaction;
+				UWalletTransaction* Transaction = NewObject<UWalletTransaction>();
 				TSharedPtr<FJsonObject> PointsObject = operations[i]->AsObject();
-				Transaction.earnedDKS = PointsObject->GetNumberField("earned_dks");
-				Transaction.earnedInternalSPD = PointsObject->GetNumberField("earned_internal");
-				Transaction.dateTransaction = PointsObject->GetStringField("date");
+				Transaction->distance = PointsObject->GetNumberField("distance");
+				Transaction->earnedDKS = PointsObject->GetNumberField("earned_dks");
+				Transaction->earnedInternalSPD = PointsObject->GetNumberField("earned_internal");
+				Transaction->dateTransaction = PointsObject->GetStringField("date");
 				//FString date = PointsObject->GetStringField("date");
 				//Transaction.dateTransaction.ParseHttpDate(date, Transaction.dateTransaction);
 				//printf(Transaction.dateTransaction);
-				Transaction.TransactionType = PointsObject->GetIntegerField("tx_type");
+				Transaction->TransactionType = PointsObject->GetIntegerField("tx_type");
+				
+				
+				GameMode->GetWalletInfo()->AddTransaction(Transaction);
 
-				GameMode->GetWalletInfo()->MyHistory.Add(Transaction);
+
+
+				//UItem* AddedItem = NewObject<UItem>();
+				//AddedItem->SetItemInfo(NFTItem);
+				//GameMode->GetNFTItemManager()->AddItem(AddedItem);
+
+
 
 				//GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
 				//UBaseWalletWidget* AddedTransactions = NewObject<UBaseWalletWidget>();
