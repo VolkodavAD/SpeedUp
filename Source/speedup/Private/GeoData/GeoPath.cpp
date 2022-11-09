@@ -25,7 +25,13 @@ FGeoPointInfo UGeotPoint::GetGeoPointInfo()
 // ------------------------------------------------------------------------PATH ---------------------------------------------------
 
 UGeoPath::UGeoPath()
-{}
+{
+	UserPathInfo.PathTime = 0.0f;
+	UserPathInfo.PathLength = 0.0f;
+	UserPathInfo.minSpeed = 0.0f;
+	UserPathInfo.maxSpeed = 0.0f;
+	UserPathInfo.AverageSpeed = 0.0f;
+}
 
 void UGeoPath::SetStatusActive(bool NewStatusActive)
 {
