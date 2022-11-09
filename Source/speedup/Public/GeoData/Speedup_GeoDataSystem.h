@@ -16,13 +16,14 @@
 
 //class ULocationServicesImpl; 
 //class ULocationServices;
+//class UHTTPAPIComponent;
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPEEDUP_API USpeedup_GeoDataSystem : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	USpeedup_GeoDataSystem();
 
@@ -31,10 +32,12 @@ protected:
 	virtual void BeginPlay() override;
 
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
+
+	//UHTTPAPIComponent* HTTPAPI;
+
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateBindableEvent, int, Path);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFinalBindableEvent, int, Path);
 
@@ -69,7 +72,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
 	void ReInitServis();
-	void ReInitServis_Implementation(); 
+	void ReInitServis_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
 	FGeoLocationInfo GetLastLocation();
@@ -84,6 +87,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopTrackPath(int ItemID, int PathID, int SlotID);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
+	void UpdateDistance(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance);
+	void UpdateDistance_Implementation(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance);
+
+	/** Broadcasts whenever the layer changes */
+	DECLARE_EVENT(FLayerViewModel, FChangedEvent)
+	FChangedEvent& OnChanged(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance) { return ChangedEvent; }
+
+private:
+	/** Broadcasts whenever the layer changes */
+	FChangedEvent ChangedEvent;
+	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
+	//void PathUpdateEvent(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance);
+	//void PathUpdateEvent_Implementation(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance);
 public:
 
 	float LeghtPath_Today;
@@ -100,27 +117,27 @@ public:
 	//class ULocationServicesImpl* SpeedUp_ULocationServices;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
-	bool ServiceEnable;
+		bool ServiceEnable;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
-	bool ServiceInit;
+		bool ServiceInit;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
-	bool ServiceStart;
+		bool ServiceStart;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
-	FTimerHandle PathTimerHandle;
+		FTimerHandle PathTimerHandle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
-	FTimerHandle Sneakers_TimerHandle;
+		FTimerHandle Sneakers_TimerHandle;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
-	FTimerHandle Car_TimerHandle;
+		FTimerHandle Car_TimerHandle;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
-	FTimerHandle Plane_TimerHandle;
+		FTimerHandle Plane_TimerHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	TArray<UGeoPath*> ActivPath;
+		TArray<UGeoPath*> ActivPath;
 
 	UFUNCTION(BlueprintCallable)
-	bool HaveActivePath();
+		bool HaveActivePath();
 
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
@@ -130,24 +147,24 @@ public:
 	*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	int LastSneakersPathID;
+		int LastSneakersPathID;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	int LastCarPathID;
+		int LastCarPathID;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	int LastPlanePathID;
+		int LastPlanePathID;
 
 private:
 	UFUNCTION(BlueprintCallable)
-	void SetServiceEnable(bool value);
+		void SetServiceEnable(bool value);
 	UFUNCTION(BlueprintCallable)
-	void SetServiceStart(bool value);
+		void SetServiceStart(bool value);
 	UFUNCTION(BlueprintCallable)
-	void SetServiceInit(bool value);
+		void SetServiceInit(bool value);
 
 	UFUNCTION(BlueprintCallable)
-	float GetLeghtPath_Today();
+		float GetLeghtPath_Today();
 	UFUNCTION(BlueprintCallable)
-	float GetLeghtPath_Weekly();
+		float GetLeghtPath_Weekly();
 	UFUNCTION(BlueprintCallable)
-	float GetLeghtPath_Total();
+		float GetLeghtPath_Total();
 };

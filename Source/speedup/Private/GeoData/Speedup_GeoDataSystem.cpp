@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GeoData/Speedup_GeoDataSystem.h"
+#include "..\..\speedupGameModeBase.h"
 #include "Engine.h"
 #include "Misc/DateTime.h"
 //#include "Logging/LogMacros.h"
@@ -250,8 +251,8 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 	AddedPoint.PointID = ActivPath[PathID]->PointsInPath.Num();
 	AddedPoint.PointLocation = LastLocation.PointLocation;
 	AddedPoint.TimeStamp = LastLocation.TimeStamp;
-	AddedPoint.CurrentTime = FDateTime::Now();
-	AddedPoint.DeltaTime = FDateTime::Now();
+	AddedPoint.DeltaTime = 0.0f;
+	AddedPoint.CurrentTime = FDateTime::UtcNow();
 
 	if (ActivPath[PathID]->PathIsActiv == true)
 	{
@@ -277,6 +278,9 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 			AddedPoint.DeltaTime = 0.0f;
 			AddedPoint.PointDistance = 0.0f;
 			AddedPoint.PointSpeed = -1.0f;
+
+			ActivPath[PathID]->UserPathInfo.PathLength = 0.0f;
+			ActivPath[PathID]->UserPathInfo.PathTime = 0.0f;
 		}
 		ActivPath[PathID]->AddPoint(AddedPoint);
 	}
@@ -318,17 +322,24 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 		AddedPathPart.minSpeed = ActivPath[PathID]->UserPathInfo.minSpeed;
 
 		ActivPath[PathID]->PartsOfPath.Add(AddedPathPart);
+
+
+		//PartsOfPath
+		if (FinalPath)
+		{
+			SendFinalPath.Broadcast(PathID);
+		}
+		else
+		{
+			SendPartPath.Broadcast(PathID);
+			//PathUpdateEvent(0, ItemInfo.);
+			//AspeedupGameModeBase* GM = 
+			
+			UpdateDistance(ActivPath[PathID]->UserPathInfo.PathID, ActivPath[PathID]->UserPathInfo.ItemID, ActivPath[PathID]->UserPathInfo.AverageSpeed, ActivPath[PathID]->UserPathInfo.PathLength);
+			OnChanged(ActivPath[PathID]->UserPathInfo.PathID, ActivPath[PathID]->UserPathInfo.ItemID, ActivPath[PathID]->UserPathInfo.AverageSpeed, ActivPath[PathID]->UserPathInfo.PathLength);
+		}
 	}
 
-	//PartsOfPath
-	if (FinalPath)
-	{
-		SendFinalPath.Broadcast(PathID);
-	}
-	else
-	{
-		SendPartPath.Broadcast(PathID);
-	}
 }
 
 // Called every frame
@@ -361,4 +372,11 @@ float USpeedup_GeoDataSystem::GetLeghtPath_Weekly()
 float USpeedup_GeoDataSystem::GetLeghtPath_Total()
 {
 	return LeghtPath_Total;
+}
+
+//void USpeedup_GeoDataSystem::UpdateDistance(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance)
+//{
+//}
+void USpeedup_GeoDataSystem::UpdateDistance_Implementation(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance)
+{
 }
