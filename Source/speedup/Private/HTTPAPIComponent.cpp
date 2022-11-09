@@ -1108,16 +1108,25 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 				TSharedPtr<FJsonObject> PointsObject = operations[i]->AsObject();
 				Transaction.earnedDKS = PointsObject->GetNumberField("earned_dks");
 				Transaction.earnedInternalSPD = PointsObject->GetNumberField("earned_internal");
-
-				FString date = PointsObject->GetStringField("date");
-				Transaction.dateTransaction.ParseHttpDate(date, Transaction.dateTransaction);
+				Transaction.dateTransaction = PointsObject->GetStringField("date");
+				//FString date = PointsObject->GetStringField("date");
+				//Transaction.dateTransaction.ParseHttpDate(date, Transaction.dateTransaction);
 				//printf(Transaction.dateTransaction);
 				Transaction.TransactionType = PointsObject->GetIntegerField("tx_type");
 
-				UBaseWalletWidget* AddedTransactions = NewObject<UBaseWalletWidget>();
-				AddedTransactions->SetWalletInfo(Transaction);
+				GameMode->GetWalletInfo()->MyHistory.Add(Transaction);
 
-				//GameMode->
+				//GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
+				//UBaseWalletWidget* AddedTransactions = NewObject<UBaseWalletWidget>();
+				//AddedTransactions->SetWalletInfo(Transaction);
+				//GameMode->GetWalletInfo();
+
+
+				//GameMode->GetBaseWalletWidget()
+				//UItem* AddedItem = NewObject<UItem>();
+				//AddedItem->SetItemInfo(NFTItem);
+				//GameMode->GetNFTItemManager()->AddItem(AddedItem);
+				
 
 					//GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
 					//GameMode->GetNFTItemManager()->AddItem(AddedItem);

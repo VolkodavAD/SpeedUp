@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "BaseSpeedUpWidget.h"
+#include "Components/ActorComponent.h"
+#include "UObject/NoExportTypes.h"
 #include "Components/TextBlock.h"
 #include "Components/ScrollBox.h"
 #include "BaseWalletWidget.generated.h"
@@ -25,7 +27,7 @@ struct FWalletTransaction
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
 		float earnedInternalSPD;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
-		FDateTime dateTransaction;
+		FString dateTransaction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
 		int TransactionType;
 	
@@ -33,8 +35,8 @@ struct FWalletTransaction
 
 
 
-UCLASS()
-class SPEEDUP_API UBaseWalletWidget : public UBaseSpeedUpWidget
+UCLASS(Blueprintable)
+class SPEEDUP_API UBaseWalletWidget : public UObject
 {
 	GENERATED_BODY()
 
@@ -53,14 +55,20 @@ public:
 
 	//UPROPERTY(meta = (BindWidget))
 	//UScrollBox* ScrollBoxSpendingHistory;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wallet")
 	TArray<FWalletTransaction> MyHistory;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+		FWalletTransaction GetWalletHistoryInfo();
 
 	UFUNCTION(BlueprintCallable)
 		void SetWalletInfo(FWalletTransaction NewWalletInfo);
 
+	UFUNCTION(BlueprintCallable)
+		void AddTransaction(FWalletTransaction AddedTransaction);
+
 protected:
 
-	void NativeOnInitialized() override;
+	//void NativeOnInitialized() override;
 
 };

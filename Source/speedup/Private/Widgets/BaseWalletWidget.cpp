@@ -4,10 +4,10 @@
 #include "widgets/BaseWalletWidget.h"
 
 
-void UBaseWalletWidget::NativeOnInitialized()
-{
+//void UBaseWalletWidget::NativeOnInitialized()
+//{
 	//RefreshSPDBalance();
-}
+//}
 
 //void UBaseWalletWidget::RefreshSPDBalance()
 //{
@@ -20,4 +20,21 @@ void UBaseWalletWidget::NativeOnInitialized()
 void UBaseWalletWidget::SetWalletInfo(FWalletTransaction NewWalletInfo)
 {
 	WalletInfo = NewWalletInfo;
+}
+
+FWalletTransaction UBaseWalletWidget::GetWalletHistoryInfo()
+{
+	return WalletInfo;
+}
+
+//void UItemManager::AddItem(UItem* AddedItem)
+//{
+	//MyItems.Add(AddedItem);
+//}
+
+
+void UBaseWalletWidget::AddTransaction(FWalletTransaction AddedTransaction)
+{
+
+	MyHistory.Add(AddedTransaction);
 }

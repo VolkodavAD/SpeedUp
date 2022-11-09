@@ -7,6 +7,7 @@
 #include "Items/ItemManager.h"
 //#include "HTTPAPIComponent.h"
 #include "GeoData/Speedup_GeoDataSystem.h"
+#include "widgets/BaseWalletWidget.h"
 #include "speedupGameModeBase.generated.h"
 
 /**
@@ -29,6 +30,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USpeedup_GeoDataSystem* GeoDataSystemCPP;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class UBaseWalletWidget* WalletBaseClass;
+
 
 public:
 
@@ -43,6 +47,6 @@ public:
 	//UFUNCTION(BlueprintNativeEvent, Category = "mesh")
 	FORCEINLINE class UItemManager* GetNFTItemManager() const { return NFTItemManager; }
 	FORCEINLINE class USpeedup_GeoDataSystem* GetGeoDataSystemCPP() const { return GeoDataSystemCPP; }
-	//FORCEINLINE class BaseWalletWidget* GetWalletInfo()const { return BaseWalletWidget; }
+	FORCEINLINE class UBaseWalletWidget* GetWalletInfo()const { return WalletBaseClass; }
 
 };

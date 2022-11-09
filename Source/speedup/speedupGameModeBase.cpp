@@ -7,6 +7,7 @@ AspeedupGameModeBase::AspeedupGameModeBase()
 {
 	NFTItemManager = CreateDefaultSubobject<UItemManager>(TEXT("ItemManager"));
 	GeoDataSystemCPP = CreateDefaultSubobject<USpeedup_GeoDataSystem>(TEXT("GeoDataSystemCPP"));
+	WalletBaseClass = CreateDefaultSubobject<UBaseWalletWidget>(TEXT("WalletBaseClass"));
 }
 
 
