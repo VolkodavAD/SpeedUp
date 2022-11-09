@@ -5,12 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Items/ItemManager.h"
+//#include "HTTPAPIComponent.h"
 #include "GeoData/Speedup_GeoDataSystem.h"
 #include "speedupGameModeBase.generated.h"
 
 /**
  * 
  */
+
 UCLASS()
 class SPEEDUP_API AspeedupGameModeBase : public AGameModeBase
 {
@@ -26,6 +28,7 @@ protected:
 	//class USkeletalMeshComponent* MeshBody;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USpeedup_GeoDataSystem* GeoDataSystemCPP;
+
 
 public:
 

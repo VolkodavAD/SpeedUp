@@ -334,9 +334,9 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 			SendPartPath.Broadcast(PathID);
 			//PathUpdateEvent(0, ItemInfo.);
 			//AspeedupGameModeBase* GM = 
-			
 			UpdateDistance(ActivPath[PathID]->UserPathInfo.PathID, ActivPath[PathID]->UserPathInfo.ItemID, ActivPath[PathID]->UserPathInfo.AverageSpeed, ActivPath[PathID]->UserPathInfo.PathLength);
 			OnChanged(ActivPath[PathID]->UserPathInfo.PathID, ActivPath[PathID]->UserPathInfo.ItemID, ActivPath[PathID]->UserPathInfo.AverageSpeed, ActivPath[PathID]->UserPathInfo.PathLength);
+			ChangedEvent.Broadcast();
 		}
 	}
 
