@@ -691,8 +691,9 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.ItemLevel = PointsObject->GetIntegerField("level");
 					NFTItem.last_trip_id = PointsObject->GetIntegerField("last_trip_id");
 					NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
-					NFTItem.NextUpdateTime = PointsObject->GetStringField("next_update");
+					//NFTItem.NextUpdateTime = PointsObject->GetStringField("next_update");
 					TSharedPtr<FJsonObject> energy = PointsObject->GetObjectField("energy");
+					NFTItem.NextUpdateTime = energy->GetStringField("next_update");
 					NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
 					NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
 					NFTItem.active = energy->GetBoolField("active");
