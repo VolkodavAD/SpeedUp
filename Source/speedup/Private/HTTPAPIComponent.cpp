@@ -1102,7 +1102,7 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 			//TSharedPtr<FJsonObject> Transactions = ResponseObject->GetObjectField("data");
 			//TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapTransactions = Transactions->Values;
 			TArray<TSharedPtr<FJsonValue>> operations = ResponseObject->GetArrayField("data");
-			
+			GameMode->GetWalletInfo()->MyHistory.Empty();
 			for (int32 i = 0; i < operations.Num(); ++i)
 			{
 				//UWalletTransaction Transaction;
@@ -1119,7 +1119,7 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 				
 				
 				GameMode->GetWalletInfo()->AddTransaction(Transaction);
-
+				
 
 
 				//UItem* AddedItem = NewObject<UItem>();
