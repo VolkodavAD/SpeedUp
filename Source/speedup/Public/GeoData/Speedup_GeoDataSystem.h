@@ -22,9 +22,11 @@
 UDELEGATE(BlueprintAuthorityOnly)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateBindableEvent, int, Path); 
 UDELEGATE(BlueprintAuthorityOnly)
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFinalBindableEvent, int, Path); 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFinalBindableEvent, int, Path);
 
-DECLARE_DELEGATE_OneParam(FStringDelegate, FString);
+DECLARE_DELEGATE_OneParam(FDataIsReadyDelegate, float);
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FDelegateName_TestDel02, float)
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPEEDUP_API USpeedup_GeoDataSystem : public UActorComponent
@@ -58,6 +60,11 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FFinalBindableEvent SendFinalPath;
 
+	//UPROPERTY(BlueprintAssignable)
+	FDataIsReadyDelegate TestSD;
+
+	//UPROPERTY(BlueprintAssignable)
+	FDelegateName_TestDel02 TestSD02;
 	//UPROPERTY(BlueprintAssignable)
 	//FMyBindableEvent SendFinalPath;
 

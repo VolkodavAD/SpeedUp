@@ -40,8 +40,10 @@ public:
 	void ActiveItem(int ItemID, int SlotID, int PathID);
 	UFUNCTION(BlueprintCallable)
 	void DeactiveItem(int ItemID, int SlotID, int PathID);
-	UFUNCTION(BlueprintCallable)
-	void UpdateItem(int ItemID, int SlotID, int PathID);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
+	void UpdateItem(int ItemID, int PathID, float Distance, float Speed);
+	void UpdateItem_Implementation(int ItemID, int PathID, float Distance, float Speed);
 
 	//FORCEINLINE class USkeletalMeshComponent* GetMesh() const { return Mesh; }
 	//UFUNCTION(BlueprintNativeEvent, Category = "mesh")

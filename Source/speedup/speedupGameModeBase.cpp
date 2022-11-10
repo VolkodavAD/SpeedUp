@@ -28,9 +28,9 @@ void AspeedupGameModeBase::DeactiveItem(int ItemID, int SlotID, int PathID)
 }
 
 
-void AspeedupGameModeBase::UpdateItem(int ItemID, int SlotID, int PathID)
+void AspeedupGameModeBase::UpdateItem_Implementation(int ItemID, int PathID, float Distance, float Speed)
 {
 	int ERR = 0;
-	GetNFTItemManager()->UpdateItem(ItemID, SlotID, ERR);
+	//GetNFTItemManager()->UpdateItem(
 	//GetGeoDataSystemCPP()->StopTrackPath(PathID);
 }

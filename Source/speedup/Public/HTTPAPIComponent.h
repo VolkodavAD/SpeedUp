@@ -143,10 +143,10 @@ public:
 	void NFTactivationRequest(const int ActivNFDId);
 
 	UFUNCTION(BlueprintCallable)
-	void NFTdeactivationRequest(const int DeactivePathID, const int DeactivNFDId, const int avg_velocity, const int avg_distance);
+	void NFTdeactivationRequest(const int DeactivePathID, const int DeactivNFDId, const float avg_velocity, const float avg_distance);
 
 	UFUNCTION(BlueprintCallable)
-	void NFTUpdateRequest(const int DeactivePathID, const int DeactivNFDId, const int avg_velocity, const int avg_distance);
+	void NFTUpdateRequest(const int DeactivePathID, const int DeactivNFDId, const float avg_velocity, const float avg_distance);
 
 	UFUNCTION(BlueprintCallable)
 	void StatisticRequest(const ItemType StatItemType, const int Period);
