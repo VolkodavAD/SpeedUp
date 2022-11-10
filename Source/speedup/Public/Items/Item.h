@@ -70,6 +70,8 @@ struct FBaseItemInfo : public FTableRowBase
 		bool active = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		int last_trip_id = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		FString NextUpdateTime;
 };
 
 USTRUCT(BlueprintType)
