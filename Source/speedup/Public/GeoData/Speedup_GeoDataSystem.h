@@ -18,6 +18,14 @@
 //class ULocationServices;
 //class UHTTPAPIComponent;
 
+	//UHTTPAPIComponent* HTTPAPI;
+UDELEGATE(BlueprintAuthorityOnly)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateBindableEvent, int, Path); 
+UDELEGATE(BlueprintAuthorityOnly)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFinalBindableEvent, int, Path); 
+
+DECLARE_DELEGATE_OneParam(FStringDelegate, FString);
+
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPEEDUP_API USpeedup_GeoDataSystem : public UActorComponent
 {
@@ -36,10 +44,6 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	//UHTTPAPIComponent* HTTPAPI;
-
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateBindableEvent, int, Path);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFinalBindableEvent, int, Path);
 
 	FTimerDelegate TimerDelegatePuth01;
 	FTimerDelegate TimerDelegatePuth02;
@@ -67,9 +71,6 @@ public:
 	void UpdateLocation();
 	void UpdateLocation_Implementation();
 
-	UFUNCTION(BlueprintCallable, Category = "GeoData")
-	void UpdateLocationInPath();
-
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
 	void ReInitServis();
 	void ReInitServis_Implementation();
@@ -87,34 +88,21 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopTrackPath(int ItemID, int PathID, int SlotID);
 
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
+	void StartTrackPathEvent(bool Stop, int ItemID, int PathID, int SlotID);
+	void StartTrackPathEvent_Implementation(bool Stop, int ItemID, int PathID, int SlotID);
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
 	void UpdateDistance(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance);
 	void UpdateDistance_Implementation(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance);
 
-	/** Broadcasts whenever the layer changes */
-	DECLARE_EVENT(FLayerViewModel, FChangedEvent)
-	FChangedEvent& OnChanged(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance) { return ChangedEvent; }
-
-private:
-	/** Broadcasts whenever the layer changes */
-	FChangedEvent ChangedEvent;
-	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
-	//void PathUpdateEvent(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance);
-	//void PathUpdateEvent_Implementation(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance);
 public:
 
 	float LeghtPath_Today;
 	float LeghtPath_Weekly;
 	float LeghtPath_Total;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
-	//class ULocationServices *SpeedupULocationServices;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
-	//ULocationServicesImpl* SpeedupULocationServicesImpl;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GeoData")
-	//class ULocationServicesImpl* SpeedUp_ULocationServices;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
 		bool ServiceEnable;
@@ -138,13 +126,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		bool HaveActivePath();
-
-	/*
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	UGeoPath* ActivPath02;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
-	UGeoPath* ActivPath03;
-	*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
 		int LastSneakersPathID;

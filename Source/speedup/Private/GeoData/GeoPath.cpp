@@ -98,6 +98,11 @@ void UGeoPath::SetSlotID(int SlotID)
 {
 	UserPathInfo.SlotID = SlotID;
 }
+
+void UGeoPath::SetItemID(int ItemID)
+{
+	UserPathInfo.ItemID = ItemID;
+}
 /*
 FMovePoint* UGeoPath::GetPoint(int IndexPoint)
 {

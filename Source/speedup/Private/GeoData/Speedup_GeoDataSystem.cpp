@@ -115,6 +115,7 @@ void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
 	ActivPath[SlotID] = NewObject<UGeoPath>();
 	ActivPath[SlotID]->SetSlotID(SlotID);
 	ActivPath[SlotID]->SetPathID(PathID);
+	ActivPath[SlotID]->SetItemID(ItemID);
 	ActivPath[SlotID]->SetStatusActive(true);
 
 	switch (SlotID)
@@ -139,7 +140,12 @@ void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
 
 	//GetWorld()->GetTimerManager().SetTimer(PathTimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocationInPath, 6.0f, true, 2.0f);
 	ActivPath[SlotID]->PathIsActiv = true;
+
+	StartTrackPathEvent(false, ItemID, PathID, SlotID);
 }
+
+void USpeedup_GeoDataSystem::StartTrackPathEvent_Implementation(bool Stop,int ItemID, int PathID, int SlotID)
+{}
 
 void USpeedup_GeoDataSystem::UpdateCurrentPath(int PathID)
 {
@@ -186,62 +192,7 @@ void USpeedup_GeoDataSystem::StopTrackPath(int ItemID, int PathID, int SlotID)
 	//ActivPath[PuthN]->PointsInPath.Empty();
 	//SendFinalPath.Broadcast();
 
-}
-
-void USpeedup_GeoDataSystem::UpdateLocationInPath()
-{
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("UpdateLocationInPath")));
-
-	FGeoLocationInfo LastLocation = GetLastLocation();
-	FGeoPointInfo AddedPoint;
-	AddedPoint.PointID = 0;
-	AddedPoint.PointLocation = LastLocation.PointLocation;
-	AddedPoint.TimeStamp = LastLocation.TimeStamp;
-
-	for (int32 i = 0; i < ActivPath.Num(); ++i)
-	{
-		if (ActivPath[i]->PathIsActiv == true)
-		{
-			AddedPoint.PointID = ActivPath[i]->PointsInPath.Num();
-			if (ActivPath[i]->PointsInPath.Num() > 0)
-			{
-				float DeltaTimePath = (AddedPoint.CurrentTime - ActivPath[i]->PointsInPath.Last().CurrentTime).GetSeconds();
-				float DeltaLeghtPath = GetDistanse2Coor(ActivPath[i]->PointsInPath.Last(), AddedPoint);
-				
-				AddedPoint.PointSpeed = DeltaLeghtPath / DeltaTimePath;
-				AddedPoint.PointDistance = DeltaLeghtPath;
-				AddedPoint.DeltaTime = 0.0f;
-
-				LeghtPath_Today = LeghtPath_Today + DeltaLeghtPath;
-				LeghtPath_Total = LeghtPath_Total + DeltaLeghtPath;
-
-				ActivPath[i]->UserPathInfo.PathLength += DeltaLeghtPath;
-				ActivPath[i]->UserPathInfo.PathTime += DeltaTimePath;
-			}
-			else
-			{
-				AddedPoint.DeltaTime = 0.0f;
-				AddedPoint.PointDistance = 0.0f;
-				AddedPoint.PointSpeed = -1.0f;
-			}
-			ActivPath[i]->AddPoint(AddedPoint);
-		}
-	}
-
-	/*
-	AddedPoint.PointID = LastSneakersPathID++;
-	if (ActivSneakersPath->UserPathInfo.PointsInPath.Num() != 0)
-	{
-		float DeltaTimePath = (AddedPoint.CurrentTime - ActivSneakersPath->UserPathInfo.PointsInPath.Last().CurrentTime).GetSeconds();
-		float DeltaLeghtPath = GetDistanse2Coor(ActivSneakersPath->UserPathInfo.PointsInPath.Last(), AddedPoint);
-		AddedPoint.PointSpeed = DeltaLeghtPath / DeltaTimePath;
-	}
-	else
-	{
-		AddedPoint.PointSpeed = -1.0;
-	}
-	ActivSneakersPath->AddPoint(AddedPoint);
-	*/
+	//StartTrackPathEvent(true, ItemID, PathID, SlotID);
 }
 
 void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
@@ -253,6 +204,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 	AddedPoint.TimeStamp = LastLocation.TimeStamp;
 	AddedPoint.DeltaTime = 0.0f;
 	AddedPoint.CurrentTime = FDateTime::UtcNow();
+	//int64 AAA = FDateTime::UtcNow().ToUnixTimestamp();
 
 	if (ActivPath[PathID]->PathIsActiv == true)
 	{
@@ -260,7 +212,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 
 		if (ActivPath[PathID]->PointsInPath.Num() > 0)
 		{
-			float DeltaTimePath = (AddedPoint.CurrentTime - ActivPath[PathID]->PointsInPath.Last().CurrentTime).GetSeconds();
+			float DeltaTimePath = 6.0; //(AddedPoint.CurrentTime - ActivPath[PathID]->PointsInPath.Last().CurrentTime).GetSeconds();
 			float DeltaLeghtPath = GetDistanse2Coor(ActivPath[PathID]->PointsInPath.Last(), AddedPoint);
 
 			AddedPoint.DeltaTime = DeltaTimePath;
@@ -335,8 +287,6 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 			//PathUpdateEvent(0, ItemInfo.);
 			//AspeedupGameModeBase* GM = 
 			UpdateDistance(ActivPath[PathID]->UserPathInfo.PathID, ActivPath[PathID]->UserPathInfo.ItemID, ActivPath[PathID]->UserPathInfo.AverageSpeed, ActivPath[PathID]->UserPathInfo.PathLength);
-			OnChanged(ActivPath[PathID]->UserPathInfo.PathID, ActivPath[PathID]->UserPathInfo.ItemID, ActivPath[PathID]->UserPathInfo.AverageSpeed, ActivPath[PathID]->UserPathInfo.PathLength);
-			ChangedEvent.Broadcast();
 		}
 	}
 
@@ -352,14 +302,6 @@ void USpeedup_GeoDataSystem::TickComponent(float DeltaTime, ELevelTick TickType,
 void USpeedup_GeoDataSystem::UpdateLocation_Implementation()
 {
 	GetLastLocation();
-   // Once we've called this function enough times, clear the Timer.
-   /*if (--RepeatingCallsRemaining <= 0)
-   {
-		//GetWorld()->GetTimerManager().ClearTimer(Sneakers_TimerHandle);
-        // MemberTimerHandle can now be reused for any other Timer.
-    }*/
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("UpdateLocation")));
-	UpdateLocationInPath();
 }
 float USpeedup_GeoDataSystem::GetLeghtPath_Today()
 {

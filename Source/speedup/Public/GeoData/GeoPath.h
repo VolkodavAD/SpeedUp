@@ -142,6 +142,8 @@ public:
 	void SetPathID(int PathID);
 	UFUNCTION(BlueprintCallable)
 	void SetSlotID(int SlotID);
+	UFUNCTION(BlueprintCallable)
+	void SetItemID(int ItemID);
 
 	UFUNCTION(BlueprintCallable)
 	void AddPoint(const FGeoPointInfo AddedPoint);
