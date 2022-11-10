@@ -188,7 +188,11 @@ void USpeedup_GeoDataSystem::StopTrackPath(int ItemID, int PathID, int SlotID)
 		break;
 	}
 
+	ActivPath[SlotID]->SetStatusActive(false);
+
 	UpdateLocationInPathID(PathID, true);
+
+
 	//ActivPath[PuthN]->PointsInPath.Empty();
 	//SendFinalPath.Broadcast();
 
