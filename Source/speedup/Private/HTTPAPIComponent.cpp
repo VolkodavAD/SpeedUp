@@ -394,6 +394,26 @@ void UHTTPAPIComponent::TransactionsRequest(const int Page, const int Limit, con
 
 }
 
+void UHTTPAPIComponent::BuyingSlotRequest(const FString TokenData)
+{
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+	const FHttpRequestRef RequestSendCode = FHttpModule::Get().CreateRequest();
+	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+	
+	FString BearerT = "Bearer ";
+
+	FString RequestBody;
+	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+	RequestSendCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedBuyingSlot);
+	RequestSendCode->SetURL(SendCodeURL);
+	RequestSendCode->SetVerb("POST");
+	RequestSendCode->SetHeader("Content-Type", "application/json");
+	RequestSendCode->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));
+	RequestSendCode->SetContentAsString(RequestBody);
+	RequestSendCode->ProcessRequest();
+}
+
 void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
 {
 	TSharedPtr<FJsonObject> ResponseObject;
@@ -1149,6 +1169,36 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 		}
 
 	}
+}
+void UHTTPAPIComponent::OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessBuying)
+{
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
+	int Code = Response->GetResponseCode();
+	if (Code != 200)
+	{
+		Message = "Unsuccess";
+	}
+
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		ErrorID = 0;
+		ErrorText = "";
+		bSuccess = ResponseObject->GetBoolField("success");
+		Message = ResponseObject->GetStringField("message");
+		
+	}
+
 }
 void UHTTPAPIComponent::StartPath_Implementation(int ItemID, int StartPathID)
 {}
