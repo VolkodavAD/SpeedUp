@@ -861,9 +861,9 @@ void UHTTPAPIComponent::OnResponseReceivedDeactivation(FHttpRequestPtr Request, 
 			if (bSuccess == true)
 			{
 				AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
-				GameMode->PostDeactivationItem(ActivationItem, PathID, ActivationSlot);
+				GameMode->PostDeactivationItem(DeactivationItem, PathID, ActivationSlot);
 				DeactivationItem = -1;
-				PathID = -1;
+				//PathID = -1;
 			}
 		}
 	}

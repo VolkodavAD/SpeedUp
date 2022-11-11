@@ -114,10 +114,17 @@ struct FItemStatisticByPath : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		float Total_distance = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
-		//FDateTime started_at = 0;
 		FDateTime started_at;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		FDateTime ended_at;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		FTimespan TS_started_at;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		FTimespan TS_ended_at;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int64 EndTotalMinutes;
+
+
 };
 
 UCLASS(Blueprintable)
