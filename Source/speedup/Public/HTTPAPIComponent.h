@@ -28,9 +28,12 @@ private:
 	void OnResponseReceivedChangePassword(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
 	void OnResponseReceivedProfile(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
-	void OnResponseReceivedActivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
-	void OnResponseReceivedUpdate(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+
+	void OnResponseReceivedActivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+	void OnResponseReceivedUpdate(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);	
+	void OnResponseReceivedDeactivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+
 	void OnResponseReceivedRepairPassword(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedRecoveryCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
@@ -65,6 +68,9 @@ private:
 	//NFTreceiptRequestURL
 
 	int ActivationItem = -1;
+	int DeactivationItem = -1;
+	int ActivationSlot = -1;
+
 public:
 
 	UHTTPAPIComponent();
@@ -126,25 +132,25 @@ public:
 	void NFTreceiptRequest(const FString TokenData);
 
 	UFUNCTION(BlueprintCallable)
-	void NFTactivationRequest(const int ActivNFDId);
+	void NFTactivationRequest(const int ActivNFDId, const int SlotID);
 
 	UFUNCTION(BlueprintCallable)
-	void NFTdeactivationRequest(const int DeactivePathID, const int DeactivNFDId, const float avg_velocity, const float avg_distance);
+	void NFTdeactivationRequest(const int DeactivNFDId, const int DeactivePathID, const float avg_velocity, const float avg_distance);
 
 	UFUNCTION(BlueprintCallable)
-	void NFTUpdateRequest(const int DeactivePathID, const int DeactivNFDId, const float avg_velocity, const float avg_distance);
+	void NFTUpdateRequest(const int DeactivNFDId, const int DeactivePathID, const float avg_velocity, const float avg_distance);
 
 	UFUNCTION(BlueprintCallable)
 	void StatisticRequest(const ItemType StatItemType, const int Period);
 
 	UFUNCTION(BlueprintCallable)
-		void TransactionsRequest(const int Page, const int Limit, const FString TokenData);
+	void TransactionsRequest(const int Page, const int Limit, const FString TokenData);
 
 	UFUNCTION(BlueprintCallable)
-		void BuyingSlotRequest(const FString TokenData);
+	void BuyingSlotRequest(const FString TokenData);
 
 	UFUNCTION(BlueprintCallable)
-		void NFTlevelUpRequest(const int NFTid, const FString TokenData);
+	void NFTlevelUpRequest(const int NFTid, const FString TokenData);
 
 
 	UFUNCTION(BlueprintNativeEvent)

@@ -196,7 +196,7 @@ void UHTTPAPIComponent::NFTreceiptRequest(const FString TokenData)
 	NFTget->ProcessRequest();
 }
 
-void UHTTPAPIComponent::NFTactivationRequest(const int NFDId)
+void UHTTPAPIComponent::NFTactivationRequest(const int NFDId, const int SlotID)
 {
 	const FHttpRequestRef RequestActiveNFT = FHttpModule::Get().CreateRequest();
 
@@ -217,6 +217,7 @@ void UHTTPAPIComponent::NFTactivationRequest(const int NFDId)
 	RequestActiveNFT->SetContentAsString(RequestBody);
 
 	ActivationItem = NFDId;
+	ActivationSlot = SlotID;
 	RequestActiveNFT->ProcessRequest();
 }
 
@@ -257,8 +258,9 @@ void UHTTPAPIComponent::NFTdeactivationRequest(const int DeactivePathID, const i
 	RequestActiveNFT->SetVerb("POST");
 	RequestActiveNFT->SetHeader("Content-Type", "application/json");
 	RequestActiveNFT->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
-	RequestActiveNFT->SetContentAsString(RequestBody);
-
+	RequestActiveNFT->SetContentAsString(RequestBody);	
+	DeactivationItem = DeactivNFDId;
+	PathID = DeactivePathID;
 	RequestActiveNFT->ProcessRequest();
 }
 
@@ -819,24 +821,49 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 			{
 				PathID = ResponseObject->GetNumberField("data");
 
-				USpeedUpGameInstance* GameIst = (USpeedUpGameInstance*)GetWorld()->GetGameInstance();
-				if (GameIst->UserInfo.Energy.spend_part > 0)
-				{
-					GameIst->UserInfo.Energy.spend_part = GameIst->UserInfo.Energy.spend_part - 1;
-					GameIst->UserInfo.Energy.capacity -= - 1;
-				}
 				//int ErrorActivation;
 				AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
 				int TActivationItem = ActivationItem;
 				int TPathID = PathID; 
-				int ErrorActivation;
-
+				//int ErrorActivation;
 				//GameMode->GetNFTItemManager()->UpdateLastPathID(ActivationItem, PathID);
-				GameMode->GetNFTItemManager()->ActivateItem(ActivationItem, PathID, 0, ErrorActivation);
-				GameMode->GetGeoDataSystemCPP()->StartTrackPath(ActivationItem, PathID, 0);
+				//GameMode->GetNFTItemManager()->ActivateItem(ActivationItem, PathID, 0, ErrorActivation);
+				//GameMode->GetGeoDataSystemCPP()->StartTrackPath(ActivationItem, PathID, 0);
+				GameMode->ActiveItem(ActivationItem, ActivationSlot, PathID);
 				StartPath(ActivationItem, PathID);
-
 				ActivationItem = -1;
+			}
+		}
+	}
+}
+
+void UHTTPAPIComponent::OnResponseReceivedDeactivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
+{
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		ErrorID = Response->GetResponseCode();
+		bSuccess = true;
+		Message = ResponseObject->GetStringField("message");
+		if (ErrorID == 200)
+		{
+			bSuccess = ResponseObject->GetBoolField("success");
+			if (bSuccess == true)
+			{
+				AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+				GameMode->DeactiveItem(ActivationItem, 0, PathID);
+				DeactivationItem = -1;
+				PathID = -1;
 			}
 		}
 	}

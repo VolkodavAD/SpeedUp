@@ -22,16 +22,15 @@ class SPEEDUP_API AspeedupGameModeBase : public AGameModeBase
 	AspeedupGameModeBase();
 
 protected:
-	//UItemManager* NFTItemManager;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UItemManager* NFTItemManager;
-	//class USkeletalMeshComponent* MeshBody;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USpeedup_GeoDataSystem* GeoDataSystemCPP;
+
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	//class USpeedup_GeoDataSystem* GeoDataSystemCPP;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		class UBaseWalletWidget* WalletBaseClass;
+	class UBaseWalletWidget* WalletBaseClass;
 
 
 public:
@@ -45,12 +44,20 @@ public:
 	void UpdateItem(int ItemID, int PathID, float Distance, float Speed);
 	void UpdateItem_Implementation(int ItemID, int PathID, float Distance, float Speed);
 
-	UFUNCTION(BlueprintCallable, Category = "GeoData")
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
+	void PostActivationItem(int ItemID, int PathID, int SlotID);
+	void PostActivationItem_Implementation(int ItemID, int PathID, int SlotID);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
+	void PostDeactivationItem(int ItemID, int PathID, int SlotID);
+	void PostDeactivationItem_Implementation(int ItemID, int PathID, int SlotID);
+
+	UFUNCTION(BlueprintCallable, Category = "Slot")
 	void ActiveSlot();
-	//FORCEINLINE class USkeletalMeshComponent* GetMesh() const { return Mesh; }
-	//UFUNCTION(BlueprintNativeEvent, Category = "mesh")
+
 	FORCEINLINE class UItemManager* GetNFTItemManager() const { return NFTItemManager; }
-	FORCEINLINE class USpeedup_GeoDataSystem* GetGeoDataSystemCPP() const { return GeoDataSystemCPP; }
+//	FORCEINLINE class USpeedup_GeoDataSystem* GetGeoDataSystemCPP() const { return GeoDataSystemCPP; }
 	FORCEINLINE class UBaseWalletWidget* GetWalletInfo()const { return WalletBaseClass; }
 
 };

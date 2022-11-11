@@ -6,7 +6,7 @@
 AspeedupGameModeBase::AspeedupGameModeBase()
 {
 	NFTItemManager = CreateDefaultSubobject<UItemManager>(TEXT("ItemManager"));
-	GeoDataSystemCPP = CreateDefaultSubobject<USpeedup_GeoDataSystem>(TEXT("GeoDataSystemCPP"));
+	//GeoDataSystemCPP = CreateDefaultSubobject<USpeedup_GeoDataSystem>(TEXT("GeoDataSystemCPP"));
 	WalletBaseClass = CreateDefaultSubobject<UBaseWalletWidget>(TEXT("WalletBaseClass"));
 }
 
@@ -17,7 +17,7 @@ void AspeedupGameModeBase::ActiveItem(int ItemID, int SlotID, int PathID)
 	bool result = GetNFTItemManager()->ActivateItem(ItemID, SlotID, PathID, ERR);
 	if (result)
 	{
-		GetGeoDataSystemCPP()->StartTrackPath(SlotID, PathID, ItemID);
+		//GetGeoDataSystemCPP()->StartTrackPath(SlotID, PathID, ItemID);
 	}
 }
 
@@ -28,15 +28,20 @@ void AspeedupGameModeBase::DeactiveItem(int ItemID, int SlotID, int PathID)
 	bool result = GetNFTItemManager()->DeactivateItem(ItemID, SlotID, ERR);
 	if (result)
 	{
-		GetGeoDataSystemCPP()->StopTrackPath(ItemID, PathID, SlotID);
+		//GetGeoDataSystemCPP()->StopTrackPath(ItemID, PathID, SlotID);
 	}
 }
 
 
 void AspeedupGameModeBase::UpdateItem_Implementation(int ItemID, int PathID, float Distance, float Speed)
 {
-	int ERR = 0;
 }
+
+void AspeedupGameModeBase::PostActivationItem_Implementation(int ItemID, int PathID, int SlotID)
+{}
+
+void AspeedupGameModeBase::PostDeactivationItem_Implementation(int ItemID, int PathID, int SlotID)
+{}
 
 void AspeedupGameModeBase::ActiveSlot()
 {
