@@ -8,7 +8,17 @@
 // ErrorID = 404; - не найден предмет
 
 UItemManager::UItemManager()
-{}
+{
+	FItemSlot AddedSlot;
+	AddedSlot.IsUnlock = true;
+	AddedSlot.ItemID = -1;
+	AddedSlot.Items_TimerHandle = Items_TimerHandle;
+	ItemsSlot.Add(AddedSlot);
+
+	AddedSlot.IsUnlock = false;
+	ItemsSlot.Add(AddedSlot);
+	ItemsSlot.Add(AddedSlot);
+}
 // Called when the game starts
 void UItemManager::BeginPlay()
 {
@@ -53,8 +63,6 @@ UItem* UItemManager::GetMyItem(int ItemID)
 
 bool UItemManager::CheckCanActivateItem(int ItemID, int SlotID, int& ErrorID)
 {
-	if (!ItemsSlot[SlotID].IsUnlock) return false;
-
 	UItem* ItemByID = GetMyItem(ItemID);
 
 	if (ItemByID == nullptr)
@@ -63,14 +71,6 @@ bool UItemManager::CheckCanActivateItem(int ItemID, int SlotID, int& ErrorID)
 		ErrorID = 404;
 	}
 
-	if (ItemByID->Energy > 0)
-	{
-		int l_ItemEnergy = GetMyItem(ItemID)->Energy = ItemByID->Energy - 1;
-	}
-	else
-	{
-		return false;
-	}
 	return true;
 }
 
@@ -138,17 +138,7 @@ bool UItemManager::UpdateItem(int ItemID, int SlotID, int& ErrorID)
 //получаем состояние слотов из бэка
 void UItemManager::PostFromBack_SlotsStats()
 {
-	FItemSlot AddedSlot;
-	AddedSlot.IsUnlock = true;
-	AddedSlot.ItemID = -1;
-	AddedSlot.Items_TimerHandle = Items_TimerHandle;
-	ItemsSlot.Add(AddedSlot);
-
-	AddedSlot.IsUnlock = false;
-	ItemsSlot.Add(AddedSlot);
-	ItemsSlot.Add(AddedSlot);
 }
-
 
 void UItemManager::AddItem(UItem* AddedItem)
 {

@@ -253,7 +253,7 @@ void UHTTPAPIComponent::NFTdeactivationRequest(const int DeactivePathID, const i
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 
 	FString BearerT = "Bearer ";
-	RequestActiveNFT->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedUpdate);
+	RequestActiveNFT->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedDeactivation);
 	RequestActiveNFT->SetURL(NFTDeactiveRequestURL);
 	RequestActiveNFT->SetVerb("POST");
 	RequestActiveNFT->SetHeader("Content-Type", "application/json");
@@ -829,7 +829,7 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 				//GameMode->GetNFTItemManager()->UpdateLastPathID(ActivationItem, PathID);
 				//GameMode->GetNFTItemManager()->ActivateItem(ActivationItem, PathID, 0, ErrorActivation);
 				//GameMode->GetGeoDataSystemCPP()->StartTrackPath(ActivationItem, PathID, 0);
-				GameMode->ActiveItem(ActivationItem, ActivationSlot, PathID);
+				GameMode->PostActivationItem(ActivationItem, PathID, ActivationSlot);
 				StartPath(ActivationItem, PathID);
 				ActivationItem = -1;
 			}
@@ -861,7 +861,7 @@ void UHTTPAPIComponent::OnResponseReceivedDeactivation(FHttpRequestPtr Request, 
 			if (bSuccess == true)
 			{
 				AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
-				GameMode->DeactiveItem(ActivationItem, 0, PathID);
+				GameMode->PostDeactivationItem(ActivationItem, PathID, ActivationSlot);
 				DeactivationItem = -1;
 				PathID = -1;
 			}

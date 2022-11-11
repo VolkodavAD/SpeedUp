@@ -67,9 +67,6 @@ private:
 	///update-params
 	//NFTreceiptRequestURL
 
-	int ActivationItem = -1;
-	int DeactivationItem = -1;
-	int ActivationSlot = -1;
 
 public:
 
@@ -88,8 +85,11 @@ public:
 	FString Data;
 
 	UPROPERTY(BlueprintReadOnly)
-	int PathID;
+	int PathID = -1;
 
+	int ActivationItem = -1;
+	int DeactivationItem = -1;
+	int ActivationSlot = -1;
 
 	USpeedUpGameInstance* GI;
 
