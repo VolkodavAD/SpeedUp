@@ -38,6 +38,7 @@ private:
 
 	void OnResponseReceivedTransactions(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessBuying);
+	void OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessLvlUp);
 
 	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
@@ -58,6 +59,7 @@ private:
 	const FString NFTDeactiveRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/stop";
 	const FString NFTUpdateRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/update-params";
 	const FString BuyingSlotURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/slot/buy";
+	const FString NFTlevelUpURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/nft/up";
 	
 	///update-params
 	//NFTreceiptRequestURL
@@ -82,27 +84,8 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	int PathID;
 
-	//UPROPERTY(BlueprintReadOnly)
-	//int ActivationPath;
 
 	USpeedUpGameInstance* GI;
-	/*USTRUCT(BlueprintType)
-		struct FItemFromData 
-	{
-		GENERATED_USTRUCT_BODY()
-
-			UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemFromData")
-			int ItemID;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemFromData")
-			int ItemType;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemFromData")
-			int ItemLevel;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemFromData")
-			int ItemRarity;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemFromData")
-			bool ItemMinted;
-	};*/
-
 
 	UPROPERTY(BlueprintReadOnly)
 	int ErrorID;
@@ -159,11 +142,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void BuyingSlotRequest(const FString TokenData);
-	//UFUNCTION(BlueprintCallable)
-	//	void NFTactivationRequest(const FString TokenData);
 
-	//UFUNCTION(BlueprintCallable)
-	//void SendCode(const FString CodeFromMail, const FString TokenData);
+	UFUNCTION(BlueprintCallable)
+		void NFTlevelUpRequest(const int NFTid, const FString TokenData);
+
 
 	UFUNCTION(BlueprintNativeEvent)
 	void StartPath(int ItemID, int StartPathID);
