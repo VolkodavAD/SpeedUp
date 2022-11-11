@@ -75,6 +75,11 @@ public:
 	TArray<FItemStatistic> MyItemStatistic;
 
 	UFUNCTION(BlueprintCallable, Category = "Item")
+	bool CheckCanActivateItem(int ItemID, int SlotID, int& ErrorID);
+	UFUNCTION(BlueprintCallable, Category = "Item")
+	bool CheckCanDeactivateItem(int ItemID, int SlotID, int& ErrorID);
+
+	UFUNCTION(BlueprintCallable, Category = "Item")
 	bool ActivateItem(int ItemID, int PathID, int SlotID, int& ErrorID);
 	UFUNCTION(BlueprintCallable, Category = "Item")
 	bool DeactivateItem(int ItemID, int SlotID, int& ErrorID);

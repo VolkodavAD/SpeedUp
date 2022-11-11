@@ -51,6 +51,36 @@ UItem* UItemManager::GetMyItem(int ItemID)
 //}
 
 
+bool UItemManager::CheckCanActivateItem(int ItemID, int SlotID, int& ErrorID)
+{
+	if (!ItemsSlot[SlotID].IsUnlock) return false;
+
+	UItem* ItemByID = GetMyItem(ItemID);
+
+	if (ItemByID == nullptr)
+	{
+		return false;
+		ErrorID = 404;
+	}
+
+	if (ItemByID->Energy > 0)
+	{
+		int l_ItemEnergy = GetMyItem(ItemID)->Energy = ItemByID->Energy - 1;
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+bool UItemManager::CheckCanDeactivateItem(int ItemID, int SlotID, int& ErrorID)
+{
+	UItem* ItemByID = GetMyItem(ItemID);
+	if (ItemByID == nullptr) { return false; }
+	return true;
+}
+
 bool UItemManager::ActivateItem(int ItemID, int PathID, int SlotID, int& ErrorID)
 {
 	if (!ItemsSlot[SlotID].IsUnlock) return false;
