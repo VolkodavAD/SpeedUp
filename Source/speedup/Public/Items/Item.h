@@ -144,15 +144,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateLastPathID(int PathID);
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
-	//UTexture2D* ItemImage;
-
-	// image for review
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
-	//UTexture2D* ItemIcon;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Energy")
-	//StatusItem Status = StatusItem::Deactive;
 
 	UFUNCTION(BlueprintCallable)
 	void SetItemInfo(FBaseItemInfo NewItemInfo);

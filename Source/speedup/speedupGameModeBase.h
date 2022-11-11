@@ -36,15 +36,17 @@ protected:
 
 public:
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void ActiveItem(int ItemID, int SlotID, int PathID);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void DeactiveItem(int ItemID, int SlotID, int PathID);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
 	void UpdateItem(int ItemID, int PathID, float Distance, float Speed);
 	void UpdateItem_Implementation(int ItemID, int PathID, float Distance, float Speed);
 
+	UFUNCTION(BlueprintCallable, Category = "GeoData")
+	void ActiveSlot();
 	//FORCEINLINE class USkeletalMeshComponent* GetMesh() const { return Mesh; }
 	//UFUNCTION(BlueprintNativeEvent, Category = "mesh")
 	FORCEINLINE class UItemManager* GetNFTItemManager() const { return NFTItemManager; }

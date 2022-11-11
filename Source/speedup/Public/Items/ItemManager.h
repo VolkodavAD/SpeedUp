@@ -60,8 +60,6 @@ private:
 
 	//получаем состояние слотов из сервере
 	void PostFromBack_SlotsStats();
-	//получаем все предметы из сервере, тут же проверяем есть ли активные
-	void PostFromBack_AllItems();
 
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Timer")
 	FTimerHandle Items_TimerHandle;
@@ -76,24 +74,31 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	TArray<FItemStatistic> MyItemStatistic;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Item")
 	bool ActivateItem(int ItemID, int PathID, int SlotID, int& ErrorID);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Item")
 	bool DeactivateItem(int ItemID, int SlotID, int& ErrorID);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Item")
 	bool UpdateItem(int ItemID, int SlotID, int& ErrorID);
 
-	UFUNCTION(BlueprintCallable)
-	void UpdateLastPathID(int ItemID, int PathID);
+	//UFUNCTION(BlueprintCallable)
+	//void UpdateLastPathID(int ItemID, int PathID);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Item")
 	UItem* GetMyItem(int ItemID);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Item")
 	void AddItem(UItem* AddedItem);
 
 	UFUNCTION(BlueprintCallable)
 	void ClearItemArray();
+
+
+	UFUNCTION(BlueprintCallable, Category = "Slot")
+	int FindFreeSlot();
+
+	UFUNCTION(BlueprintCallable, Category = "Slot")
+	bool ActiveSlot();
 	//UFUNCTION(BlueprintCallable)
 	//FItemSlot GetItemSlot(int SlotID);
 };

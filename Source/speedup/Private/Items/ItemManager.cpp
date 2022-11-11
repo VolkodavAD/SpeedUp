@@ -4,6 +4,9 @@
 #include "Misc/DateTime.h"
 #include "GeoData/Speedup_GeoDataSystem.h"
 
+// ErrorID = 504; - не найден слот 
+// ErrorID = 404; - не найден предмет
+
 UItemManager::UItemManager()
 {}
 // Called when the game starts
@@ -26,7 +29,6 @@ void UItemManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 void UItemManager::InitItemManager()
 {
 	PostFromBack_SlotsStats();
-	PostFromBack_AllItems();
 }
 
 UItem* UItemManager::GetMyItem(int ItemID)
@@ -43,35 +45,39 @@ UItem* UItemManager::GetMyItem(int ItemID)
 	return nullptr;
 }
 
-void UItemManager::UpdateLastPathID(int ItemID, int PathID)
-{
-	GetMyItem(ItemID)->UpdateLastPathID(PathID);
-}
+//void UItemManager::UpdateLastPathID(int ItemID, int PathID)
+//{
+//	GetMyItem(ItemID)->UpdateLastPathID(PathID);
+//}
+
 
 bool UItemManager::ActivateItem(int ItemID, int PathID, int SlotID, int& ErrorID)
 {
-	if (ItemsSlot.Num() <= SlotID)
-	return false;
-
-	if (!ItemsSlot[SlotID].IsUnlock)
-	return false;
-
-	//if (ItemsSlot[SlotID].ItemID > 0)
-	//return false;
+	if (!ItemsSlot[SlotID].IsUnlock) return false;
 
 	UItem* ItemByID = GetMyItem(ItemID);
-	if (ItemByID == nullptr) { return false; }
 
-	if (ItemByID->Energy > 0) {
+	if (ItemByID == nullptr)
+	{
+		return false;
+		ErrorID = 404;
+	}
 
+	if (ItemByID->Energy > 0) 
+	{
 		int l_ItemEnergy = GetMyItem(ItemID)->Energy = ItemByID->Energy - 1;
 	}
+	else
+	{
+		return false;
+	}
+
 	ItemByID->SetItemStatus(StatusItem::Active);
 
 	ItemsSlot[SlotID].ItemID = ItemID;
 	ItemsSlot[SlotID].PathForItem = PathID;
 
-	UpdateLastPathID(ItemID, PathID);
+	ItemByID->UpdateLastPathID(PathID);
 
 	return true;
 }
@@ -113,24 +119,6 @@ void UItemManager::PostFromBack_SlotsStats()
 	ItemsSlot.Add(AddedSlot);
 }
 
-//получаем все предметы из бека, тут же проверяем есть ли активные
-void UItemManager::PostFromBack_AllItems()
-{
-	/*
-	UItem* AddedItem = NewObject<UItem>();
-	FBaseItemInfo AddedItemInfi;
-	AddedItemInfi.ItemID = 1;
-	AddedItemInfi.ItemLevel = 1;
-	AddedItemInfi.ItemName = "Snikers";
-	AddedItemInfi.ItemStatus = StatusItem::Deactive;
-	AddedItemInfi.ItemRarity = ItemLevelRarity::Common;
-	AddedItemInfi.Type = ItemType::Sneakers;
-	AddedItem->SetItemInfo(AddedItemInfi);
-	AddedItem->Energy = 3;
-	
-	MyItems.Add(AddedItem);
-	*/
-}
 
 void UItemManager::AddItem(UItem* AddedItem)
 {
@@ -140,4 +128,32 @@ void UItemManager::AddItem(UItem* AddedItem)
 void UItemManager::ClearItemArray()
 {
 	MyItems.Empty(0);
+}
+
+int UItemManager::FindFreeSlot()
+{
+	//UItem* FindedItems;
+	for (int i = 0; i < 3; i++)
+	{
+		if (ItemsSlot[i].IsUnlock && ItemsSlot[i].ItemID == -1)
+		{
+			return i;
+			//return FindedItems;
+		}
+	}
+	return 0;
+}
+
+bool UItemManager::ActiveSlot()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		if (ItemsSlot[i].IsUnlock == false)
+		{
+			ItemsSlot[i].IsUnlock = true;
+			return true;
+		}
+
+	}
+	return false;
 }
