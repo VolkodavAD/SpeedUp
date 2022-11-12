@@ -135,7 +135,7 @@ public:
 	void NFTactivationRequest(const int ActivNFDId, const int SlotID);
 
 	UFUNCTION(BlueprintCallable)
-	void NFTdeactivationRequest(const int DeactivNFDId, const int DeactivePathID, const float avg_velocity, const float avg_distance);
+	void NFTdeactivationRequest(const int DeactivNFDId, const int DeactivePathID, const int DeactivSlot, const float avg_velocity, const float avg_distance);
 
 	UFUNCTION(BlueprintCallable)
 	void NFTUpdateRequest(const int DeactivNFDId, const int DeactivePathID, const float avg_velocity, const float avg_distance);

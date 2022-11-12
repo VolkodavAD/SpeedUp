@@ -230,7 +230,7 @@ void UHTTPAPIComponent::NFTactivationRequest(const int NFDId, const int SlotID)
 //"avg_distance:0.00"
 //}
 
-void UHTTPAPIComponent::NFTdeactivationRequest(const int DeactivePathID, const int DeactivNFDId, const float avg_velocity, const float avg_distance)
+void UHTTPAPIComponent::NFTdeactivationRequest(const int DeactivNFDId, const int DeactivePathID, const int DeactivSlot, const float avg_velocity, const float avg_distance)
 {
 	USpeedUpGameInstance* GameIst = (USpeedUpGameInstance*)GetWorld()->GetGameInstance();
 	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
@@ -261,10 +261,11 @@ void UHTTPAPIComponent::NFTdeactivationRequest(const int DeactivePathID, const i
 	RequestActiveNFT->SetContentAsString(RequestBody);	
 	DeactivationItem = DeactivNFDId;
 	PathID = DeactivePathID;
+	ActivationSlot = DeactivSlot;
 	RequestActiveNFT->ProcessRequest();
 }
 
-void UHTTPAPIComponent::NFTUpdateRequest(const int DeactivePathID, const int DeactivNFDId, const float avg_velocity, const float avg_distance)
+void UHTTPAPIComponent::NFTUpdateRequest(const int DeactivNFDId, const int DeactivePathID, const float avg_velocity, const float avg_distance)
 {
 	USpeedUpGameInstance* GameIst = (USpeedUpGameInstance*)GetWorld()->GetGameInstance();
 	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
@@ -862,7 +863,7 @@ void UHTTPAPIComponent::OnResponseReceivedDeactivation(FHttpRequestPtr Request, 
 			{
 				AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
 				GameMode->PostDeactivationItem(DeactivationItem, PathID, ActivationSlot);
-				DeactivationItem = -1;
+				//DeactivationItem = -1;
 				//PathID = -1;
 			}
 		}

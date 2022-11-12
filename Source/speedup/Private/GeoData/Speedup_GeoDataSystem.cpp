@@ -141,7 +141,7 @@ void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
 	//GetWorld()->GetTimerManager().SetTimer(PathTimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocationInPath, 6.0f, true, 2.0f);
 	ActivPath[SlotID]->PathIsActiv = true;
 
-	StartTrackPathEvent(false, ItemID, PathID, SlotID);
+	//StartTrackPathEvent(false, ItemID, PathID, SlotID);
 }
 
 void USpeedup_GeoDataSystem::StartTrackPathEvent_Implementation(bool Stop,int ItemID, int PathID, int SlotID)
