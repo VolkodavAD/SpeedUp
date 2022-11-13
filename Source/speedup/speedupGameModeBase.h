@@ -30,19 +30,23 @@ protected:
 	//class USpeedup_GeoDataSystem* GeoDataSystemCPP;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UBaseWalletWidget* WalletBaseClass;
+	UBaseWalletWidget* WalletBaseClass;
 
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "GeoData")
-	void ActiveItem(int ItemID, int SlotID, int PathID);
-	UFUNCTION(BlueprintCallable, Category = "GeoData")
-	void DeactiveItem(int ItemID, int SlotID, int PathID);
+	//UFUNCTION(BlueprintCallable, Category = "GeoData")
+	//void ActiveItem(int ItemID, int PathID, int SlotID);
+	//UFUNCTION(BlueprintCallable, Category = "GeoData")
+	//void DeactiveItem(int ItemID, int PathID, int SlotID);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
-	void UpdateItem(int ItemID, int PathID, float Distance, float Speed);
-	void UpdateItem_Implementation(int ItemID, int PathID, float Distance, float Speed);
+	void UpdatePathItem(int ItemID, int SlotN, float Distance, float Speed);
+	void UpdatePathItem_Implementation(int ItemID, int SlotN, float Distance, float Speed);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
+	void FinalPathItem(int ItemID, int PathID, int SlotN, float Distance, float Speed);
+	void FinalPathItem_Implementation(int ItemID, int PathID, int SlotN, float Distance, float Speed);
 
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
@@ -56,8 +60,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Slot")
 	void ActiveSlot();
 
+	UFUNCTION(BlueprintCallable, Category = "Widjet")
+	void SetWalletInfo(UBaseWalletWidget* UBaseWalletWidget);
+
 	FORCEINLINE class UItemManager* GetNFTItemManager() const { return NFTItemManager; }
 //	FORCEINLINE class USpeedup_GeoDataSystem* GetGeoDataSystemCPP() const { return GeoDataSystemCPP; }
-	FORCEINLINE class UBaseWalletWidget* GetWalletInfo()const { return WalletBaseClass; }
+	FORCEINLINE UBaseWalletWidget* GetWalletInfo()const { return WalletBaseClass; }
 
 };

@@ -93,15 +93,6 @@ bool UItemManager::ActivateItem(int ItemID, int PathID, int SlotID, int& ErrorID
 		ErrorID = 404;
 	}
 
-	if (ItemByID->Energy > 0) 
-	{
-		int l_ItemEnergy = GetMyItem(ItemID)->Energy = ItemByID->Energy - 1;
-	}
-	else
-	{
-		return false;
-	}
-
 	ItemByID->SetItemStatus(StatusItem::Active);
 
 	ItemsSlot[SlotID].ItemID = ItemID;

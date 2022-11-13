@@ -153,12 +153,12 @@ public:
 	void NFTlevelUpRequest(const int NFTid, const FString TokenData);
 
 
-	UFUNCTION(BlueprintNativeEvent)
-	void StartPath(int ItemID, int StartPathID);
-	void StartPath_Implementation(int ItemID, int StartPathID);
-	UFUNCTION(BlueprintNativeEvent)
-	void StotPath(int ItemID, int StopPathID);
-	void StotPath_Implementation(int ItemID, int StopPathID);
+	//UFUNCTION(BlueprintNativeEvent)
+	//void StartPath(int ItemID, int StartPathID);
+	//void StartPath_Implementation(int ItemID, int StartPathID);
+	//UFUNCTION(BlueprintNativeEvent)
+	//void StotPath(int ItemID, int StopPathID);
+	//void StotPath_Implementation(int ItemID, int StopPathID);
 
 	UFUNCTION(BlueprintCallable)
 	void Verify(const FString CodeFromMail, const FString TokenData);

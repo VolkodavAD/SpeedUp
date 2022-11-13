@@ -60,27 +60,21 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FFinalBindableEvent SendFinalPath;
 
-	//UPROPERTY(BlueprintAssignable)
-	FDataIsReadyDelegate TestSD;
-
-	//UPROPERTY(BlueprintAssignable)
-	FDelegateName_TestDel02 TestSD02;
-	//UPROPERTY(BlueprintAssignable)
-	//FMyBindableEvent SendFinalPath;
-
+	// отправка данных на сервер
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void UpdateCurrentPath(int PathID);
-
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void UpdateLocationInPathID(int PathID, bool FinalPath = false);
+	
+	// работа с Модулем девайса
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
+	void ReInitServis();
+	void ReInitServis_Implementation();
+	// работа с Модулем девайса
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "GeoData")
 	void UpdateLocation();
 	void UpdateLocation_Implementation();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
-	void ReInitServis();
-	void ReInitServis_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
 	FGeoLocationInfo GetLastLocation();
@@ -91,14 +85,11 @@ public:
 	float GetDistanse2Coor_Implementation(FGeoPointInfo PointStart, FGeoPointInfo PointEnd);
 
 	UFUNCTION(BlueprintCallable)
+	void RestartTrackPath(int ItemID, int PathID, int SlotID);
+	UFUNCTION(BlueprintCallable)
 	void StartTrackPath(int ItemID, int PathID, int SlotID);
 	UFUNCTION(BlueprintCallable)
 	void StopTrackPath(int ItemID, int PathID, int SlotID);
-
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
-	void StartTrackPathEvent(bool Stop, int ItemID, int PathID, int SlotID);
-	void StartTrackPathEvent_Implementation(bool Stop, int ItemID, int PathID, int SlotID);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
 	void UpdateDistance(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance);

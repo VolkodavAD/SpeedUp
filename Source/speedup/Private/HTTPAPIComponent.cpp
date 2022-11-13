@@ -290,7 +290,7 @@ void UHTTPAPIComponent::NFTUpdateRequest(const int DeactivNFDId, const int Deact
 		FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 
 		FString BearerT = "Bearer ";
-		RequestActiveNFT->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedActivation);
+		RequestActiveNFT->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedUpdate);
 		RequestActiveNFT->SetURL(NFTUpdateRequestURL);
 		RequestActiveNFT->SetVerb("POST");
 		RequestActiveNFT->SetHeader("Content-Type", "application/json");
@@ -840,7 +840,7 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 				//GameMode->GetNFTItemManager()->ActivateItem(ActivationItem, PathID, 0, ErrorActivation);
 				//GameMode->GetGeoDataSystemCPP()->StartTrackPath(ActivationItem, PathID, 0);
 				GameMode->PostActivationItem(ActivationItem, PathID, ActivationSlot);
-				StartPath(ActivationItem, PathID);
+				//StartPath(ActivationItem, PathID);
 				ActivationItem = -1;
 			}
 		}
@@ -1180,6 +1180,10 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 			//TSharedPtr<FJsonObject> Transactions = ResponseObject->GetObjectField("data");
 			//TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapTransactions = Transactions->Values;
 			TArray<TSharedPtr<FJsonValue>> operations = ResponseObject->GetArrayField("data");
+			if (GameMode->GetWalletInfo() == nullptr)
+			{
+				GameMode->SetWalletInfo(NewObject<UBaseWalletWidget>(UBaseWalletWidget::StaticClass()));
+			}
 			GameMode->GetWalletInfo()->MyHistory.Empty();
 			for (int32 i = 0; i < operations.Num(); ++i)
 			{
@@ -1286,10 +1290,6 @@ void UHTTPAPIComponent::OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FH
 
 	}
 }
-void UHTTPAPIComponent::StartPath_Implementation(int ItemID, int StartPathID)
-{}
-void UHTTPAPIComponent::StotPath_Implementation(int ItemID, int StopPathID)
-{}
 
 UHTTPAPIComponent::UHTTPAPIComponent()
 {

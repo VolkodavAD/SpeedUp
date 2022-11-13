@@ -50,7 +50,11 @@ void USpeedup_GeoDataSystem::BeginPlay()
 	for (int32 i = 0; i < 3; ++i)
 	{
 		//ActivPath.Add(NewObject<UGeoPath>());
-		//ActivPath[i] = NewObject<UGeoPath>();
+		ActivPath[i] = NewObject<UGeoPath>();
+		ActivPath[i]->SetSlotID(i);
+		ActivPath[i]->SetPathID(-1);
+		ActivPath[i]->SetItemID(-1);
+		ActivPath[i]->SetStatusActive(false);
 	}
 }
 
@@ -89,29 +93,9 @@ TimerDel.BindUFunction(this, FName("MyUsefulFunction"), MyInt, MyFloat);
 //Calling MyUsefulFunction after 5 seconds without looping
 GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
 */
-
-void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
+void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID)
 {
 	ReInitServis();
-/*
-	UE_LOG(LogTemp, Warning, TEXT("ServiceEnable : %d"), ServiceEnable);
-
-	if (PathTimerHandle.IsValid())
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Silver, FString::Printf(TEXT("PathTimerHandle.IsValid - true")));
-	else
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Silver, FString::Printf(TEXT("PathTimerHandle.IsValid - false")));
-
-	if (GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle))
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Silver, FString::Printf(TEXT("IsTimerActive - true")));
-	else
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Silver, FString::Printf(TEXT("IsTimerActive - false")));
-*/
-	/*
-	if (ActivPath[SlotID] == nullptr)
-	{
-		ActivPath[SlotID] = NewObject<UGeoPath>();
-	}
-	*/
 	ActivPath[SlotID] = NewObject<UGeoPath>();
 	ActivPath[SlotID]->SetSlotID(SlotID);
 	ActivPath[SlotID]->SetPathID(PathID);
@@ -137,27 +121,43 @@ void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
 	default:
 		break;
 	}
-
-	//GetWorld()->GetTimerManager().SetTimer(PathTimerHandle, this, &USpeedup_GeoDataSystem::UpdateLocationInPath, 6.0f, true, 2.0f);
 	ActivPath[SlotID]->PathIsActiv = true;
-
-	//StartTrackPathEvent(false, ItemID, PathID, SlotID);
 }
 
-void USpeedup_GeoDataSystem::StartTrackPathEvent_Implementation(bool Stop,int ItemID, int PathID, int SlotID)
-{}
+void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
+{
+	ReInitServis();
+	ActivPath[SlotID] = NewObject<UGeoPath>();
+	ActivPath[SlotID]->SetSlotID(SlotID);
+	ActivPath[SlotID]->SetPathID(PathID);
+	ActivPath[SlotID]->SetItemID(ItemID);
+	ActivPath[SlotID]->SetStatusActive(true);
+
+	switch (SlotID)
+	{
+	case 0:
+		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 0);
+		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle01, TimerDelegatePuth01, 2.0f, true, 0.1f);
+
+		break;
+	case 1:
+		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 1);
+		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle02, TimerDelegatePuth02, 2.0f, true, 0.1f);
+		break;
+	case 2:
+		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 2);
+		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle03, TimerDelegatePuth03, 2.0f, true, 0.1f);
+		break;
+
+	default:
+		break;
+	}
+	ActivPath[SlotID]->PathIsActiv = true;
+}
+
 
 void USpeedup_GeoDataSystem::UpdateCurrentPath(int PathID)
 {
-	/*
-	if (ActivPath[PuthN] == nullptr)
-	{
-		ActivPath[PuthN] = NewObject<UGeoPath>();
-		return;
-	}
-	ActivPath[PuthN]->AddPoint(GetLastLocation());
-	*/
-	//UpdateLocationInPath();
 	UpdateLocationInPathID(PathID, false);
 }
 
@@ -166,19 +166,19 @@ void USpeedup_GeoDataSystem::StopTrackPath(int ItemID, int PathID, int SlotID)
 	switch (SlotID)
 	{
 	case 0:
-		if (GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle01) && !HaveActivePath())
+		if (GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle01))
 		{
 			GetWorld()->GetTimerManager().ClearTimer(PathTimerHandle01);
 		}
 		break;
 	case 1:
-		if (GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle02) && !HaveActivePath())
+		if (GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle02))
 		{
 			GetWorld()->GetTimerManager().ClearTimer(PathTimerHandle02);
 		}
 		break;
 	case 2:
-		if (GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle03) && !HaveActivePath())
+		if (GetWorld()->GetTimerManager().IsTimerActive(PathTimerHandle03))
 		{
 			GetWorld()->GetTimerManager().ClearTimer(PathTimerHandle03);
 		}
@@ -188,10 +188,9 @@ void USpeedup_GeoDataSystem::StopTrackPath(int ItemID, int PathID, int SlotID)
 		break;
 	}
 
+	//UpdateLocationInPathID(SlotID, true);
+
 	ActivPath[SlotID]->SetStatusActive(false);
-
-	UpdateLocationInPathID(PathID, true);
-
 
 	//ActivPath[PuthN]->PointsInPath.Empty();
 	//SendFinalPath.Broadcast();
@@ -199,35 +198,31 @@ void USpeedup_GeoDataSystem::StopTrackPath(int ItemID, int PathID, int SlotID)
 	//StartTrackPathEvent(true, ItemID, PathID, SlotID);
 }
 
-void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
+void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 {
 	FGeoLocationInfo LastLocation = GetLastLocation();
 	FGeoPointInfo AddedPoint;
-	AddedPoint.PointID = ActivPath[PathID]->PointsInPath.Num();
+	AddedPoint.PointID = ActivPath[SlotN]->PointsInPath.Num();
 	AddedPoint.PointLocation = LastLocation.PointLocation;
 	AddedPoint.TimeStamp = LastLocation.TimeStamp;
 	AddedPoint.DeltaTime = 0.0f;
 	AddedPoint.CurrentTime = FDateTime::UtcNow();
-	//int64 AAA = FDateTime::UtcNow().ToUnixTimestamp();
 
-	if (ActivPath[PathID]->PathIsActiv == true)
+	if (ActivPath[SlotN]->PathIsActiv == true)
 	{
-		AddedPoint.PointID = ActivPath[PathID]->PointsInPath.Num();
+		AddedPoint.PointID = ActivPath[SlotN]->PointsInPath.Num();
 
-		if (ActivPath[PathID]->PointsInPath.Num() > 0)
+		if (ActivPath[SlotN]->PointsInPath.Num() > 0)
 		{
 			float DeltaTimePath = 2.0; //(AddedPoint.CurrentTime - ActivPath[PathID]->PointsInPath.Last().CurrentTime).GetSeconds();
-			float DeltaLeghtPath = GetDistanse2Coor(ActivPath[PathID]->PointsInPath.Last(), AddedPoint);
+			float DeltaLeghtPath = GetDistanse2Coor(ActivPath[SlotN]->PointsInPath.Last(), AddedPoint);
 
 			AddedPoint.DeltaTime = DeltaTimePath;
 			AddedPoint.PointDistance = DeltaLeghtPath;
 			AddedPoint.PointSpeed = DeltaLeghtPath / DeltaTimePath;
 
-			//LeghtPath_Today = LeghtPath_Today + DeltaLeghtPath;
-			//LeghtPath_Total = LeghtPath_Total + DeltaLeghtPath;
-
-			ActivPath[PathID]->UserPathInfo.PathLength += DeltaLeghtPath;
-			ActivPath[PathID]->UserPathInfo.PathTime += DeltaTimePath;
+			ActivPath[SlotN]->UserPathInfo.PathLength += DeltaLeghtPath;
+			ActivPath[SlotN]->UserPathInfo.PathTime += DeltaTimePath;
 		}
 		else
 		{
@@ -235,13 +230,13 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 			AddedPoint.PointDistance = 0.0f;
 			AddedPoint.PointSpeed = -1.0f;
 
-			ActivPath[PathID]->UserPathInfo.PathLength = 0.0f;
-			ActivPath[PathID]->UserPathInfo.PathTime = 0.0f;
+			ActivPath[SlotN]->UserPathInfo.PathLength = 0.0f;
+			ActivPath[SlotN]->UserPathInfo.PathTime = 0.0f;
 		}
-		ActivPath[PathID]->AddPoint(AddedPoint);
+		ActivPath[SlotN]->AddPoint(AddedPoint);
 	}
 
-	if ((ActivPath[PathID]->UserPathInfo.PathTime > 60) || (FinalPath))
+	if ((ActivPath[SlotN]->UserPathInfo.PathTime > 60) || (FinalPath))
 	{
 		float PathSumSpeed = 0.0f;
 		float PathMinSpeed = 0.0f;
@@ -249,56 +244,48 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int PathID, bool FinalPath)
 		float PathAverageSpeed = 0.0f;
 		float PathDistance = 0.0f;
 
-		for (int32 i = 0; i < ActivPath[PathID]->PointsInPath.Num(); ++i)
+		for (int32 i = 0; i < ActivPath[SlotN]->PointsInPath.Num(); ++i)
 		{
 			if (i == 0)
 			{
-				PathMinSpeed = ActivPath[PathID]->PointsInPath[i].PointSpeed;
-				PathMaxSpeed = ActivPath[PathID]->PointsInPath[i].PointSpeed;
+				PathMinSpeed = ActivPath[SlotN]->PointsInPath[i].PointSpeed;
+				PathMaxSpeed = ActivPath[SlotN]->PointsInPath[i].PointSpeed;
 			}
 			else
 			{
-				PathMinSpeed = PathMinSpeed > ActivPath[PathID]->PointsInPath[i].PointSpeed ? ActivPath[PathID]->PointsInPath[i].PointSpeed : PathMinSpeed;
-				PathMaxSpeed = PathMaxSpeed < ActivPath[PathID]->PointsInPath[i].PointSpeed ? ActivPath[PathID]->PointsInPath[i].PointSpeed : PathMaxSpeed;
+				PathMinSpeed = PathMinSpeed > ActivPath[SlotN]->PointsInPath[i].PointSpeed ? ActivPath[SlotN]->PointsInPath[i].PointSpeed : PathMinSpeed;
+				PathMaxSpeed = PathMaxSpeed < ActivPath[SlotN]->PointsInPath[i].PointSpeed ? ActivPath[SlotN]->PointsInPath[i].PointSpeed : PathMaxSpeed;
 			}
-			PathSumSpeed += ActivPath[PathID]->PointsInPath[i].PointSpeed;
+			PathSumSpeed += ActivPath[SlotN]->PointsInPath[i].PointSpeed;
 		}
-		PathAverageSpeed = PathSumSpeed / ActivPath[PathID]->PointsInPath.Num();
-
-		ActivPath[PathID]->UserPathInfo.AverageSpeed = PathSumSpeed / ActivPath[PathID]->PointsInPath.Num();
-		ActivPath[PathID]->PointsInPath.Empty();
+		PathAverageSpeed = PathSumSpeed / ActivPath[SlotN]->PointsInPath.Num();
 
 		FGeoPathinfo AddedPathPart;
 
-		AddedPathPart.PathID = PathID;
-		AddedPathPart.AverageSpeed = ActivPath[PathID]->UserPathInfo.AverageSpeed;
-		AddedPathPart.PathLength = ActivPath[PathID]->UserPathInfo.PathLength;
-		AddedPathPart.PathTime = ActivPath[PathID]->UserPathInfo.PathTime;
-		AddedPathPart.maxSpeed = ActivPath[PathID]->UserPathInfo.maxSpeed;
-		AddedPathPart.minSpeed = ActivPath[PathID]->UserPathInfo.minSpeed;
+		AddedPathPart.PathID = ActivPath[SlotN]->UserPathInfo.PathID;
+		AddedPathPart.AverageSpeed = ActivPath[SlotN]->UserPathInfo.AverageSpeed;
+		AddedPathPart.PathLength = ActivPath[SlotN]->UserPathInfo.PathLength;
+		AddedPathPart.PathTime = ActivPath[SlotN]->UserPathInfo.PathTime;
+		AddedPathPart.maxSpeed = ActivPath[SlotN]->UserPathInfo.maxSpeed;
+		AddedPathPart.minSpeed = ActivPath[SlotN]->UserPathInfo.minSpeed;
 
-		ActivPath[PathID]->PartsOfPath.Add(AddedPathPart);
+		ActivPath[SlotN]->PartsOfPath.Add(AddedPathPart);
+		ActivPath[SlotN]->UserPathInfo.AverageSpeed = PathSumSpeed / ActivPath[SlotN]->PointsInPath.Num();
 
-
-		//PartsOfPath
 		if (FinalPath)
 		{
-			SendFinalPath.Broadcast(PathID);
+			AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+			GameMode->FinalPathItem(ActivPath[SlotN]->UserPathInfo.ItemID, ActivPath[SlotN]->UserPathInfo.PathID, SlotN, PathDistance, PathAverageSpeed);
 		}
 		else
 		{
-			//TestSD.ExecuteIfBound(PathID);
-			//TestSD02.Broadcast(PathID);
-			//SendPartPath.Broadcast(PathID);
 
 			AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
-			GameMode->UpdateItem(ActivPath[PathID]->UserPathInfo.ItemID, ActivPath[PathID]->UserPathInfo.PathID, PathDistance, PathAverageSpeed);
-			//PathUpdateEvent(0, ItemInfo.);
-			//AspeedupGameModeBase* GM = 
-			//UpdateDistance(ActivPath[PathID]->UserPathInfo.PathID, ActivPath[PathID]->UserPathInfo.ItemID, ActivPath[PathID]->UserPathInfo.AverageSpeed, ActivPath[PathID]->UserPathInfo.PathLength);
+			GameMode->UpdatePathItem(ActivPath[SlotN]->UserPathInfo.ItemID, ActivPath[SlotN]->UserPathInfo.PathID, PathDistance, PathAverageSpeed);
 		}
-	}
 
+		ActivPath[SlotN]->PointsInPath.Empty();
+	}
 }
 
 // Called every frame
