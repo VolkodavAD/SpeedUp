@@ -72,6 +72,16 @@ struct FBaseItemInfo : public FTableRowBase
 		int last_trip_id = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		FString NextUpdateTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int DKScount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int SPDcount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int distance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		bool nextLevelEnabled = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int distance2;
 };
 
 USTRUCT(BlueprintType)

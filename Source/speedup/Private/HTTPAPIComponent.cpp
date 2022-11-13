@@ -740,6 +740,15 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
 					NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
 					NFTItem.active = energy->GetBoolField("active");
+
+					TSharedPtr<FJsonObject> NextLevel = PointsObject->GetObjectField("next_level");
+					NFTItem.DKScount = NextLevel->GetIntegerField("dks");
+					NFTItem.SPDcount = NextLevel->GetIntegerField("spd");
+					NFTItem.distance = NextLevel->GetIntegerField("distance");
+
+					NFTItem.nextLevelEnabled = PointsObject->GetBoolField("next_level_enabled");
+					NFTItem.distance2= PointsObject->GetIntegerField("distance");
+
 					UItem* AddedItem = NewObject<UItem>();
 					AddedItem->SetItemInfo(NFTItem);
 					GameMode->GetNFTItemManager()->AddItem(AddedItem);
