@@ -44,6 +44,11 @@ void UItem::LevelUp()
 	ItemInfo.ItemLevel++;
 }
 
+void UItem::DifCapacity()
+{
+	ItemInfo.capacity--;
+}
+
 void UItem::SetItemStatus(StatusItem NewItemStatus)
 {
 	ItemInfo.ItemStatus = NewItemStatus;

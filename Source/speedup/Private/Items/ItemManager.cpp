@@ -26,7 +26,6 @@ void UItemManager::BeginPlay()
 	//PostFromBack_SlotsStats();
 	//PostFromBack_AllItems();
 
-	PostFromBack_SlotsStats();
 }
 
 // Called every frame
@@ -38,7 +37,6 @@ void UItemManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 
 void UItemManager::InitItemManager()
 {
-	PostFromBack_SlotsStats();
 }
 
 UItem* UItemManager::GetMyItem(int ItemID)
@@ -115,6 +113,7 @@ bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 
 	ItemsSlot[SlotID].ItemID = -1;
 	ItemsSlot[SlotID].PathForItem = -1;
+	ItemByID->DifCapacity();
 
 	return true;
 }
@@ -122,13 +121,6 @@ bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 bool UItemManager::UpdateItem(int ItemID, int SlotID, int& ErrorID)
 {
 	return true;
-}
-
-//----------------------------------- ЗАГЛУШКИ ПО БЭКУ ---------------------------------------
-
-//получаем состояние слотов из бэка
-void UItemManager::PostFromBack_SlotsStats()
-{
 }
 
 void UItemManager::AddItem(UItem* AddedItem)
