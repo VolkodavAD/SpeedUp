@@ -55,6 +55,9 @@ struct Fbalances : public FTableRowBase
         float dks_balance;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
         float internal_balance;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        float native_balance;
+
 };
 
 USTRUCT(BlueprintType)

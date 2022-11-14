@@ -649,7 +649,7 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 			FString balances_dks_wallet = balances->GetStringField("dks_wallet");
 			float balances_dks_balance = balances->GetNumberField("dks_balance");
 			float balances_internal_balance = balances->GetNumberField("internal_balance");
-
+			float native_balance = balances->GetNumberField("native_balance");
 			//TSharedPtr<FJsonObject> energy = nested->GetObjectField("energy");
 			//int user_id = energy->GetIntegerField("energy");
 			//uint8 capacity = energy->GetIntegerField("capacity"); // Byte
@@ -667,6 +667,7 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 			SpeedUpGI->UserInfo.Balance.dks_wallet = balances_dks_wallet;
 			SpeedUpGI->UserInfo.Balance.dks_balance = balances_dks_balance;
 			SpeedUpGI->UserInfo.Balance.internal_balance = balances_internal_balance;
+			SpeedUpGI->UserInfo.Balance.native_balance = native_balance;
 
 			//SpeedUpGI->UserInfo.Energy.capacity = capacity;
 			//SpeedUpGI->UserInfo.Energy.spend_part = spend_part;
