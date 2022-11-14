@@ -176,6 +176,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LevelUp();
+	UFUNCTION(BlueprintCallable)
+	void DifCapacity();
 
 	UFUNCTION(BlueprintCallable)
 	void SetItemStatus(StatusItem NewItemStatus);

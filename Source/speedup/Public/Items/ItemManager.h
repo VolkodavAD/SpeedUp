@@ -58,9 +58,6 @@ public:
 private:
 	void InitItemManager();
 
-	//получаем состояние слотов из сервере
-	void PostFromBack_SlotsStats();
-
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Timer")
 	FTimerHandle Items_TimerHandle;
 
