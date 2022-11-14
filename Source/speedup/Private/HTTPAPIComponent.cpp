@@ -770,6 +770,7 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
 
 					TSharedPtr<FJsonObject> energy = PointsObject->GetObjectField("energy");
+					NFTItem.NextUpdateTime = energy->GetStringField("next_update");
 					NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
 					NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
 					NFTItem.active = energy->GetBoolField("active");
@@ -794,6 +795,7 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.ItemRarity = static_cast<ItemLevelRarity>(PointsObject->GetIntegerField("rarity"));
 
 					TSharedPtr<FJsonObject> energy = PointsObject->GetObjectField("energy");
+					NFTItem.NextUpdateTime = energy->GetStringField("next_update");
 					NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
 					NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
 					NFTItem.active = energy->GetBoolField("active");
