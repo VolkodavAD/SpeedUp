@@ -696,6 +696,7 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 			SpeedUpGI->UserInfo.email_confirmed = Profile_email_confirmed;
 			SpeedUpGI->UserInfo.id = Profile_id;
 			SpeedUpGI->UserInfo.UserToken = ClientTocken;
+			SpeedUpGI->UserInfo.AllowedSlots = Allowed_slots;
 
 			SpeedUpGI->UserInfo.Balance.dks_wallet = balances_dks_wallet;
 			SpeedUpGI->UserInfo.Balance.dks_balance = balances_dks_balance;
