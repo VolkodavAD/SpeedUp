@@ -419,10 +419,21 @@ void UHTTPAPIComponent::BuyingSlotRequest(const FString TokenData)
 
 void UHTTPAPIComponent::NFTlevelUpRequest(const int NFTid,const FString TokenData)
 {
+
+	//const FHttpRequestRef RequestActiveNFT = FHttpModule::Get().CreateRequest();
+
+	//const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+	//RequestJsonObject->SetNumberField("nft_id", NFDId);
+	////токен
+	////RequestJsonObject->SetStringField("token", Password);
+	//FString RequestBody;
+
 	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+	
 	const FHttpRequestRef RequestSendCode = FHttpModule::Get().CreateRequest();
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
 	RequestJsonObject->SetNumberField("nft_id", NFTid);
+	
 	FString BearerT = "Bearer ";
 
 	FString RequestBody;
@@ -1271,6 +1282,7 @@ void UHTTPAPIComponent::OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FH
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
 	int Code = Response->GetResponseCode();
+
 	if (Code != 200)
 	{
 		Message = "Unsuccess";

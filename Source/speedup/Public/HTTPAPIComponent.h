@@ -62,7 +62,7 @@ private:
 	const FString NFTDeactiveRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/stop";
 	const FString NFTUpdateRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/update-params";
 	const FString BuyingSlotURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/slot/buy";
-	const FString NFTlevelUpURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/nft/up";
+	const FString NFTlevelUpURL = "https://m2e-backend-core.production.bc.gotbitgames.co/nft/up";
 	
 	///update-params
 	//NFTreceiptRequestURL
