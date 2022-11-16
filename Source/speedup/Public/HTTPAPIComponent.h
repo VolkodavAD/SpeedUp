@@ -42,6 +42,7 @@ private:
 	void OnResponseReceivedTransactions(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessBuying);
 	void OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessLvlUp);
+	void OnResponseReceivedNFTmint(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessMint);
 
 	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
@@ -63,6 +64,7 @@ private:
 	const FString NFTUpdateRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/update-params";
 	const FString BuyingSlotURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/slot/buy";
 	const FString NFTlevelUpURL = "https://m2e-backend-core.production.bc.gotbitgames.co/nft/up";
+	const FString MintNftURL = "https://m2e-backend-core.production.bc.gotbitgames.co/nft/mint";
 	
 	///update-params
 	//NFTreceiptRequestURL
@@ -152,7 +154,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void NFTlevelUpRequest(const int NFTid, const FString TokenData);
 
-
+	UFUNCTION(BlueprintCallable)
+		void NFTMint(const int NFTid, const FString TokenData);
 	//UFUNCTION(BlueprintNativeEvent)
 	//void StartPath(int ItemID, int StartPathID);
 	//void StartPath_Implementation(int ItemID, int StartPathID);
