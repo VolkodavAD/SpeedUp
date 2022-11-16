@@ -9,14 +9,18 @@
 
 UItemManager::UItemManager()
 {
+	/*
 	FItemSlot AddedSlot;
 	AddedSlot.IsUnlock = true;
 	AddedSlot.ItemID = -1;
 	AddedSlot.Items_TimerHandle = Items_TimerHandle;
 	ItemsSlot.Add(AddedSlot);
-
+	*/
+	FItemSlot AddedSlot;
 	AddedSlot.IsUnlock = false;
-	ItemsSlot.Add(AddedSlot);
+	AddedSlot.ItemID = -1;
+	AddedSlot.Items_TimerHandle = Items_TimerHandle;
+
 	ItemsSlot.Add(AddedSlot);
 }
 // Called when the game starts
@@ -35,8 +39,13 @@ void UItemManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 	// ...
 }
 
-void UItemManager::InitItemManager()
+void UItemManager::InitItemManager(int SlotCount)
 {
+	FItemSlot AddedSlot;
+	for (int i = 0; i < SlotCount; i++)
+	{
+		ItemsSlot[i].IsUnlock = true;
+	}
 }
 
 UItem* UItemManager::GetMyItem(int ItemID)

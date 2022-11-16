@@ -95,6 +95,8 @@ struct FUserInfo : public FTableRowBase
         Fbalances  Balance;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
         Fenergy Energy;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        int AllowedSlots;
 };
 
 UCLASS()

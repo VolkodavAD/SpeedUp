@@ -56,13 +56,15 @@ public:
 	//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMyBindableEvent);
 
 private:
-	void InitItemManager();
 
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Timer")
 	FTimerHandle Items_TimerHandle;
 
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "Slot")
+	void InitItemManager(int SlotCount);
+
 	//слоты инвенторя и список имеющихся на аккаунте предметов
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
 	TArray<FItemSlot> ItemsSlot;
