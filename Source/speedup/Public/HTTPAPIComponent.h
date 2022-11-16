@@ -6,11 +6,62 @@
 #include "Items/Item.h"
 #include "UObject/Object.h"
 #include "Interfaces/IHttpRequest.h"
+#include <unordered_map>
+#include <string>
+#include "ThirdParty/nlohmann/json.hpp"
 #include "HTTPAPIComponent.generated.h"
 
 class UActorComponent;
 class AspeedupGameModeBase;
 class USpeedUpGameInstance;
+
+#define INIT_ENDP_URL(service, endp) "https://m2e-backend-"#service".production.bc.gotbitgames.co/"#endp
+
+class HttpResponseWrapper {
+	public:
+
+	explicit operator bool() const;
+ 
+	HttpResponseWrapper(FHttpResponsePtr Response);
+
+	int GetErrorID() const;
+
+	const FString& GetErrorText();
+
+	const FString& GetMessage() const;
+
+	bool GetSuccessValue() const;
+
+	nlohmann::json RespBody;
+
+
+	private:
+
+	std::string FromFStringToStd(FString value);
+
+	int ErrorID = 101;
+	
+	FString Data;
+	
+	FString Message = "ResponseObject is null";
+	
+	bool Success = false;
+
+	bool Initialized = false;
+
+	std::unordered_map<int, FString> ErrorText = {
+		{101, "Response is null"},
+		{400, "Invalid Arguments"},
+		{401, "Unauthorized"},
+		{403, "Invalid Credentials"},
+		{404, "Not found"},
+		{500, "Internal Server Error"},
+		{502, "Bad Gateway"},
+		{200, "OK"}
+	};
+};
+
+
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SPEEDUP_API UHTTPAPIComponent : public UActorComponent
@@ -43,26 +94,26 @@ private:
 	void OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessBuying);
 	void OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessLvlUp);
 
-	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
-	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
-	const FString LogOutURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
-	const FString ChangePasswordURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/change-password";
-	const FString PasswordRepairURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/recovery-account";
-	const FString SendRecoveryCodeURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/send-code-recovery";
+	// const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
+	// const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
+	// const FString LogOutURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
+	// const FString ChangePasswordURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/change-password";
+	// const FString PasswordRepairURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/recovery-account";
+	// const FString SendRecoveryCodeURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/send-code-recovery";
 
-	const FString SendCodeURL =	"https://m2e-backend-auth.production.bc.gotbitgames.co/auth/send-code";
-	const FString VerifiURL =	"https://m2e-backend-auth.production.bc.gotbitgames.co/auth/verify-code";
+	// const FString SendCodeURL =	"https://m2e-backend-auth.production.bc.gotbitgames.co/auth/send-code";
+	// const FString VerifiURL =	"https://m2e-backend-auth.production.bc.gotbitgames.co/auth/verify-code";
 
-	const FString ProfileURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/profile";
-	const FString StatisticURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/stat";
-	const FString TransactionsURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/transactions/history";
+	// const FString ProfileURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/profile";
+	// const FString StatisticURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/stat";
+	// const FString TransactionsURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/transactions/history";
 	
-	const FString NFTreceiptRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/profile/nfts";
-	const FString NFTActiveRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/start";
-	const FString NFTDeactiveRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/stop";
-	const FString NFTUpdateRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/update-params";
-	const FString BuyingSlotURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/slot/buy";
-	const FString NFTlevelUpURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/nft/up";
+	// const FString NFTreceiptRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/profile/nfts";
+	// const FString NFTActiveRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/start";
+	// const FString NFTDeactiveRequestURL =	"https://m2e-backend-core.production.bc.gotbitgames.co/stop";
+	// const FString NFTUpdateRequestURL =		"https://m2e-backend-core.production.bc.gotbitgames.co/update-params";
+	// const FString BuyingSlotURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/slot/buy";
+	// const FString NFTlevelUpURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/nft/up";
 	
 	///update-params
 	//NFTreceiptRequestURL

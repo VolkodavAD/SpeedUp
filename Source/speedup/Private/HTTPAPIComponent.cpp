@@ -13,6 +13,55 @@
 
 DEFINE_LOG_CATEGORY_STATIC(HTTP_REQUEST_RESPONSE, Log, Log)
 
+HttpResponseWrapper::HttpResponseWrapper(FHttpResponsePtr Response) {
+
+	TSharedPtr<FJsonObject> ResponseObject;
+	FJsonSerializer::Deserialize(
+		TJsonReaderFactory<>::Create(Response->GetContentAsString()), 
+		ResponseObject
+	);
+
+	FString OutputString;
+    TSharedRef< TJsonWriter<> > Writer = TJsonWriterFactory<>::Create(&OutputString);
+    FJsonSerializer::Serialize(ResponseObject.ToSharedRef(), Writer);
+
+	RespBody = nlohmann::json::parse(FromFStringToStd(OutputString).c_str());
+
+	if (ResponseObject)
+	{
+		ErrorID = Response->GetResponseCode();
+		Success = ResponseObject->GetBoolField("success");
+		Success = RespBody["success"].get<bool>();
+		Message = RespBody["message"].get<std::string>().c_str();
+		Data = ResponseObject->HasField("data") ? ResponseObject->GetStringField("data") : "";
+		Initialized = true;
+	}
+}
+
+std::string HttpResponseWrapper::FromFStringToStd(FString value) {
+	return std::string(TCHAR_TO_UTF8(*value));
+}
+
+HttpResponseWrapper::operator bool() const {
+	return Initialized;
+}
+
+int HttpResponseWrapper::GetErrorID() const {
+	return ErrorID;
+}
+
+const FString& HttpResponseWrapper::GetErrorText() {
+	return ErrorText[ErrorID];
+}
+
+const FString& HttpResponseWrapper::GetMessage() const {
+	return Message;
+}
+
+bool HttpResponseWrapper::GetSuccessValue() const {
+	return Success;
+}
+
 
 void UHTTPAPIComponent::BeginPlay()
 {
@@ -41,7 +90,7 @@ void UHTTPAPIComponent::SignUpRequest(const FString Email, const FString Passwor
 	const TSharedRef<TJsonWriter<>> JsonWriter =TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);	
 	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedSignUP);
-	Request->SetURL(SignUPURL);
+	Request->SetURL(INIT_ENDP_URL(auth, auth/signup));
 	Request->SetVerb("POST");
 	Request->SetHeader("Content-Type", "application/json");
 	Request->SetContentAsString(RequestBody);
@@ -66,7 +115,7 @@ void UHTTPAPIComponent::SignInRequest(const FString Email, const FString Passwor
 	const TSharedRef<TJsonWriter<>> JsonWriter =TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);	
 	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedSignIN);
-	Request->SetURL(SignINURL);
+	Request->SetURL(INIT_ENDP_URL(auth, auth/login));
 	Request->SetVerb("POST");
 	Request->SetHeader("Content-Type", "application/json");
 	Request->SetContentAsString(RequestBody);
@@ -88,7 +137,7 @@ void UHTTPAPIComponent::ChangePassword(const FString OldPassword, const FString 
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 	FString BearerT = "Bearer ";
 	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedChangePassword);
-	Request->SetURL(ChangePasswordURL);
+	Request->SetURL(INIT_ENDP_URL(auth, auth/change-password));
 	Request->SetVerb("POST");
 	Request->SetHeader("Content-Type", "application/json");
 	Request->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
@@ -110,7 +159,7 @@ void UHTTPAPIComponent::RepairPassword(const FString NewPassword, const FString 
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedRepairPassword);
-	Request->SetURL(PasswordRepairURL);
+	Request->SetURL(INIT_ENDP_URL(auth, auth/recovery-account));
 	Request->SetVerb("POST");
 	Request->SetHeader("Content-Type", "application/json");
 	Request->SetContentAsString(RequestBody);
@@ -129,7 +178,7 @@ void UHTTPAPIComponent::SendRecoveryCode(const FString Email)
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedRecoveryCode);
-	Request->SetURL(SendRecoveryCodeURL);
+	Request->SetURL(INIT_ENDP_URL(auth, auth/send-code-recovery));
 	Request->SetVerb("POST");
 	Request->SetHeader("Content-Type", "application/json");
 	Request->SetContentAsString(RequestBody);
@@ -149,7 +198,7 @@ void UHTTPAPIComponent::LogoutRequest(const FString DataToken)
 	const TSharedRef<TJsonWriter<>> JsonWriter =TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);	
 	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedLogOut);
-	Request->SetURL(LogOutURL);
+	Request->SetURL(INIT_ENDP_URL(auth, auth/logout));
 	Request->SetVerb("POST");
 	Request->SetHeader("Content-Type", "application/json");
 	Request->SetContentAsString(RequestBody);
@@ -170,7 +219,7 @@ void UHTTPAPIComponent::CodeRequestFromServer(const FString DataToken)
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 	RequestSendCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedSendCode);
-	RequestSendCode->SetURL(SendCodeURL);
+	RequestSendCode->SetURL(INIT_ENDP_URL(auth, auth/send-code));
 	RequestSendCode->SetVerb("POST");
 	RequestSendCode->SetHeader("Content-Type", "application/json");
 	RequestSendCode->AppendToHeader("Authorization", BearerT.Append(DataToken));
@@ -189,7 +238,7 @@ void UHTTPAPIComponent::NFTreceiptRequest(const FString TokenData)
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
 
 	NFTget->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedNFTreceipt);
-	NFTget->SetURL(NFTreceiptRequestURL);
+	NFTget->SetURL(INIT_ENDP_URL(core, profile/nfts));
 	NFTget->SetVerb("GET");
 	NFTget->SetHeader("Content-Type", "application/json");
 	NFTget->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));	
@@ -202,7 +251,7 @@ void UHTTPAPIComponent::NFTactivationRequest(const int NFDId, const int SlotID)
 
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
 	RequestJsonObject->SetNumberField("nft_id", NFDId);
-	//токен
+	//пїЅпїЅпїЅпїЅпїЅ
 	//RequestJsonObject->SetStringField("token", Password);
 	FString RequestBody;
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
@@ -210,7 +259,7 @@ void UHTTPAPIComponent::NFTactivationRequest(const int NFDId, const int SlotID)
 
 	FString BearerT = "Bearer ";
 	RequestActiveNFT->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedActivation);
-	RequestActiveNFT->SetURL(NFTActiveRequestURL);
+	RequestActiveNFT->SetURL(INIT_ENDP_URL(core, start));
 	RequestActiveNFT->SetVerb("POST");
 	RequestActiveNFT->SetHeader("Content-Type", "application/json");
 	RequestActiveNFT->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
@@ -246,7 +295,7 @@ void UHTTPAPIComponent::NFTdeactivationRequest(const int DeactivNFDId, const int
 	RequestJsonObject->SetNumberField("avg_velocity", avg_velocity);
 	RequestJsonObject->SetNumberField("avg_distance", avg_distance);
 
-	//токен
+	//пїЅпїЅпїЅпїЅпїЅ
 	//RequestJsonObject->SetStringField("token", Password);
 	FString RequestBody;
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
@@ -254,7 +303,7 @@ void UHTTPAPIComponent::NFTdeactivationRequest(const int DeactivNFDId, const int
 
 	FString BearerT = "Bearer ";
 	RequestActiveNFT->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedDeactivation);
-	RequestActiveNFT->SetURL(NFTDeactiveRequestURL);
+	RequestActiveNFT->SetURL(INIT_ENDP_URL(core, stop));
 	RequestActiveNFT->SetVerb("POST");
 	RequestActiveNFT->SetHeader("Content-Type", "application/json");
 	RequestActiveNFT->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
@@ -283,7 +332,7 @@ void UHTTPAPIComponent::NFTUpdateRequest(const int DeactivNFDId, const int Deact
 		RequestJsonObject->SetNumberField("avg_Speed", avg_velocity);
 		RequestJsonObject->SetNumberField("avg_distanse", avg_distance);
 
-		//токен
+		//пїЅпїЅпїЅпїЅпїЅ
 		//RequestJsonObject->SetStringField("token", Password);
 		FString RequestBody;
 		const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
@@ -291,7 +340,7 @@ void UHTTPAPIComponent::NFTUpdateRequest(const int DeactivNFDId, const int Deact
 
 		FString BearerT = "Bearer ";
 		RequestActiveNFT->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedUpdate);
-		RequestActiveNFT->SetURL(NFTUpdateRequestURL);
+		RequestActiveNFT->SetURL(INIT_ENDP_URL(core, update-params));
 		RequestActiveNFT->SetVerb("POST");
 		RequestActiveNFT->SetHeader("Content-Type", "application/json");
 		RequestActiveNFT->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
@@ -314,7 +363,7 @@ void UHTTPAPIComponent::Verify(const FString CodeFromMail, const FString TokenDa
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 	FString BearerT = "Bearer ";
 	VerifyCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedVerefi);
-	VerifyCode->SetURL(VerifiURL);
+	VerifyCode->SetURL(INIT_ENDP_URL(auth, auth/verify-code));
 	VerifyCode->SetVerb("POST");
 	VerifyCode->SetHeader("Content-Type", "application/json");
 	VerifyCode->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
@@ -335,7 +384,7 @@ void UHTTPAPIComponent::Profile(const FString TokenData)
 	*/
 	FString BearerT = "Bearer ";
 	ProfileCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedProfile);
-	ProfileCode->SetURL(ProfileURL);
+	ProfileCode->SetURL(INIT_ENDP_URL(core, profile));
 	ProfileCode->SetVerb("GET");
 	ProfileCode->SetHeader("Content-Type", "application/json");
 	ProfileCode->AppendToHeader("Authorization", BearerT.Append(TokenData));
@@ -356,7 +405,7 @@ void UHTTPAPIComponent::StatisticRequest(const ItemType StatItemType, const int 
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 	ProfileCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedPathStatistick);
-	ProfileCode->SetURL(StatisticURL);
+	ProfileCode->SetURL(INIT_ENDP_URL(core, profile/stat));
 	ProfileCode->SetVerb("POST");
 	ProfileCode->SetHeader("Content-Type", "application/json");
 	ProfileCode->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
@@ -388,7 +437,7 @@ void UHTTPAPIComponent::TransactionsRequest(const int Page, const int Limit, con
 	const FHttpRequestRef TransactionsRequest = FHttpModule::Get().CreateRequest();
 	
 	TransactionsRequest->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedTransactions);
-	TransactionsRequest->SetURL(TransactionsURL);
+	TransactionsRequest->SetURL(INIT_ENDP_URL(core, profile/transactions/history));
 	TransactionsRequest->SetVerb("POST");
 	TransactionsRequest->SetHeader("Content-Type", "application/json");
 	TransactionsRequest->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));
@@ -409,7 +458,7 @@ void UHTTPAPIComponent::BuyingSlotRequest(const FString TokenData)
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 	RequestSendCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedBuyingSlot);
-	RequestSendCode->SetURL(BuyingSlotURL);
+	RequestSendCode->SetURL(INIT_ENDP_URL(core, profile/slot/buy));
 	RequestSendCode->SetVerb("POST");
 	RequestSendCode->SetHeader("Content-Type", "application/json");
 	RequestSendCode->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));
@@ -429,7 +478,7 @@ void UHTTPAPIComponent::NFTlevelUpRequest(const int NFTid,const FString TokenDat
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
 	RequestSendCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedNFTlevelUp);
-	RequestSendCode->SetURL(NFTlevelUpURL);
+	RequestSendCode->SetURL(INIT_ENDP_URL(core, profile/nft/up));
 	RequestSendCode->SetVerb("POST");
 	RequestSendCode->SetHeader("Content-Type", "application/json");
 	RequestSendCode->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));
@@ -461,9 +510,32 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 			Message = ResponseObject->GetStringField("message");
 			ClientTocken = ResponseObject->GetStringField("data");
 			SpeedUpGI->UserInfo.UserToken = ClientTocken;
-
 		}
 	}
+
+
+	/*
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+	if (auto resp = HttpResponseWrapper(Response); resp && SpeedUpGI) {
+		ErrorID = resp.GetErrorID();
+		bSuccess = resp.GetSuccessValue();
+		ErrorText = resp.GetErrorText();
+		Data = resp.RespBody["data"].get<std::string>().c_str();
+		Message = resp.RespBody["message"].get<std::string>().c_str();
+
+		{
+			id: "asdasdsa",
+			qweqe: {
+				asdas: 3
+			}
+		}
+
+		jsonObj["qweqe"]["asdas"].get<std::string>();
+		ClientTocken = resp.RespBody["data"].get<std::string>().c_str();
+		SpeedUpGI->UserInfo.UserToken = ClientTocken;
+ }*/
+
+
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"));
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"));
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"));
@@ -517,6 +589,7 @@ void UHTTPAPIComponent::OnResponseReceivedSignUP(FHttpRequestPtr Request, FHttpR
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
 
 	if (ResponseObject == nullptr)
 	{
@@ -638,6 +711,7 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 			Message = ResponseObject->GetStringField("message");
 			bSuccess = ResponseObject->GetBoolField("success");
 			//Data = ResponseObject->GetStringField("data");
+
 
 			TSharedPtr<FJsonObject> nested = ResponseObject->GetObjectField("data");
 			FString Profile_Name = nested->GetStringField("email");
