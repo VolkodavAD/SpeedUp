@@ -21,22 +21,26 @@ HttpResponseWrapper::HttpResponseWrapper(FHttpResponsePtr Response) {
 		ResponseObject
 	);
 
-	FString OutputString;
-    TSharedRef< TJsonWriter<> > Writer = TJsonWriterFactory<>::Create(&OutputString);
-    FJsonSerializer::Serialize(ResponseObject.ToSharedRef(), Writer);
+	// FString OutputString;
+    // TSharedRef< TJsonWriter<> > Writer = TJsonWriterFactory<>::Create(&OutputString);
+    // FJsonSerializer::Serialize(ResponseObject.ToSharedRef(), Writer);
 
-	RespBody = nlohmann::json::parse(FromFStringToStd(OutputString).c_str());
+	// RespBody = nlohmann::json::parse(FromFStringToStd(OutputString).c_str());
 
 	if (ResponseObject)
 	{
-		ErrorID = Response->GetResponseCode();
+		// ErrorID = Response->GetResponseCode();
+		// Success = RespBody["success"].get<bool>();
+		// Message = RespBody["message"].get<std::string>().c_str();
+		// Initialized = true;
 		Success = ResponseObject->GetBoolField("success");
-		Success = RespBody["success"].get<bool>();
-		Message = RespBody["message"].get<std::string>().c_str();
-		Data = ResponseObject->HasField("data") ? ResponseObject->GetStringField("data") : "";
+		Message = ResponseObject->GetStringField("message");
+		ErrorID = Response->GetResponseCode();
 		Initialized = true;
 	}
 }
+
+
 
 std::string HttpResponseWrapper::FromFStringToStd(FString value) {
 	return std::string(TCHAR_TO_UTF8(*value));
@@ -51,17 +55,12 @@ int HttpResponseWrapper::GetErrorID() const {
 }
 
 const FString& HttpResponseWrapper::GetErrorText() {
-	return ErrorText[ErrorID];
-}
-
-const FString& HttpResponseWrapper::GetMessage() const {
 	return Message;
 }
 
 bool HttpResponseWrapper::GetSuccessValue() const {
 	return Success;
 }
-
 
 void UHTTPAPIComponent::BeginPlay()
 {
@@ -484,6 +483,17 @@ void UHTTPAPIComponent::NFTlevelUpRequest(const int NFTid,const FString TokenDat
 	RequestSendCode->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));
 	RequestSendCode->SetContentAsString(RequestBody);
 	RequestSendCode->ProcessRequest();
+}
+
+void UHTTPAPIComponent::MintNFTRequest(const int NFTid)
+{
+	const FHttpRequestRef RequestSendCode = FHttpModule::Get().CreateRequest();
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+
+	nlohmann::json RequestJsonObject = {
+		{ "nft_id", NFTid }
+	};
+
 }
 
 void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)

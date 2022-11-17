@@ -17,6 +17,7 @@ class USpeedUpGameInstance;
 
 #define INIT_ENDP_URL(service, endp) "https://m2e-backend-"#service".production.bc.gotbitgames.co/"#endp
 
+
 class HttpResponseWrapper {
 	public:
 
@@ -28,12 +29,9 @@ class HttpResponseWrapper {
 
 	const FString& GetErrorText();
 
-	const FString& GetMessage() const;
-
 	bool GetSuccessValue() const;
 
 	nlohmann::json RespBody;
-
 
 	private:
 
@@ -41,25 +39,24 @@ class HttpResponseWrapper {
 
 	int ErrorID = 101;
 	
-	FString Data;
-	
 	FString Message = "ResponseObject is null";
 	
 	bool Success = false;
 
 	bool Initialized = false;
 
-	std::unordered_map<int, FString> ErrorText = {
-		{101, "Response is null"},
-		{400, "Invalid Arguments"},
-		{401, "Unauthorized"},
-		{403, "Invalid Credentials"},
-		{404, "Not found"},
-		{500, "Internal Server Error"},
-		{502, "Bad Gateway"},
-		{200, "OK"}
-	};
+	// std::unordered_map<int, FString> ErrorText = {
+	// 	{101, "Response is null"},
+	// 	{400, "Invalid Arguments"},
+	// 	{401, "Unauthorized"},
+	// 	{403, "Invalid Credentials"},
+	// 	{404, "Not found"},
+	// 	{500, "Internal Server Error"},
+	// 	{502, "Bad Gateway"},
+	// 	{200, "OK"}
+	// };
 };
+
 
 
 
@@ -93,6 +90,8 @@ private:
 	void OnResponseReceivedTransactions(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessBuying);
 	void OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessLvlUp);
+
+	void OnResponseReceivedMintNFT(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
 	// const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	// const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
@@ -162,6 +161,9 @@ public:
 	void SignUpRequest(const FString Email, const FString Password);
 
 	UFUNCTION(BlueprintCallable)
+	void SignUpRequest(const FString Email, const FString Password);
+
+	UFUNCTION(BlueprintCallable)
 	void SignInRequest(const FString Email, const FString Password);
 
 	UFUNCTION(BlueprintCallable)
@@ -202,6 +204,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void NFTlevelUpRequest(const int NFTid, const FString TokenData);
+
+	UFUNCTION(BlueprintCallable)
+	void MintNFTRequest(const int NFTid);
 
 
 	//UFUNCTION(BlueprintNativeEvent)
