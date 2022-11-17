@@ -12,12 +12,38 @@ class UActorComponent;
 class AspeedupGameModeBase;
 class USpeedUpGameInstance;
 
+/**
+400 - пользователь сделал херню (неправильные аргументы)
+401 - нет авторизации/либо нет доступа к чему то
+403 - неправильные креденшиалсы (уже существует такой пользователь/неправильный пароль)
+404 - не найдено (неважно что)
+500 - ошибка на беке - можно унифицировать сообщение от нее - server side error или что то такоеё
+502 - сервер недоступен, упал или еще что то
+200 - ок
+ **/
+
+USTRUCT(BlueprintType)
+struct FResponceInfo: public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	bool CorrectResponseObject = false;
+	bool bSuccess = false;
+	FString Message = "Error";
+	int ErrorID = 404;
+};
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SPEEDUP_API UHTTPAPIComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 private:
+	FResponceInfo InfoResponseSignUP;
+	FResponceInfo InfoResponseSignIN;
+	FResponceInfo InfoResponseSignOut;
+	FResponceInfo InfoResponseSebdCode;
+	FResponceInfo InfoResponseVerefi;
 
 	void OnResponseReceivedSignUP(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
@@ -27,18 +53,30 @@ private:
 	void OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedChangePassword(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
+	FResponceInfo InfoResponseProfile;
+	FResponceInfo InfoResponseNFTreceipt;
 	void OnResponseReceivedProfile(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
+	FResponceInfo InfoResponseNFTActivation;
+	FResponceInfo InfoResponseNFTUpdate;
+	FResponceInfo InfoResponseNFTDeactivation;
 	void OnResponseReceivedActivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedUpdate(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);	
 	void OnResponseReceivedDeactivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
+	FResponceInfo InfoResponseRepairPassword;
+	FResponceInfo InfoResponseRecoveryCode;
 	void OnResponseReceivedRepairPassword(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedRecoveryCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
+	FResponceInfo InfoResponseStatistick;
 	void OnResponseReceivedPathStatistick(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
+	FResponceInfo InfoResponseTransactions;
+	FResponceInfo InfoResponseBuyingSlot;
+	FResponceInfo InfoResponseNFTlevelUp;
+	FResponceInfo InfoResponseNFTmint;
 	void OnResponseReceivedTransactions(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessBuying);
 	void OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessLvlUp);
@@ -73,6 +111,8 @@ private:
 public:
 
 	UHTTPAPIComponent();
+
+	TMap<int, FString> ErrorsMap;
 
 	UPROPERTY(BlueprintReadOnly)
 	FString LoginResult;
@@ -155,7 +195,7 @@ public:
 	void NFTlevelUpRequest(const int NFTid, const FString TokenData);
 
 	UFUNCTION(BlueprintCallable)
-		void NFTMint(const int NFTid, const FString TokenData);
+	void NFTMint(const int NFTid, const FString TokenData);
 	//UFUNCTION(BlueprintNativeEvent)
 	//void StartPath(int ItemID, int StartPathID);
 	//void StartPath_Implementation(int ItemID, int StartPathID);

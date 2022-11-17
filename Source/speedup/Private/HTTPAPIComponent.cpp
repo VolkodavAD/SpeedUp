@@ -490,11 +490,26 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 		else
 		{
 			ErrorID = Response->GetResponseCode();
-			bSuccess = ResponseObject->GetBoolField("success");
-			Message = ResponseObject->GetStringField("message");
-			ClientTocken = ResponseObject->GetStringField("data");
-			SpeedUpGI->UserInfo.UserToken = ClientTocken;
+			if (ErrorID != 200)
+			{
+				InfoResponseSignIN.CorrectResponseObject = true;
+				InfoResponseSignIN.bSuccess = true;
+				InfoResponseSignIN.ErrorID = ErrorID;
+				InfoResponseSignIN.Message = "Success";
+			}
+			else
+			{
+				InfoResponseSignIN.CorrectResponseObject = false;
+				InfoResponseSignIN.bSuccess = false;
+				InfoResponseSignIN.ErrorID = ErrorID;
+				InfoResponseSignIN.Message = "Success";
 
+				ErrorID = Response->GetResponseCode();
+				bSuccess = ResponseObject->GetBoolField("success");
+				Message = ResponseObject->GetStringField("message");
+				ClientTocken = ResponseObject->GetStringField("data");
+				SpeedUpGI->UserInfo.UserToken = ClientTocken;
+			}
 		}
 	}
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"));
@@ -1360,7 +1375,24 @@ void UHTTPAPIComponent::OnResponseReceivedNFTmint(FHttpRequestPtr Request, FHttp
 	}
 }
 
+/**
+400 - пользователь сделал херню (неправильные аргументы)
+401 - нет авторизации/либо нет доступа к чему то
+403 - неправильные креденшиалсы (уже существует такой пользователь/неправильный пароль)
+404 - не найдено (неважно что)
+500 - ошибка на беке - можно унифицировать сообщение от нее - server side error или что то такоеё
+502 - сервер недоступен, упал или еще что то
+200 - ок
+ **/
+
 UHTTPAPIComponent::UHTTPAPIComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	ErrorsMap.Add(200, "Success");
+	ErrorsMap.Add(400, "Is't correct input");
+	ErrorsMap.Add(401, "Is't authorization");
+	ErrorsMap.Add(403, "неправильные креденшиалсы");
+	ErrorsMap.Add(404, "Not Found");
+	ErrorsMap.Add(500, "server side error");
+	ErrorsMap.Add(502, "сервер недоступен");
 }
