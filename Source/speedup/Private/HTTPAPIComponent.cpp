@@ -479,6 +479,8 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
 	if (SpeedUpGI)
 	{
+		//CheckResponse(Response);
+
 		if (ResponseObject == nullptr)
 		{
 			bSuccess = false;
@@ -486,20 +488,24 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 			Data = "";
 			ErrorID = 101;
 			ErrorText = "Response is null";
+
+			InfoResponseSignIN.bCorrectResponseObject = false;
+			InfoResponseSignIN.bSuccess = false;
+			InfoResponseSignIN.ErrorID = 101;
+			InfoResponseSignIN.Message = "Response is null";
 		}
-		else
+
+		ErrorID = Response->GetResponseCode();
+		if (ErrorID != 200)
 		{
-			ErrorID = Response->GetResponseCode();
-			if (ErrorID != 200)
-			{
-				InfoResponseSignIN.CorrectResponseObject = true;
-				InfoResponseSignIN.bSuccess = true;
+				InfoResponseSignIN.bCorrectResponseObject = true;
+				InfoResponseSignIN.bSuccess = ResponseObject->GetBoolField("success");
 				InfoResponseSignIN.ErrorID = ErrorID;
-				InfoResponseSignIN.Message = "Success";
-			}
-			else
-			{
-				InfoResponseSignIN.CorrectResponseObject = false;
+				InfoResponseSignIN.Message = ResponseObject->GetStringField("message");
+		}
+
+		{
+				InfoResponseSignIN.bCorrectResponseObject = false;
 				InfoResponseSignIN.bSuccess = false;
 				InfoResponseSignIN.ErrorID = ErrorID;
 				InfoResponseSignIN.Message = "Success";
@@ -507,9 +513,9 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 				ErrorID = Response->GetResponseCode();
 				bSuccess = ResponseObject->GetBoolField("success");
 				Message = ResponseObject->GetStringField("message");
+
 				ClientTocken = ResponseObject->GetStringField("data");
 				SpeedUpGI->UserInfo.UserToken = ClientTocken;
-			}
 		}
 	}
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"));
@@ -552,7 +558,6 @@ void UHTTPAPIComponent::OnResponseReceivedSendCode(FHttpRequestPtr Request, FHtt
 		ErrorText = "";
 		bSuccess = ResponseObject->GetBoolField("success");
 		Message = ResponseObject->GetStringField("message");
-		//Data = ResponseObject->GetStringField("data");
 	}
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
@@ -1395,4 +1400,6 @@ UHTTPAPIComponent::UHTTPAPIComponent()
 	ErrorsMap.Add(404, "Not Found");
 	ErrorsMap.Add(500, "server side error");
 	ErrorsMap.Add(502, "сервер недоступен");
+
+	InfoResponseSignIN.ErrorMap.Add(404, "Not found item");
 }

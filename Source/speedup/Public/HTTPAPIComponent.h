@@ -27,10 +27,12 @@ struct FResponceInfo: public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	bool CorrectResponseObject = false;
+	bool bCorrectResponseObject = false;
 	bool bSuccess = false;
 	FString Message = "Error";
 	int ErrorID = 404;
+	bool bIndividualErrorMap = false;
+	TMap<int, FString> ErrorMap;
 };
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -39,12 +41,6 @@ class SPEEDUP_API UHTTPAPIComponent : public UActorComponent
 	GENERATED_BODY()
 
 private:
-	FResponceInfo InfoResponseSignUP;
-	FResponceInfo InfoResponseSignIN;
-	FResponceInfo InfoResponseSignOut;
-	FResponceInfo InfoResponseSebdCode;
-	FResponceInfo InfoResponseVerefi;
-
 	void OnResponseReceivedSignUP(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedLogOut(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
@@ -53,30 +49,18 @@ private:
 	void OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedChangePassword(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
-	FResponceInfo InfoResponseProfile;
-	FResponceInfo InfoResponseNFTreceipt;
 	void OnResponseReceivedProfile(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
-	FResponceInfo InfoResponseNFTActivation;
-	FResponceInfo InfoResponseNFTUpdate;
-	FResponceInfo InfoResponseNFTDeactivation;
 	void OnResponseReceivedActivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedUpdate(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);	
 	void OnResponseReceivedDeactivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
-	FResponceInfo InfoResponseRepairPassword;
-	FResponceInfo InfoResponseRecoveryCode;
 	void OnResponseReceivedRepairPassword(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedRecoveryCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
-	FResponceInfo InfoResponseStatistick;
 	void OnResponseReceivedPathStatistick(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
-	FResponceInfo InfoResponseTransactions;
-	FResponceInfo InfoResponseBuyingSlot;
-	FResponceInfo InfoResponseNFTlevelUp;
-	FResponceInfo InfoResponseNFTmint;
 	void OnResponseReceivedTransactions(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 	void OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessBuying);
 	void OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessLvlUp);
@@ -111,6 +95,29 @@ private:
 public:
 
 	UHTTPAPIComponent();
+
+	FResponceInfo InfoResponseSignUP;
+	FResponceInfo InfoResponseSignIN;
+	FResponceInfo InfoResponseSignOut;
+	FResponceInfo InfoResponseSebdCode;
+	FResponceInfo InfoResponseVerefi;
+
+	FResponceInfo InfoResponseProfile;
+	FResponceInfo InfoResponseNFTreceipt;
+
+	FResponceInfo InfoResponseNFTActivation;
+	FResponceInfo InfoResponseNFTUpdate;
+	FResponceInfo InfoResponseNFTDeactivation;
+
+	FResponceInfo InfoResponseRepairPassword;
+	FResponceInfo InfoResponseRecoveryCode;
+
+	FResponceInfo InfoResponseStatistick;
+
+	FResponceInfo InfoResponseTransactions;
+	FResponceInfo InfoResponseBuyingSlot;
+	FResponceInfo InfoResponseNFTlevelUp;
+	FResponceInfo InfoResponseNFTmint;
 
 	TMap<int, FString> ErrorsMap;
 
