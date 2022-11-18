@@ -1421,11 +1421,9 @@ UHTTPAPIComponent::UHTTPAPIComponent()
 	ErrorsMap.Add(200, "Success");
 	ErrorsMap.Add(400, "Is't correct input");
 	ErrorsMap.Add(401, "Is't authorization");
-	ErrorsMap.Add(403, "неправильные креденшиалсы");
+	ErrorsMap.Add(403, "403");
 	ErrorsMap.Add(404, "Not Found");
 	ErrorsMap.Add(500, "server side error");
-	ErrorsMap.Add(502, "сервер недоступен");
-
-	InfoResponseSignIN.ErrorMap.Add(404, "Not found item");
+	ErrorsMap.Add(502, "server is't evaible");
 }
 
