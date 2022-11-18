@@ -480,43 +480,40 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 	if (SpeedUpGI)
 	{
 		//CheckResponse(Response);
+		ErrorID = Response->GetResponseCode();
+		FResponceInfo& InfoResponseActiv = InfoResponseSignIN;
+		//bool RRR = CheckResponse(ResponseObject.Get(), ErrorID);
 
 		if (ResponseObject == nullptr)
 		{
-			bSuccess = false;
-			Message = "ResponseObject is null";
-			Data = "";
-			ErrorID = 101;
-			ErrorText = "Response is null";
-
-			InfoResponseSignIN.bCorrectResponseObject = false;
-			InfoResponseSignIN.bSuccess = false;
-			InfoResponseSignIN.ErrorID = 101;
-			InfoResponseSignIN.Message = "Response is null";
+			InfoResponseActiv.bCorrectResponseObject = false;
+			InfoResponseActiv.bSuccess = false;
+			InfoResponseActiv.ErrorID = 101;
+			InfoResponseActiv.Message = "Response is null";
+			return;
 		}
 
-		ErrorID = Response->GetResponseCode();
+		InfoResponseActiv.ErrorID = ErrorID;
+		InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+		InfoResponseActiv.Message = ResponseObject->GetStringField("message");
+
 		if (ErrorID != 200)
 		{
-				InfoResponseSignIN.bCorrectResponseObject = true;
-				InfoResponseSignIN.bSuccess = ResponseObject->GetBoolField("success");
-				InfoResponseSignIN.ErrorID = ErrorID;
-				InfoResponseSignIN.Message = ResponseObject->GetStringField("message");
+			InfoResponseActiv.bCorrectResponseObject = false;
+			return;
 		}
-
+		else
 		{
-				InfoResponseSignIN.bCorrectResponseObject = false;
-				InfoResponseSignIN.bSuccess = false;
-				InfoResponseSignIN.ErrorID = ErrorID;
-				InfoResponseSignIN.Message = "Success";
-
-				ErrorID = Response->GetResponseCode();
-				bSuccess = ResponseObject->GetBoolField("success");
-				Message = ResponseObject->GetStringField("message");
-
-				ClientTocken = ResponseObject->GetStringField("data");
-				SpeedUpGI->UserInfo.UserToken = ClientTocken;
+			InfoResponseActiv.bCorrectResponseObject = true;
 		}
+
+		//ErrorID = Response->GetResponseCode();
+		//bSuccess = ResponseObject->GetBoolField("success");
+		//Message = ResponseObject->GetStringField("message");
+
+		ClientTocken = ResponseObject->GetStringField("data");
+		SpeedUpGI->UserInfo.UserToken = ClientTocken;
+
 	}
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"));
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"));
@@ -571,6 +568,33 @@ void UHTTPAPIComponent::OnResponseReceivedSignUP(FHttpRequestPtr Request, FHttpR
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseSignUP;
+
+	if (ResponseObject == nullptr)
+	{
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 101;
+		InfoResponseActiv.Message = "Response is null";
+		return;
+	}
+
+	InfoResponseActiv.ErrorID = ErrorID;
+	InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+	InfoResponseActiv.Message = ResponseObject->GetStringField("message");
+
+	if (ErrorID != 200)
+	{
+		InfoResponseActiv.bCorrectResponseObject = false;
+		return;
+	}
+	else
+	{
+		InfoResponseActiv.bCorrectResponseObject = true;
+	}
+
+	/*
 	if (ResponseObject == nullptr)
 	{
 		bSuccess = false;
@@ -587,6 +611,7 @@ void UHTTPAPIComponent::OnResponseReceivedSignUP(FHttpRequestPtr Request, FHttpR
 		Message = ResponseObject->GetStringField("message");
 		Data = ResponseObject->GetStringField("data");
 	}
+	*/
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
@@ -1403,3 +1428,4 @@ UHTTPAPIComponent::UHTTPAPIComponent()
 
 	InfoResponseSignIN.ErrorMap.Add(404, "Not found item");
 }
+

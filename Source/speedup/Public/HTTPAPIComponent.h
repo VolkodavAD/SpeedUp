@@ -27,11 +27,17 @@ struct FResponceInfo: public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(BlueprintReadOnly)
 	bool bCorrectResponseObject = false;
+	UPROPERTY(BlueprintReadOnly)
 	bool bSuccess = false;
+	UPROPERTY(BlueprintReadOnly)
 	FString Message = "Error";
+	UPROPERTY(BlueprintReadOnly)
 	int ErrorID = 404;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIndividualErrorMap = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<int, FString> ErrorMap;
 };
 
@@ -96,27 +102,44 @@ public:
 
 	UHTTPAPIComponent();
 
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseSignUP;
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseSignIN;
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseSignOut;
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseSebdCode;
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseVerefi;
 
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseProfile;
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseNFTreceipt;
 
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseNFTActivation;
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseNFTUpdate;
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseNFTDeactivation;
 
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseRepairPassword;
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseRecoveryCode;
 
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseStatistick;
 
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseTransactions;
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseBuyingSlot;
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseNFTlevelUp;
+	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseNFTmint;
 
 	TMap<int, FString> ErrorsMap;
@@ -152,6 +175,9 @@ public:
 	FString ClientTocken;
 	
 	virtual void BeginPlay() override;
+
+	//UFUNCTION(BlueprintCallable)
+	//bool CheckResponse(FJsonObject& CheckedJsonObject, int ErrorID, FResponceInfo& ResultResponceInfo);
 
 	UFUNCTION(BlueprintCallable)
 	void InitComponent();
