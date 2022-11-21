@@ -15,12 +15,12 @@ UItemManager::UItemManager()
 	AddedSlot.ItemID = -1;
 	AddedSlot.Items_TimerHandle = Items_TimerHandle;
 	ItemsSlot.Add(AddedSlot);
-	*/
+	
 	FItemSlot AddedSlot;
 	AddedSlot.IsUnlock = false;
 	AddedSlot.ItemID = -1;
 	AddedSlot.Items_TimerHandle = Items_TimerHandle;
-
+	*/
 	//ItemsSlot.Add(AddedSlot);
 	//ItemsSlot.Add(AddedSlot);
 	//ItemsSlot.Add(AddedSlot); 
@@ -43,11 +43,12 @@ void UItemManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 
 void UItemManager::InitItemManager(int SlotCount)
 {
+	ItemsSlot.Empty();
 	FItemSlot AddedSlot;
 	AddedSlot.IsUnlock = false;
 	AddedSlot.ItemID = -1;
 	AddedSlot.Items_TimerHandle = Items_TimerHandle;
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		//ItemsSlot[i].IsUnlock = false;
 		//ItemsSlot[i].ItemID = -1;
@@ -185,4 +186,16 @@ bool UItemManager::ActiveSlot()
 
 	}
 	return false;
+}
+
+int UItemManager::FindSlotByItemID(int ItemID)
+{
+	for (int i = 0; i < 3; i++)
+	{
+		if (ItemsSlot[i].ItemID == ItemID)
+		{
+			return i;
+		}
+	}
+	return -1;
 }

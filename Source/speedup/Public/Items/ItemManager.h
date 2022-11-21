@@ -66,7 +66,8 @@ public:
 	void InitItemManager(int SlotCount);
 
 	//слоты инвенторя и список имеющихся на аккаунте предметов
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot")
+	UPROPERTY(BlueprintReadOnly, Category = "Slot")
 	TArray<FItemSlot> ItemsSlot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	TArray<UItem*> MyItems;
@@ -103,6 +104,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Slot")
 	bool ActiveSlot();
+
+	UFUNCTION(BlueprintCallable, Category = "Slot")
+	int FindSlotByItemID(int ItemID);
 	//UFUNCTION(BlueprintCallable)
 	//FItemSlot GetItemSlot(int SlotID);
 };
