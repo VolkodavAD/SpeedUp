@@ -111,7 +111,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseSignOut;
 	UPROPERTY(BlueprintReadOnly)
-	FResponceInfo InfoResponseSebdCode;
+	FResponceInfo InfoResponseSendCode;
 	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseVerefi;
 

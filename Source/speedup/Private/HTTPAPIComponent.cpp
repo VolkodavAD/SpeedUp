@@ -556,6 +556,35 @@ void UHTTPAPIComponent::OnResponseReceivedSendCode(FHttpRequestPtr Request, FHtt
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseCode = InfoResponseSendCode;
+
+	if (ResponseObject == nullptr)
+	{
+		InfoResponseCode.bCorrectResponseObject = false;
+		InfoResponseCode.bSuccess = false;
+		InfoResponseCode.ErrorID = 101;
+		InfoResponseCode.Message = "Response is null";
+		return;
+	}
+
+	InfoResponseCode.ErrorID = ErrorID;
+	InfoResponseCode.bSuccess = ResponseObject->GetBoolField("success");
+	InfoResponseCode.Message = ResponseObject->GetStringField("message");
+
+	if (ErrorID != 200)
+	{
+		InfoResponseCode.bCorrectResponseObject = false;
+		return;
+	}
+	else
+	{
+		InfoResponseCode.bCorrectResponseObject = true;
+	}
+	/*TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
 	if (ResponseObject == nullptr)
 	{
 		bSuccess = false;
@@ -570,7 +599,7 @@ void UHTTPAPIComponent::OnResponseReceivedSendCode(FHttpRequestPtr Request, FHtt
 		ErrorText = "";
 		bSuccess = ResponseObject->GetBoolField("success");
 		Message = ResponseObject->GetStringField("message");
-	}
+	}*/
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
@@ -1043,6 +1072,35 @@ void UHTTPAPIComponent::OnResponseReceivedRecoveryCode(FHttpRequestPtr Request, 
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseCodeRecovery = InfoResponseRecoveryCode;
+
+	if (ResponseObject == nullptr)
+	{
+		InfoResponseCodeRecovery.bCorrectResponseObject = false;
+		InfoResponseCodeRecovery.bSuccess = false;
+		InfoResponseCodeRecovery.ErrorID = 101;
+		InfoResponseCodeRecovery.Message = "Response is null";
+		return;
+	}
+
+	InfoResponseCodeRecovery.ErrorID = ErrorID;
+	InfoResponseCodeRecovery.bSuccess = ResponseObject->GetBoolField("success");
+	InfoResponseCodeRecovery.Message = ResponseObject->GetStringField("message");
+
+	if (ErrorID != 200)
+	{
+		InfoResponseCodeRecovery.bCorrectResponseObject = false;
+		return;
+	}
+	else
+	{
+		InfoResponseCodeRecovery.bCorrectResponseObject = true;
+	}
+	/*TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
 	int Code = Response->GetResponseCode();
 	if (Code != 200)
 	{
@@ -1065,7 +1123,7 @@ void UHTTPAPIComponent::OnResponseReceivedRecoveryCode(FHttpRequestPtr Request, 
 		bSuccess = ResponseObject->GetBoolField("success");
 		Message = ResponseObject->GetStringField("message");
 		//Data = ResponseObject->GetStringField("data");
-	}
+	}*/
 }
 
 void UHTTPAPIComponent::OnResponseReceivedPathStatistick(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
