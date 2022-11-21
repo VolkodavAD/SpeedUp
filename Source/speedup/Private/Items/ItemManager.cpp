@@ -47,7 +47,7 @@ void UItemManager::InitItemManager(int SlotCount)
 	AddedSlot.IsUnlock = false;
 	AddedSlot.ItemID = -1;
 	AddedSlot.Items_TimerHandle = Items_TimerHandle;
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		//ItemsSlot[i].IsUnlock = false;
 		//ItemsSlot[i].ItemID = -1;
