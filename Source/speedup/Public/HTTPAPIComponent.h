@@ -71,10 +71,12 @@ private:
 	void OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessBuying);
 	void OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessLvlUp);
 	void OnResponseReceivedNFTmint(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessMint);
+	void OnResponseReceivedGoogleAuth(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
 
 	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
 	const FString LogOutURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/logout";
+	const FString GoogleURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/sign/google";
 	const FString ChangePasswordURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/change-password";
 	const FString PasswordRepairURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/recovery-account";
 	const FString SendRecoveryCodeURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/send-code-recovery";
@@ -238,6 +240,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Verify(const FString CodeFromMail, const FString TokenData);
+
 	UFUNCTION(BlueprintCallable)
 	void Profile(const FString TokenData);
+
+	UFUNCTION(BlueprintCallable)
+	void GoogleAuth();
 };

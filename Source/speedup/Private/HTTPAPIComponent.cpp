@@ -343,6 +343,21 @@ void UHTTPAPIComponent::Profile(const FString TokenData)
 	ProfileCode->ProcessRequest();
 }
 
+void UHTTPAPIComponent::GoogleAuth()
+{
+	const FHttpRequestRef Authorization = FHttpModule::Get().CreateRequest();
+
+	//const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+
+	//FString BearerT = "Bearer ";
+	Authorization->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedGoogleAuth);
+	Authorization->SetURL(GoogleURL);
+	Authorization->SetVerb("GET");
+	//ProfileCode->SetHeader("Content-Type", "application/json");
+	//ProfileCode->AppendToHeader("Authorization", BearerT.Append(TokenData));
+	Authorization->ProcessRequest();
+}
+
 void UHTTPAPIComponent::StatisticRequest(const ItemType StatItemType, const int Period)
 {
 	const FHttpRequestRef ProfileCode = FHttpModule::Get().CreateRequest();
@@ -1382,6 +1397,36 @@ void UHTTPAPIComponent::OnResponseReceivedNFTmint(FHttpRequestPtr Request, FHttp
 
 	int Code = Response->GetResponseCode();
 
+	if (Code != 200)
+	{
+		Message = "Unsuccess";
+	}
+
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		ErrorID = 0;
+		ErrorText = "";
+		bSuccess = ResponseObject->GetBoolField("success");
+		Message = ResponseObject->GetStringField("message");
+
+	}
+}
+
+void UHTTPAPIComponent::OnResponseReceivedGoogleAuth(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
+{
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
+	int Code = Response->GetResponseCode();
 	if (Code != 200)
 	{
 		Message = "Unsuccess";
