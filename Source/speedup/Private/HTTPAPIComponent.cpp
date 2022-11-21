@@ -1040,6 +1040,36 @@ void UHTTPAPIComponent::OnResponseReceivedRepairPassword(FHttpRequestPtr Request
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponsePasswordRepair = InfoResponseRepairPassword;
+
+	if (ResponseObject == nullptr)
+	{
+		InfoResponsePasswordRepair.bCorrectResponseObject = false;
+		InfoResponsePasswordRepair.bSuccess = false;
+		InfoResponsePasswordRepair.ErrorID = 101;
+		InfoResponsePasswordRepair.Message = "Response is null";
+		return;
+	}
+
+	InfoResponsePasswordRepair.ErrorID = ErrorID;
+	InfoResponsePasswordRepair.bSuccess = ResponseObject->GetBoolField("success");
+	InfoResponsePasswordRepair.Message = ResponseObject->GetStringField("message");
+
+	if (ErrorID != 200)
+	{
+		InfoResponsePasswordRepair.bCorrectResponseObject = false;
+		return;
+	}
+	else
+	{
+		InfoResponsePasswordRepair.bCorrectResponseObject = true;
+	}
+	
+	/*TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
 	int Code = Response->GetResponseCode();
 	if (Code != 200)
 	{
@@ -1063,7 +1093,7 @@ void UHTTPAPIComponent::OnResponseReceivedRepairPassword(FHttpRequestPtr Request
 		bSuccess = ResponseObject->GetBoolField("success");
 		//Message = ResponseObject->GetStringField("message");
 		//Data = ResponseObject->GetStringField("data");
-	}
+	}*/
 }
 
 void UHTTPAPIComponent::OnResponseReceivedRecoveryCode(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
