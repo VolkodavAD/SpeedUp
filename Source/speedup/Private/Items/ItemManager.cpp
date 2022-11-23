@@ -89,14 +89,17 @@ UItem* UItemManager::GetMyItem(int ItemID)
 bool UItemManager::CheckCanActivateItem(int ItemID, int SlotID, int& ErrorID)
 {
 	UItem* ItemByID = GetMyItem(ItemID);
-
 	if (ItemByID == nullptr)
 	{
 		return false;
 		ErrorID = 404;
 	}
 
-	return true;
+	if (ItemByID->GetItemInfo().capacity > 0)
+	{
+		return true;
+	}
+	return false;
 }
 
 bool UItemManager::CheckCanDeactivateItem(int ItemID, int SlotID, int& ErrorID)

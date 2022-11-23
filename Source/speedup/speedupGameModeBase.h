@@ -14,6 +14,15 @@
  * 
  */
 
+UENUM(BlueprintType)
+enum class PopupType : uint8
+{
+	neutral			UMETA(DisplayName = "neutral"),
+	successful		UMETA(DisplayName = "successful"),
+	error			UMETA(DisplayName = "error"),
+	warning			UMETA(DisplayName = "warning"),
+};
+
 UCLASS()
 class SPEEDUP_API AspeedupGameModeBase : public AGameModeBase
 {
@@ -48,7 +57,6 @@ public:
 	void FinalPathItem(int ItemID, int PathID, int SlotN, float Distance, float Speed);
 	void FinalPathItem_Implementation(int ItemID, int PathID, int SlotN, float Distance, float Speed);
 
-
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
 	void PostActivationItem(int ItemID, int PathID, int SlotID);
 	void PostActivationItem_Implementation(int ItemID, int PathID, int SlotID);
@@ -57,11 +65,16 @@ public:
 	void PostDeactivationItem(int ItemID, int PathID, int SlotID);
 	void PostDeactivationItem_Implementation(int ItemID, int PathID, int SlotID);
 
+	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Popup")
+	//void ShowPopup(const FString Message, const PopupType MessageType);
+	//void ShowPopup_Implementation(const FString Message, const PopupType MessageType);
+
 	UFUNCTION(BlueprintCallable, Category = "Slot")
 	void ActiveSlot();
 
 	UFUNCTION(BlueprintCallable, Category = "Widjet")
 	void SetWalletInfo(UBaseWalletWidget* UBaseWalletWidget);
+
 
 	FORCEINLINE class UItemManager* GetNFTItemManager() const { return NFTItemManager; }
 //	FORCEINLINE class USpeedup_GeoDataSystem* GetGeoDataSystemCPP() const { return GeoDataSystemCPP; }
