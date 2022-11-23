@@ -1176,99 +1176,103 @@ void UHTTPAPIComponent::OnResponseReceivedPathStatistick(FHttpRequestPtr Request
 	{
 		if (SpeedUpGI)
 		{
-			//gameInstance->GetSaveManager()->FlushCachedSaveData();
-			//UGameplayStatics::OpenLevel(world, FName(*world->GetName()));
-			//UGameplayStatics::GetGameInstance()
-			//TSharedPtr<FJsonObject> ObjectResult;
-
 			ErrorID = Response->GetResponseCode();
 			ErrorText = "";
 			Message = ResponseObject->GetStringField("message");
 			bSuccess = ResponseObject->GetBoolField("success");
 
-			//TSharedPtr<FJsonObject> NFT = ResponseObject->GetObjectField("data");
-			//TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapNFT = NFT->Values;
-			//TArray<TSharedPtr<FJsonValue>> Points = NFT->GetArrayField(TEXT("Sneaker"));
-
-			TSharedPtr<FJsonObject> PathData = ResponseObject->GetObjectField("data");
-			TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapStatistic = PathData->Values;
-			TSharedPtr<FJsonObject> tripsObject = MapStatistic["trips"]->AsObject();
-			//TArray<TSharedPtr<FJsonValue>> tripsObject = PathData->GetArrayField(TEXT("trips"));
-			TArray<TSharedPtr<FJsonValue>> SneakerPath = tripsObject->GetArrayField(TEXT("Sneaker"));
-			if (SneakerPath.Num() > 0)
+			if (Response->GetResponseCode() == 200)
 			{
-				for (int32 i = 0; i < SneakerPath.Num(); ++i)
+				//gameInstance->GetSaveManager()->FlushCachedSaveData();
+				//UGameplayStatics::OpenLevel(world, FName(*world->GetName()));
+				//UGameplayStatics::GetGameInstance()
+				//TSharedPtr<FJsonObject> ObjectResult;
+
+				//TSharedPtr<FJsonObject> NFT = ResponseObject->GetObjectField("data");
+				//TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapNFT = NFT->Values;
+				//TArray<TSharedPtr<FJsonValue>> Points = NFT->GetArrayField(TEXT("Sneaker"));
+
+
+				TSharedPtr<FJsonObject> PathData = ResponseObject->GetObjectField("data");
+				TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapStatistic = PathData->Values;
+				TSharedPtr<FJsonObject> tripsObject = MapStatistic["trips"]->AsObject();
+				//TArray<TSharedPtr<FJsonValue>> tripsObject = PathData->GetArrayField(TEXT("trips"));
+				TArray<TSharedPtr<FJsonValue>> SneakerPath = tripsObject->GetArrayField(TEXT("Sneaker"));
+				if (SneakerPath.Num() > 0)
 				{
-					FItemStatistic ItemStat;
-					TSharedPtr<FJsonObject> PointsObject = SneakerPath[i]->AsObject();
+					for (int32 i = 0; i < SneakerPath.Num(); ++i)
+					{
+						FItemStatistic ItemStat;
+						TSharedPtr<FJsonObject> PointsObject = SneakerPath[i]->AsObject();
 
-					ItemStat.id = PointsObject->GetIntegerField("id");
-					ItemStat.user_id = PointsObject->GetIntegerField("user_id");
+						ItemStat.id = PointsObject->GetIntegerField("id");
+						ItemStat.user_id = PointsObject->GetIntegerField("user_id");
 
-					TSharedPtr<FJsonObject> nft = PointsObject->GetObjectField("nft");
-					ItemStat.nft = nft->GetIntegerField("id");
-					ItemStat.Type = static_cast<ItemType>(nft->GetIntegerField("type"));
-					ItemStat.ItemLevel = nft->GetIntegerField("level");
-					ItemStat.ItemRarity = static_cast<ItemLevelRarity>(nft->GetIntegerField("rarity"));
+						TSharedPtr<FJsonObject> nft = PointsObject->GetObjectField("nft");
+						ItemStat.nft = nft->GetIntegerField("id");
+						ItemStat.Type = static_cast<ItemType>(nft->GetIntegerField("type"));
+						ItemStat.ItemLevel = nft->GetIntegerField("level");
+						ItemStat.ItemRarity = static_cast<ItemLevelRarity>(nft->GetIntegerField("rarity"));
 
-					ItemStat.avg_velocity = PointsObject->GetNumberField("avg_velocity");
-					ItemStat.avg_distance = PointsObject->GetNumberField("avg_distance");
-					ItemStat.started_at = PointsObject->GetStringField("started_at");
-					ItemStat.ended_at = PointsObject->GetStringField("ended_at");
+						ItemStat.avg_velocity = PointsObject->GetNumberField("avg_velocity");
+						ItemStat.avg_distance = PointsObject->GetNumberField("avg_distance");
+						ItemStat.started_at = PointsObject->GetStringField("started_at");
+						ItemStat.ended_at = PointsObject->GetStringField("ended_at");
 
-					GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
+						GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
+					}
 				}
-			}
 
-			TArray<TSharedPtr<FJsonValue>> CarPath = tripsObject->GetArrayField(TEXT("Car"));
-			if (CarPath.Num() > 0)
-			{
-				for (int32 i = 0; i < CarPath.Num(); ++i)
+				TArray<TSharedPtr<FJsonValue>> CarPath = tripsObject->GetArrayField(TEXT("Car"));
+				if (CarPath.Num() > 0)
 				{
-					FItemStatistic ItemStat;
-					TSharedPtr<FJsonObject> PointsObject = CarPath[i]->AsObject();
+					for (int32 i = 0; i < CarPath.Num(); ++i)
+					{
+						FItemStatistic ItemStat;
+						TSharedPtr<FJsonObject> PointsObject = CarPath[i]->AsObject();
 
-					ItemStat.id = PointsObject->GetIntegerField("id");
-					ItemStat.user_id = PointsObject->GetIntegerField("user_id");
+						ItemStat.id = PointsObject->GetIntegerField("id");
+						ItemStat.user_id = PointsObject->GetIntegerField("user_id");
 
-					TSharedPtr<FJsonObject> nft = PointsObject->GetObjectField("nft");
-					ItemStat.nft = nft->GetIntegerField("id");
-					ItemStat.Type = static_cast<ItemType>(nft->GetIntegerField("type"));
-					ItemStat.ItemLevel = nft->GetIntegerField("level");
-					ItemStat.ItemRarity = static_cast<ItemLevelRarity>(nft->GetIntegerField("rarity"));
+						TSharedPtr<FJsonObject> nft = PointsObject->GetObjectField("nft");
+						ItemStat.nft = nft->GetIntegerField("id");
+						ItemStat.Type = static_cast<ItemType>(nft->GetIntegerField("type"));
+						ItemStat.ItemLevel = nft->GetIntegerField("level");
+						ItemStat.ItemRarity = static_cast<ItemLevelRarity>(nft->GetIntegerField("rarity"));
 
-					ItemStat.avg_velocity = PointsObject->GetNumberField("avg_velocity");
-					ItemStat.avg_distance = PointsObject->GetNumberField("avg_distance");
-					ItemStat.started_at = PointsObject->GetStringField("started_at");
-					ItemStat.ended_at = PointsObject->GetStringField("ended_at");
+						ItemStat.avg_velocity = PointsObject->GetNumberField("avg_velocity");
+						ItemStat.avg_distance = PointsObject->GetNumberField("avg_distance");
+						ItemStat.started_at = PointsObject->GetStringField("started_at");
+						ItemStat.ended_at = PointsObject->GetStringField("ended_at");
 
-					GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
+						GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
+					}
 				}
-			}
 
-			TArray<TSharedPtr<FJsonValue>> PlanePath = tripsObject->GetArrayField(TEXT("Car"));
-			if (PlanePath.Num() > 0)
-			{
-				for (int32 i = 0; i < PlanePath.Num(); ++i)
+				TArray<TSharedPtr<FJsonValue>> PlanePath = tripsObject->GetArrayField(TEXT("Car"));
+				if (PlanePath.Num() > 0)
 				{
-					FItemStatistic ItemStat;
-					TSharedPtr<FJsonObject> PointsObject = PlanePath[i]->AsObject();
+					for (int32 i = 0; i < PlanePath.Num(); ++i)
+					{
+						FItemStatistic ItemStat;
+						TSharedPtr<FJsonObject> PointsObject = PlanePath[i]->AsObject();
 
-					ItemStat.id = PointsObject->GetIntegerField("id");
-					ItemStat.user_id = PointsObject->GetIntegerField("user_id");
+						ItemStat.id = PointsObject->GetIntegerField("id");
+						ItemStat.user_id = PointsObject->GetIntegerField("user_id");
 
-					TSharedPtr<FJsonObject> nft = PointsObject->GetObjectField("nft");
-					ItemStat.nft = nft->GetIntegerField("id");
-					ItemStat.Type = static_cast<ItemType>(nft->GetIntegerField("type"));
-					ItemStat.ItemLevel = nft->GetIntegerField("level");
-					ItemStat.ItemRarity = static_cast<ItemLevelRarity>(nft->GetIntegerField("rarity"));
+						TSharedPtr<FJsonObject> nft = PointsObject->GetObjectField("nft");
+						ItemStat.nft = nft->GetIntegerField("id");
+						ItemStat.Type = static_cast<ItemType>(nft->GetIntegerField("type"));
+						ItemStat.ItemLevel = nft->GetIntegerField("level");
+						ItemStat.ItemRarity = static_cast<ItemLevelRarity>(nft->GetIntegerField("rarity"));
 
-					ItemStat.avg_velocity = PointsObject->GetNumberField("avg_velocity");
-					ItemStat.avg_distance = PointsObject->GetNumberField("avg_distance");
-					ItemStat.started_at = PointsObject->GetStringField("started_at");
-					ItemStat.ended_at = PointsObject->GetStringField("ended_at");
+						ItemStat.avg_velocity = PointsObject->GetNumberField("avg_velocity");
+						ItemStat.avg_distance = PointsObject->GetNumberField("avg_distance");
+						ItemStat.started_at = PointsObject->GetStringField("started_at");
+						ItemStat.ended_at = PointsObject->GetStringField("ended_at");
 
-					GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
+						GameMode->GetNFTItemManager()->MyItemStatistic.Add(ItemStat);
+					}
 				}
 			}
 

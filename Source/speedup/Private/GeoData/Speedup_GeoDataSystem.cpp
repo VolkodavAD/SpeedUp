@@ -137,16 +137,16 @@ void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
 	{
 	case 0:
 		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 0);
-		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle01, TimerDelegatePuth01, 2.0f, true, 0.1f);
+		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle01, TimerDelegatePuth01, DeltaTimePath, true, 0.1f);
 
 		break;
 	case 1:
 		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 1);
-		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle02, TimerDelegatePuth02, 2.0f, true, 0.1f);
+		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle02, TimerDelegatePuth02, DeltaTimePath, true, 0.1f);
 		break;
 	case 2:
 		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 2);
-		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle03, TimerDelegatePuth03, 2.0f, true, 0.1f);
+		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle03, TimerDelegatePuth03, DeltaTimePath, true, 0.1f);
 		break;
 
 	default:
@@ -214,7 +214,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 
 		if (ActivPath[SlotN]->PointsInPath.Num() > 0)
 		{
-			float DeltaTimePath = 2.0; //(AddedPoint.CurrentTime - ActivPath[PathID]->PointsInPath.Last().CurrentTime).GetSeconds();
+			//DeltaTimePath = 2.0; //(AddedPoint.CurrentTime - ActivPath[PathID]->PointsInPath.Last().CurrentTime).GetSeconds();
 			float DeltaLeghtPath = GetDistanse2Coor(ActivPath[SlotN]->PointsInPath.Last(), AddedPoint);
 
 			AddedPoint.DeltaTime = DeltaTimePath;
@@ -236,7 +236,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 		ActivPath[SlotN]->AddPoint(AddedPoint);
 	}
 
-	if ((ActivPath[SlotN]->UserPathInfo.PathTime > 60) || (FinalPath))
+	if ((ActivPath[SlotN]->UserPathInfo.PathTime > 120) || (FinalPath))
 	{
 		float PathSumSpeed = 0.0f;
 		float PathMinSpeed = 0.0f;
@@ -315,6 +315,6 @@ float USpeedup_GeoDataSystem::GetLeghtPath_Total()
 //void USpeedup_GeoDataSystem::UpdateDistance(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance)
 //{
 //}
-void USpeedup_GeoDataSystem::UpdateDistance_Implementation(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance)
+void USpeedup_GeoDataSystem::UpdateDistance_Implementation(int DeactivePathID, int DeactivNFDId, float avg_velocity, float avg_distance)
 {
 }

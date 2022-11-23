@@ -20,7 +20,7 @@
 
 	//UHTTPAPIComponent* HTTPAPI;
 UDELEGATE(BlueprintAuthorityOnly)
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateBindableEvent, int, Path); 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateBindableEvent, int, Path);
 UDELEGATE(BlueprintAuthorityOnly)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFinalBindableEvent, int, Path);
 
@@ -60,6 +60,8 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FFinalBindableEvent SendFinalPath;
 
+	float DeltaTimePath = 5.0;
+
 	// отправка данных на сервер
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void UpdateCurrentPath(int PathID);
@@ -92,8 +94,8 @@ public:
 	void StopTrackPath(int ItemID, int PathID, int SlotID);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
-	void UpdateDistance(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance);
-	void UpdateDistance_Implementation(int DeactivePathID, int DeactivNFDId, int avg_velocity, int avg_distance);
+	void UpdateDistance(int DeactivePathID, int DeactivNFDId, float avg_velocity, float avg_distance);
+	void UpdateDistance_Implementation(int DeactivePathID, int DeactivNFDId, float avg_velocity, float avg_distance);
 
 public:
 
