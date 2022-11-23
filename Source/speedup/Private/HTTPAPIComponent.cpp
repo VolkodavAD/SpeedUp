@@ -202,7 +202,7 @@ void UHTTPAPIComponent::NFTactivationRequest(const int NFDId, const int SlotID)
 
 	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
 	RequestJsonObject->SetNumberField("nft_id", NFDId);
-	//токен
+	//пїЅпїЅпїЅпїЅпїЅ
 	//RequestJsonObject->SetStringField("token", Password);
 	FString RequestBody;
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
@@ -246,7 +246,7 @@ void UHTTPAPIComponent::NFTdeactivationRequest(const int DeactivNFDId, const int
 	RequestJsonObject->SetNumberField("avg_velocity", avg_velocity);
 	RequestJsonObject->SetNumberField("avg_distance", avg_distance);
 
-	//токен
+	//пїЅпїЅпїЅпїЅпїЅ
 	//RequestJsonObject->SetStringField("token", Password);
 	FString RequestBody;
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
@@ -283,7 +283,7 @@ void UHTTPAPIComponent::NFTUpdateRequest(const int DeactivNFDId, const int Deact
 		RequestJsonObject->SetNumberField("avg_Speed", avg_velocity);
 		RequestJsonObject->SetNumberField("avg_distanse", avg_distance);
 
-		//токен
+		//пїЅпїЅпїЅпїЅпїЅ
 		//RequestJsonObject->SetStringField("token", Password);
 		FString RequestBody;
 		const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
@@ -439,7 +439,7 @@ void UHTTPAPIComponent::NFTlevelUpRequest(const int NFTid,const FString TokenDat
 
 	//const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
 	//RequestJsonObject->SetNumberField("nft_id", NFDId);
-	////токен
+	////пїЅпїЅпїЅпїЅпїЅ
 	////RequestJsonObject->SetStringField("token", Password);
 	//FString RequestBody;
 
@@ -538,12 +538,44 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 
 void UHTTPAPIComponent::OnResponseReceivedLogOut(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
 {
+	// TSharedPtr<FJsonObject> ResponseObject;
+	// const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	// FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+// 
+	// bSuccess = ResponseObject->GetBoolField("success");
+	// Message = ResponseObject->GetStringField("message");
+
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
-	bSuccess = ResponseObject->GetBoolField("success");
-	Message = ResponseObject->GetStringField("message");
+	//CheckResponse(Response);
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseSignOut;
+	//bool RRR = CheckResponse(ResponseObject.Get(), ErrorID);
+
+	if (ResponseObject == nullptr)
+	{
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 500;
+		InfoResponseActiv.Message = "Unexpected server error";
+		return;
+	}
+
+	InfoResponseActiv.ErrorID = ErrorID;
+	InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+	InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+
+	if (ErrorID != 200)
+	{
+		InfoResponseActiv.bCorrectResponseObject = false;
+		return;
+	}
+	else
+	{
+		InfoResponseActiv.bCorrectResponseObject = true;
+	}
 	
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
@@ -671,25 +703,36 @@ void UHTTPAPIComponent::OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpR
 	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
 	if (SpeedUpGI)
 	{
+		ErrorID = Response->GetResponseCode();
+		FResponceInfo& InfoResponseActiv = InfoResponseVerefi;
 		if (ResponseObject == nullptr)
 		{
-			bSuccess = false;
-			Message = "ResponseObject is null";
-			Data = "";
-			ErrorID = 101;
-			ErrorText = "Response is null";
+			InfoResponseActiv.bCorrectResponseObject = false;
+			InfoResponseActiv.bSuccess = false;
+			InfoResponseActiv.ErrorID = 500;
+			InfoResponseActiv.Message = "Unexpected server error";
+			return;
+		}
+		
+		InfoResponseActiv.ErrorID = ErrorID;
+		InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+		InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+		Data = ResponseObject->GetStringField("data");
+		ClientTocken = ResponseObject->GetStringField("data");
+		SpeedUpGI->UserInfo.UserToken = ClientTocken;
+
+		if (ErrorID != 200)
+		{
+			InfoResponseActiv.bCorrectResponseObject = false;
+			return;
 		}
 		else
 		{
-			ErrorID = 0;
-			ErrorText = "";
-			bSuccess = ResponseObject->GetBoolField("success");
-			Message = ResponseObject->GetStringField("message");
-			Data = ResponseObject->GetStringField("data");
-			ClientTocken = ResponseObject->GetStringField("data");
-			SpeedUpGI->UserInfo.UserToken = ClientTocken;
+			InfoResponseActiv.bCorrectResponseObject = true;
 		}
+		
 	}
+
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
@@ -702,29 +745,32 @@ void UHTTPAPIComponent::OnResponseReceivedChangePassword(FHttpRequestPtr Request
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
-	int Code = Response->GetResponseCode();
-	if (Code != 200)
-	{
-		Message = "Wrong Password";
-		return;
-	}
-
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseChangePassword;
 	if (ResponseObject == nullptr)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 500;
+		InfoResponseActiv.Message = "Unexpected server error";
+		return;
+	}
+		
+	InfoResponseActiv.ErrorID = ErrorID;
+	InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+	InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+
+	if (ErrorID != 200)
+	{
+		InfoResponseActiv.bCorrectResponseObject = false;
+		return;
 	}
 	else
 	{
-		ErrorID = 0;
-		ErrorText = "";
-		bSuccess = ResponseObject->GetBoolField("success");
+		InfoResponseActiv.bCorrectResponseObject = true;
+	}
 		//Message = ResponseObject->GetStringField("message");
 		//Data = ResponseObject->GetStringField("data");
-	}
 }
 
 void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
@@ -735,13 +781,15 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseProfile;
 	if (ResponseObject == nullptr)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 500;
+		InfoResponseActiv.Message = "Unexpected server error";
+		return;
 	}
 	else
 	{
@@ -755,10 +803,19 @@ void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttp
 
 			//TSharedPtr<FJsonObject> ObjectResult;
 
-			ErrorID = Response->GetResponseCode();
-			ErrorText = "";
-			Message = ResponseObject->GetStringField("message");
-			bSuccess = ResponseObject->GetBoolField("success");
+			InfoResponseActiv.ErrorID = ErrorID;
+			InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+			InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+			if (ErrorID != 200)
+			{
+				InfoResponseActiv.bCorrectResponseObject = false;
+				return;
+			}
+			else
+			{
+				InfoResponseActiv.bCorrectResponseObject = true;
+			}
+			
 			//Data = ResponseObject->GetStringField("data");
 
 			TSharedPtr<FJsonObject> nested = ResponseObject->GetObjectField("data");
@@ -817,13 +874,15 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 		return;
 	}
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseNFTreceipt;
 	if (ResponseObject == nullptr)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 500;
+		InfoResponseActiv.Message = "Unexpected server error";
+		return;
 	}
 	else
 	{
@@ -834,10 +893,19 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 
 			if (gameInstance)
 			{
-				ErrorID = 0;
-				ErrorText = "";
-				Message = ResponseObject->GetStringField("message");
-				bSuccess = ResponseObject->GetBoolField("success");
+				InfoResponseActiv.ErrorID = ErrorID;
+				InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+				InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+
+				if (ErrorID != 200)
+				{
+					InfoResponseActiv.bCorrectResponseObject = false;
+					return;
+				}
+				else
+				{
+					InfoResponseActiv.bCorrectResponseObject = true;
+				}
 
 
 				GameMode->GetNFTItemManager()->ClearItemArray();
@@ -937,23 +1005,35 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseNFTActivation;
 	if (ResponseObject == nullptr)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 500;
+		InfoResponseActiv.Message = "Unexpected server error";
+		return;
 	}
 	else
 	{
-		ErrorID = Response->GetResponseCode();
-		bSuccess = true;
-		Message = ResponseObject->GetStringField("message");
+		InfoResponseActiv.ErrorID = ErrorID;
+		InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+		InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+
+		if (ErrorID != 200)
+		{
+			InfoResponseActiv.bCorrectResponseObject = false;
+			return;
+		}
+		else
+		{
+			InfoResponseActiv.bCorrectResponseObject = true;
+		}
 		if (ErrorID == 200)
 		{
 			bSuccess = ResponseObject->GetBoolField("success");
-			if (bSuccess == true)
+			if (InfoResponseActiv.bSuccess == true)
 			{
 				PathID = ResponseObject->GetNumberField("data");
 
@@ -978,19 +1058,33 @@ void UHTTPAPIComponent::OnResponseReceivedDeactivation(FHttpRequestPtr Request, 
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseNFTDeactivation;
 	if (ResponseObject == nullptr)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 500;
+		InfoResponseActiv.Message = "Unexpected server error";
+		return;
 	}
 	else
 	{
-		ErrorID = Response->GetResponseCode();
-		bSuccess = true;
-		Message = ResponseObject->GetStringField("message");
+		InfoResponseActiv.ErrorID = ErrorID;
+		InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+		InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+
+		if (ErrorID != 200)
+		{
+			InfoResponseActiv.bCorrectResponseObject = false;
+			return;
+		}
+		else
+		{
+			InfoResponseActiv.bCorrectResponseObject = true;
+		}
+
 		if (ErrorID == 200)
 		{
 			bSuccess = ResponseObject->GetBoolField("success");
@@ -1011,19 +1105,32 @@ void UHTTPAPIComponent::OnResponseReceivedUpdate(FHttpRequestPtr Request, FHttpR
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseNFTUpdate;
 	if (ResponseObject == nullptr)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 500;
+		InfoResponseActiv.Message = "Unexpected server error";
+		return;
 	}
 	else
 	{
-		ErrorID = Response->GetResponseCode();
-		bSuccess = true;
-		Message = ResponseObject->GetStringField("message");
+		nfoResponseActiv.ErrorID = ErrorID;
+		InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+		InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+
+		if (ErrorID != 200)
+		{
+			InfoResponseActiv.bCorrectResponseObject = false;
+			return;
+		}
+		else
+		{
+			InfoResponseActiv.bCorrectResponseObject = true;
+		}
+
 		if (ErrorID == 200)
 		{
 			bSuccess = ResponseObject->GetBoolField("success");
@@ -1165,13 +1272,16 @@ void UHTTPAPIComponent::OnResponseReceivedPathStatistick(FHttpRequestPtr Request
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseStatistick;
+
 	if (ResponseObject == nullptr)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = Response->GetResponseCode();
-		ErrorText = "Response is null";
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 500;
+		InfoResponseActiv.Message = "Unexpected server error";
+		return;
 	}
 	else
 	{
@@ -1182,10 +1292,19 @@ void UHTTPAPIComponent::OnResponseReceivedPathStatistick(FHttpRequestPtr Request
 			//UGameplayStatics::GetGameInstance()
 			//TSharedPtr<FJsonObject> ObjectResult;
 
-			ErrorID = Response->GetResponseCode();
-			ErrorText = "";
-			Message = ResponseObject->GetStringField("message");
-			bSuccess = ResponseObject->GetBoolField("success");
+			InfoResponseActiv.ErrorID = ErrorID;
+			InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+			InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+
+			if (ErrorID != 200)
+			{
+				InfoResponseActiv.bCorrectResponseObject = false;
+				return;
+			}
+			else
+			{
+				InfoResponseActiv.bCorrectResponseObject = true;
+			}
 
 			//TSharedPtr<FJsonObject> NFT = ResponseObject->GetObjectField("data");
 			//TMap<FString, TSharedPtr<FJsonValue, ESPMode::ThreadSafe>> MapNFT = NFT->Values;
@@ -1331,23 +1450,34 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseTransactions;
 	if (ResponseObject == nullptr)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = Response->GetResponseCode();
-		ErrorText = "Response is null";
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 500;
+		InfoResponseActiv.Message = "Unexpected server error";
+		return;
 	}
 	else
 	{
 		if (SpeedUpGI)
 		{
 
-			ErrorID = Response->GetResponseCode();
-			ErrorText = "";
-			Message = ResponseObject->GetStringField("message");
-			bSuccess = ResponseObject->GetBoolField("success");
+			InfoResponseActiv.ErrorID = ErrorID;
+			InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+			InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+
+			if (ErrorID != 200)
+			{
+				InfoResponseActiv.bCorrectResponseObject = false;
+				return;
+			}
+			else
+			{
+				InfoResponseActiv.bCorrectResponseObject = true;
+			}
 
 
 
@@ -1428,21 +1558,28 @@ void UHTTPAPIComponent::OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FH
 		Message = "Unsuccess";
 	}
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseBuyingSlot;
 	if (ResponseObject == nullptr)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 500;
+		InfoResponseActiv.Message = "Unexpected server error";
+		return;
+	}
+	InfoResponseActiv.ErrorID = ErrorID;
+	InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+	InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+
+	if (ErrorID != 200)
+	{
+		InfoResponseActiv.bCorrectResponseObject = false;
+		return;
 	}
 	else
 	{
-		ErrorID = 0;
-		ErrorText = "";
-		bSuccess = ResponseObject->GetBoolField("success");
-		Message = ResponseObject->GetStringField("message");
-		
+		InfoResponseActiv.bCorrectResponseObject = true;
 	}
 
 }
@@ -1453,27 +1590,33 @@ void UHTTPAPIComponent::OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FH
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
 	int Code = Response->GetResponseCode();
-
 	if (Code != 200)
 	{
 		Message = "Unsuccess";
 	}
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseNFTlevelUp;
 	if (ResponseObject == nullptr)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 500;
+		InfoResponseActiv.Message = "Unexpected server error";
+		return;
+	}
+	InfoResponseActiv.ErrorID = ErrorID;
+	InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+	InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+
+	if (ErrorID != 200)
+	{
+		InfoResponseActiv.bCorrectResponseObject = false;
+		return;
 	}
 	else
 	{
-		ErrorID = 0;
-		ErrorText = "";
-		bSuccess = ResponseObject->GetBoolField("success");
-		Message = ResponseObject->GetStringField("message");
-
+		InfoResponseActiv.bCorrectResponseObject = true;
 	}
 }
 
@@ -1484,27 +1627,33 @@ void UHTTPAPIComponent::OnResponseReceivedNFTmint(FHttpRequestPtr Request, FHttp
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
 	int Code = Response->GetResponseCode();
-
 	if (Code != 200)
 	{
 		Message = "Unsuccess";
 	}
 
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseActiv = InfoResponseNFTmint;
 	if (ResponseObject == nullptr)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
+		InfoResponseActiv.bCorrectResponseObject = false;
+		InfoResponseActiv.bSuccess = false;
+		InfoResponseActiv.ErrorID = 500;
+		InfoResponseActiv.Message = "Unexpected server error";
+		return;
+	}
+	InfoResponseActiv.ErrorID = ErrorID;
+	InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
+	InfoResponseActiv.Message = ErrorID >= 500 ? ( (ErrorID == 502 ?  FString("Server unavailable") : FString("Unexpected server error")) : ResponseObject->GetStringField("message"));
+
+	if (ErrorID != 200)
+	{
+		InfoResponseActiv.bCorrectResponseObject = false;
+		return;
 	}
 	else
 	{
-		ErrorID = 0;
-		ErrorText = "";
-		bSuccess = ResponseObject->GetBoolField("success");
-		Message = ResponseObject->GetStringField("message");
-
+		InfoResponseActiv.bCorrectResponseObject = true;
 	}
 }
 
@@ -1539,13 +1688,13 @@ void UHTTPAPIComponent::OnResponseReceivedGoogleAuth(FHttpRequestPtr Request, FH
 }
 
 /**
-400 - пользователь сделал херню (неправильные аргументы)
-401 - нет авторизации/либо нет доступа к чему то
-403 - неправильные креденшиалсы (уже существует такой пользователь/неправильный пароль)
-404 - не найдено (неважно что)
-500 - ошибка на беке - можно унифицировать сообщение от нее - server side error или что то такоеё
-502 - сервер недоступен, упал или еще что то
-200 - ок
+400 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+401 - пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ
+403 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ)
+404 - пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ)
+500 - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ - server side error пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+502 - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ
+200 - пїЅпїЅ
  **/
 
 UHTTPAPIComponent::UHTTPAPIComponent()
