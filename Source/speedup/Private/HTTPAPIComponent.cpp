@@ -496,30 +496,29 @@ void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpR
 	{
 		//CheckResponse(Response);
 		ErrorID = Response->GetResponseCode();
-		FResponceInfo& InfoResponseActiv = InfoResponseSignIN;
+		FResponceInfo& InfoResponseSign = InfoResponseSignIN;
 		//bool RRR = CheckResponse(ResponseObject.Get(), ErrorID);
 
 		if (ResponseObject == nullptr)
 		{
-			InfoResponseActiv.bCorrectResponseObject = false;
-			InfoResponseActiv.bSuccess = false;
-			InfoResponseActiv.ErrorID = 101;
-			InfoResponseActiv.Message = "Response is null";
+			InfoResponseSign.bSuccess = false;
+			InfoResponseSign.ErrorID = 101;
+			InfoResponseSign.Message = "Response is null";
 			return;
 		}
 
-		InfoResponseActiv.ErrorID = ErrorID;
-		InfoResponseActiv.bSuccess = ResponseObject->GetBoolField("success");
-		InfoResponseActiv.Message = ResponseObject->GetStringField("message");
+		InfoResponseSign.ErrorID = ErrorID;
+		InfoResponseSign.bSuccess = ResponseObject->GetBoolField("success");
+		InfoResponseSign.Message = ResponseObject->GetStringField("message");
 
 		if (ErrorID != 200)
 		{
-			InfoResponseActiv.bCorrectResponseObject = false;
+			InfoResponseSign.bCorrectResponseObject = false;
 			return;
 		}
 		else
 		{
-			InfoResponseActiv.bCorrectResponseObject = true;
+			InfoResponseSign.bCorrectResponseObject = true;
 		}
 
 		//ErrorID = Response->GetResponseCode();
