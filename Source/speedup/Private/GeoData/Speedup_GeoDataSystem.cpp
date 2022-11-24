@@ -110,11 +110,11 @@ void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID
 
 		break;
 	case 1:
-		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 1);
+		TimerDelegatePuth02.BindUFunction(this, FName("UpdateCurrentPath"), 1);
 		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle02, TimerDelegatePuth02, 2.0f, true, 0.1f);
 		break;
 	case 2:
-		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 2);
+		TimerDelegatePuth03.BindUFunction(this, FName("UpdateCurrentPath"), 2);
 		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle03, TimerDelegatePuth03, 2.0f, true, 0.1f);
 		break;
 
@@ -141,11 +141,11 @@ void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
 
 		break;
 	case 1:
-		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 1);
+		TimerDelegatePuth02.BindUFunction(this, FName("UpdateCurrentPath"), 1);
 		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle02, TimerDelegatePuth02, DeltaTimePath, true, 0.1f);
 		break;
 	case 2:
-		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 2);
+		TimerDelegatePuth03.BindUFunction(this, FName("UpdateCurrentPath"), 2);
 		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle03, TimerDelegatePuth03, DeltaTimePath, true, 0.1f);
 		break;
 
@@ -161,6 +161,14 @@ void USpeedup_GeoDataSystem::UpdateCurrentPath(int PathID)
 	UpdateLocationInPathID(PathID, false);
 }
 
+void USpeedup_GeoDataSystem::UpdateCurrentPath01(int PathID)
+{
+	UpdateLocationInPathID(1, false);
+}
+void USpeedup_GeoDataSystem::UpdateCurrentPath02(int PathID)
+{
+	UpdateLocationInPathID(2, false);
+}
 void USpeedup_GeoDataSystem::StopTrackPath(int ItemID, int PathID, int SlotID)
 {
 	switch (SlotID)

@@ -66,6 +66,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void UpdateCurrentPath(int PathID);
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
+	void UpdateCurrentPath01(int PathID);
+	UFUNCTION(BlueprintCallable, Category = "GeoData")
+	void UpdateCurrentPath02(int PathID);
+	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void UpdateLocationInPathID(int PathID, bool FinalPath = false);
 	
 	// работа с Модулем девайса
