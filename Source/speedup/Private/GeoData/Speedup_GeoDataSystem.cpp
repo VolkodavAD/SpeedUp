@@ -96,63 +96,69 @@ GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
 void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID)
 {
 	ReInitServis();
-	ActivPath[SlotID] = NewObject<UGeoPath>();
-	ActivPath[SlotID]->SetSlotID(SlotID);
-	ActivPath[SlotID]->SetPathID(PathID);
-	ActivPath[SlotID]->SetItemID(ItemID);
-	ActivPath[SlotID]->SetStatusActive(true);
-
-	switch (SlotID)
+	if (ServiceEnable && ServiceInit)
 	{
-	case 0:
-		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 0);
-		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle01, TimerDelegatePuth01, 2.0f, true, 0.1f);
+		ActivPath[SlotID] = NewObject<UGeoPath>();
+		ActivPath[SlotID]->SetSlotID(SlotID);
+		ActivPath[SlotID]->SetPathID(PathID);
+		ActivPath[SlotID]->SetItemID(ItemID);
+		ActivPath[SlotID]->SetStatusActive(true);
 
-		break;
-	case 1:
-		TimerDelegatePuth02.BindUFunction(this, FName("UpdateCurrentPath"), 1);
-		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle02, TimerDelegatePuth02, 2.0f, true, 0.1f);
-		break;
-	case 2:
-		TimerDelegatePuth03.BindUFunction(this, FName("UpdateCurrentPath"), 2);
-		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle03, TimerDelegatePuth03, 2.0f, true, 0.1f);
-		break;
+		switch (SlotID)
+		{
+		case 0:
+			TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 0);
+			GetWorld()->GetTimerManager().SetTimer(PathTimerHandle01, TimerDelegatePuth01, 2.0f, true, 0.1f);
 
-	default:
-		break;
+			break;
+		case 1:
+			TimerDelegatePuth02.BindUFunction(this, FName("UpdateCurrentPath"), 1);
+			GetWorld()->GetTimerManager().SetTimer(PathTimerHandle02, TimerDelegatePuth02, 2.0f, true, 0.1f);
+			break;
+		case 2:
+			TimerDelegatePuth03.BindUFunction(this, FName("UpdateCurrentPath"), 2);
+			GetWorld()->GetTimerManager().SetTimer(PathTimerHandle03, TimerDelegatePuth03, 2.0f, true, 0.1f);
+			break;
+
+		default:
+			break;
+		}
+		ActivPath[SlotID]->PathIsActiv = true;
 	}
-	ActivPath[SlotID]->PathIsActiv = true;
 }
 
 void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
 {
 	ReInitServis();
-	ActivPath[SlotID] = NewObject<UGeoPath>();
-	ActivPath[SlotID]->SetSlotID(SlotID);
-	ActivPath[SlotID]->SetPathID(PathID);
-	ActivPath[SlotID]->SetItemID(ItemID);
-	ActivPath[SlotID]->SetStatusActive(true);
-
-	switch (SlotID)
+	if (ServiceEnable && ServiceInit)
 	{
-	case 0:
-		TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 0);
-		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle01, TimerDelegatePuth01, DeltaTimePath, true, 0.1f);
+		ActivPath[SlotID] = NewObject<UGeoPath>();
+		ActivPath[SlotID]->SetSlotID(SlotID);
+		ActivPath[SlotID]->SetPathID(PathID);
+		ActivPath[SlotID]->SetItemID(ItemID);
+		ActivPath[SlotID]->SetStatusActive(true);
 
-		break;
-	case 1:
-		TimerDelegatePuth02.BindUFunction(this, FName("UpdateCurrentPath"), 1);
-		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle02, TimerDelegatePuth02, DeltaTimePath, true, 0.1f);
-		break;
-	case 2:
-		TimerDelegatePuth03.BindUFunction(this, FName("UpdateCurrentPath"), 2);
-		GetWorld()->GetTimerManager().SetTimer(PathTimerHandle03, TimerDelegatePuth03, DeltaTimePath, true, 0.1f);
-		break;
+		switch (SlotID)
+		{
+		case 0:
+			TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 0);
+			GetWorld()->GetTimerManager().SetTimer(PathTimerHandle01, TimerDelegatePuth01, DeltaTimePath, true, 0.1f);
 
-	default:
-		break;
+			break;
+		case 1:
+			TimerDelegatePuth02.BindUFunction(this, FName("UpdateCurrentPath"), 1);
+			GetWorld()->GetTimerManager().SetTimer(PathTimerHandle02, TimerDelegatePuth02, DeltaTimePath, true, 0.1f);
+			break;
+		case 2:
+			TimerDelegatePuth03.BindUFunction(this, FName("UpdateCurrentPath"), 2);
+			GetWorld()->GetTimerManager().SetTimer(PathTimerHandle03, TimerDelegatePuth03, DeltaTimePath, true, 0.1f);
+			break;
+
+		default:
+			break;
+		}
+		ActivPath[SlotID]->PathIsActiv = true;
 	}
-	ActivPath[SlotID]->PathIsActiv = true;
 }
 
 
