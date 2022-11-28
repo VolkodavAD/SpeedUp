@@ -959,6 +959,8 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 
 void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
 {
+	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
@@ -984,7 +986,6 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 				PathID = ResponseObject->GetNumberField("data");
 
 				//int ErrorActivation;
-				AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
 				int TActivationItem = ActivationItem;
 				int TPathID = PathID; 
 				//int ErrorActivation;
@@ -994,6 +995,19 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 				GameMode->PostActivationItem(ActivationItem, PathID, ActivationSlot);
 				//StartPath(ActivationItem, PathID);
 				ActivationItem = -1;
+
+				GameMode->AddPopAppMessage("Error", Message, PopupType::successful);
+			}
+		}
+		else
+		{
+			if ((ErrorID == 404) || (ErrorID == 403))
+			{
+				GameMode->AddPopAppMessage("Error", Message, PopupType::error);
+			}
+			if ((ErrorID == 402) || (ErrorID == 500))
+			{
+				GameMode->AddPopAppMessage("Error", Message, PopupType::warning);
 			}
 		}
 	}
