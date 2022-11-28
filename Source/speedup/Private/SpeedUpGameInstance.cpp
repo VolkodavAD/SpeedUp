@@ -2,7 +2,10 @@
 
 
 #include "SpeedUpGameInstance.h"
-
+int USpeedUpGameInstance::PullNewID()
+{
+	return 0;
+}
 /*void USpeedUpGameInstance::Init()
 {
 	Super::Init();

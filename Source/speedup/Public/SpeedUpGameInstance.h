@@ -152,6 +152,10 @@ public:
     UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
         void OpenLevel(const FString& Level, const FString& Options);
 
+    UFUNCTION(BlueprintCallable)
+        int PullNewID();
+
+    static int MesID;
     //future function for popup for example copy private code from wallet
     /*UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
         void ShowNewMessagePopup(const FRemoteMessageInfo& message);*/
