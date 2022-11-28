@@ -114,6 +114,8 @@ public:
 	FResponceInfo InfoResponseSendCode;
 	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseVerefi;
+	UPROPERTY(BlueprintReadOnly)
+	FResponceInfo InfoResponseChangePassword;
 
 	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseProfile;

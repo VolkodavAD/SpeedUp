@@ -700,8 +700,35 @@ void UHTTPAPIComponent::OnResponseReceivedChangePassword(FHttpRequestPtr Request
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+	//InfoResponseChangePassword
 
-	int Code = Response->GetResponseCode();
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponsePasswordChange = InfoResponseChangePassword;
+
+	if (ResponseObject == nullptr)
+	{
+		InfoResponsePasswordChange.bCorrectResponseObject = false;
+		InfoResponsePasswordChange.bSuccess = false;
+		InfoResponsePasswordChange.ErrorID = 101;
+		InfoResponsePasswordChange.Message = "Response is null";
+		return;
+	}
+
+	InfoResponsePasswordChange.ErrorID = ErrorID;
+	InfoResponsePasswordChange.bSuccess = ResponseObject->GetBoolField("success");
+	InfoResponsePasswordChange.Message = ResponseObject->GetStringField("message");
+
+	if (ErrorID != 200)
+	{
+		InfoResponsePasswordChange.bCorrectResponseObject = false;
+		return;
+	}
+	else
+	{
+		InfoResponsePasswordChange.bCorrectResponseObject = true;
+	}
+
+	/*int Code = Response->GetResponseCode();
 	if (Code != 200)
 	{
 		Message = "Wrong Password";
@@ -723,7 +750,7 @@ void UHTTPAPIComponent::OnResponseReceivedChangePassword(FHttpRequestPtr Request
 		bSuccess = ResponseObject->GetBoolField("success");
 		//Message = ResponseObject->GetStringField("message");
 		//Data = ResponseObject->GetStringField("data");
-	}
+	}*/
 }
 
 void UHTTPAPIComponent::OnResponseReceivedProfile(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
