@@ -24,6 +24,34 @@ enum class EMainMenuPage : uint8
     GENERAL = 6 UMETA(DisplayName = "General")
 };
 
+
+UENUM(BlueprintType)
+enum class PopupType : uint8
+{
+    neutral			UMETA(DisplayName = "neutral"),
+    successful		UMETA(DisplayName = "successful"),
+    error			UMETA(DisplayName = "error"),
+    warning			UMETA(DisplayName = "warning"),
+};
+
+USTRUCT(BlueprintType)
+struct FPopupSlot : public FTableRowBase
+{
+    GENERATED_USTRUCT_BODY()
+
+        //GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Popup")
+        int MessageID = 0;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Popup")
+        PopupType MessageType = PopupType::neutral;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Popup")
+        FString TitleM = "Title";
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Popup")
+        FString TextM = "Text";
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Popup")
+        float TimeToEnd;
+};
+
 /*"data": {
     "id": 2,
      "email" : "hahalol915@gmail.com",

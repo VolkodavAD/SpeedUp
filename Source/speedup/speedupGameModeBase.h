@@ -14,14 +14,6 @@
  * 
  */
 
-UENUM(BlueprintType)
-enum class PopupType : uint8
-{
-	neutral			UMETA(DisplayName = "neutral"),
-	successful		UMETA(DisplayName = "successful"),
-	error			UMETA(DisplayName = "error"),
-	warning			UMETA(DisplayName = "warning"),
-};
 
 UCLASS()
 class SPEEDUP_API AspeedupGameModeBase : public AGameModeBase
