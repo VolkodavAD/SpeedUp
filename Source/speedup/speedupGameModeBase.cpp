@@ -38,6 +38,10 @@ void AspeedupGameModeBase::PostDeactivationItem_Implementation(int ItemID, int P
 //void AspeedupGameModeBase::ShowPopup_Implementation(const FString Message, const PopupType MessageType)
 //{}
 
+void AspeedupGameModeBase::AddPopAppMessage_Implementation(const FString& TitleMess, const FString & Mess, PopupType TypeMess)
+{
+}
+
 void AspeedupGameModeBase::SetWalletInfo(UBaseWalletWidget* UBaseWalletWidget)
 {
 	WalletBaseClass = UBaseWalletWidget;
