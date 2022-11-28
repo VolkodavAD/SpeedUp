@@ -57,9 +57,9 @@ public:
 	void PostDeactivationItem(int ItemID, int PathID, int SlotID);
 	void PostDeactivationItem_Implementation(int ItemID, int PathID, int SlotID);
 
-	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Popup")
-	//void ShowPopup(const FString Message, const PopupType MessageType);
-	//void ShowPopup_Implementation(const FString Message, const PopupType MessageType);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Popup")
+	void AddPopAppMessage(const FString& TitleMess, const FString& Mess, PopupType TypeMess);
+	void AddPopAppMessage_Implementation(const FString& TitleMess, const FString& Mess, PopupType TypeMess);
 
 	UFUNCTION(BlueprintCallable, Category = "Slot")
 	void ActiveSlot();
