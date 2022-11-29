@@ -112,10 +112,11 @@ public:
 	FResponceInfo InfoResponseSignOut;
 	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseSendCode;
-	UPROPERTY(BlueprintReadOnly)
-	FResponceInfo InfoResponseVerefi;
+	
 	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseChangePassword;
+	UPROPERTY(BlueprintReadOnly)
+	FResponceInfo InfoResponseVerefi;
 
 	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseProfile;

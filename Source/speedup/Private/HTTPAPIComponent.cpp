@@ -668,7 +668,34 @@ void UHTTPAPIComponent::OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpR
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
 	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
-	if (SpeedUpGI)
+
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoResponseVerefication = InfoResponseVerefi;
+
+	if (ResponseObject == nullptr)
+	{
+		InfoResponseVerefication.bCorrectResponseObject = false;
+		InfoResponseVerefication.bSuccess = false;
+		InfoResponseVerefication.ErrorID = 101;
+		InfoResponseVerefication.Message = "Response is null";
+		return;
+	}
+
+	InfoResponseVerefication.ErrorID = ErrorID;
+	InfoResponseVerefication.bSuccess = ResponseObject->GetBoolField("success");
+	InfoResponseVerefication.Message = ResponseObject->GetStringField("message");
+
+	if (ErrorID != 200)
+	{
+		InfoResponseVerefication.bCorrectResponseObject = false;
+		return;
+	}
+	else
+	{
+		InfoResponseVerefication.bCorrectResponseObject = true;
+	}
+
+	/*if (SpeedUpGI)
 	{
 		if (ResponseObject == nullptr)
 		{
@@ -687,8 +714,8 @@ void UHTTPAPIComponent::OnResponseReceivedVerefi(FHttpRequestPtr Request, FHttpR
 			Data = ResponseObject->GetStringField("data");
 			ClientTocken = ResponseObject->GetStringField("data");
 			SpeedUpGI->UserInfo.UserToken = ClientTocken;
-		}
-	}
+		}*/
+	
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("data : %s"), *ResponseObject->GetStringField("data"))
@@ -953,6 +980,17 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					GameMode->GetNFTItemManager()->AddItem(AddedItem);
 				}
 			}
+			else
+			{
+				if ((ErrorID == 404) || (ErrorID == 403))
+				{
+					GameMode->AddPopAppMessage("Error", Message, PopupType::error);
+				}
+				if ((ErrorID == 402) || (ErrorID == 500))
+				{
+					GameMode->AddPopAppMessage("Error", Message, PopupType::warning);
+				}
+			}
 		}
 	}
 }
@@ -985,15 +1023,9 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 			{
 				PathID = ResponseObject->GetNumberField("data");
 
-				//int ErrorActivation;
 				int TActivationItem = ActivationItem;
 				int TPathID = PathID; 
-				//int ErrorActivation;
-				//GameMode->GetNFTItemManager()->UpdateLastPathID(ActivationItem, PathID);
-				//GameMode->GetNFTItemManager()->ActivateItem(ActivationItem, PathID, 0, ErrorActivation);
-				//GameMode->GetGeoDataSystemCPP()->StartTrackPath(ActivationItem, PathID, 0);
 				GameMode->PostActivationItem(ActivationItem, PathID, ActivationSlot);
-				//StartPath(ActivationItem, PathID);
 				ActivationItem = -1;
 
 				GameMode->AddPopAppMessage("Error", Message, PopupType::successful);
@@ -1015,10 +1047,50 @@ void UHTTPAPIComponent::OnResponseReceivedActivation(FHttpRequestPtr Request, FH
 
 void UHTTPAPIComponent::OnResponseReceivedDeactivation(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
 {
+	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		ErrorID = Response->GetResponseCode();
+		bSuccess = true;
+		Message = ResponseObject->GetStringField("message");
+		
+		if (ErrorID == 200)
+		{
+			bSuccess = ResponseObject->GetBoolField("success");
+			
+			if (bSuccess == true)
+			{
+				
+				GameMode->PostDeactivationItem(DeactivationItem, PathID, ActivationSlot);
+				//GameMode->AddPopAppMessage("Error", Message, PopupType::successful);
+			}
+		}
+		else
+		{
+			if ((ErrorID == 404) || (ErrorID == 401)|| (ErrorID == 400))
+			{
+				GameMode->AddPopAppMessage("Error", Message, PopupType::error);
+			}
+			if ((ErrorID == 402) || (ErrorID == 500) || (ErrorID == 502))
+			{
+				GameMode->AddPopAppMessage("Error", Message, PopupType::warning);
+			}
+		}
+	}
+
+	/*
+	* if (ResponseObject == nullptr)
 	{
 		bSuccess = false;
 		Message = "ResponseObject is null";
@@ -1036,13 +1108,30 @@ void UHTTPAPIComponent::OnResponseReceivedDeactivation(FHttpRequestPtr Request, 
 			bSuccess = ResponseObject->GetBoolField("success");
 			if (bSuccess == true)
 			{
-				AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
-				GameMode->PostDeactivationItem(DeactivationItem, PathID, ActivationSlot);
-				//DeactivationItem = -1;
-				//PathID = -1;
+				PathID = ResponseObject->GetNumberField("data");
+
+				int TActivationItem = ActivationItem;
+				int TPathID = PathID; 
+				GameMode->PostActivationItem(ActivationItem, PathID, ActivationSlot);
+				ActivationItem = -1;
+
+				GameMode->AddPopAppMessage("Error", Message, PopupType::successful);
+			}
+		}
+		else
+		{
+			if ((ErrorID == 404) || (ErrorID == 403))
+			{
+				GameMode->AddPopAppMessage("Error", Message, PopupType::error);
+			}
+			if ((ErrorID == 402) || (ErrorID == 500))
+			{
+				GameMode->AddPopAppMessage("Error", Message, PopupType::warning);
 			}
 		}
 	}
+	*/
+
 }
 
 void UHTTPAPIComponent::OnResponseReceivedUpdate(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
@@ -1457,7 +1546,17 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 
 			//Points = NFT->GetArrayField(TEXT("Car"));
 		}
-
+		else
+		{
+			if ((ErrorID == 404) || (ErrorID == 401)|| (ErrorID == 400))
+			{
+				GameMode->AddPopAppMessage("Error", Message, PopupType::error);
+			}
+			if ((ErrorID == 402) || (ErrorID == 500)|| (ErrorID == 502))
+			{
+				GameMode->AddPopAppMessage("Error", Message, PopupType::warning);
+			}
+		}
 	}
 }
 void UHTTPAPIComponent::OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessBuying)
@@ -1492,6 +1591,7 @@ void UHTTPAPIComponent::OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FH
 }
 void UHTTPAPIComponent::OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessLvlUp)
 {
+	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
@@ -1511,7 +1611,7 @@ void UHTTPAPIComponent::OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FH
 		ErrorID = 101;
 		ErrorText = "Response is null";
 	}
-	else
+	else if (ResponseObject != nullptr)
 	{
 		ErrorID = 0;
 		ErrorText = "";
@@ -1519,6 +1619,58 @@ void UHTTPAPIComponent::OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FH
 		Message = ResponseObject->GetStringField("message");
 
 	}
+	else
+	{
+		if ((ErrorID == 404) || (ErrorID == 401) || (ErrorID == 400))
+		{
+			GameMode->AddPopAppMessage("Error", Message, PopupType::error);
+		}
+		if ((ErrorID == 402) || (ErrorID == 500) || (ErrorID == 502))
+		{
+			GameMode->AddPopAppMessage("Error", Message, PopupType::warning);
+		}
+	}
+
+	/*
+	if (ResponseObject == nullptr)
+	{
+		bSuccess = false;
+		Message = "ResponseObject is null";
+		Data = "";
+		ErrorID = 101;
+		ErrorText = "Response is null";
+	}
+	else
+	{
+		ErrorID = Response->GetResponseCode();
+		bSuccess = true;
+		Message = ResponseObject->GetStringField("message");
+		
+		if (ErrorID == 200)
+		{
+			bSuccess = ResponseObject->GetBoolField("success");
+			
+			if (bSuccess == true)
+			{
+				
+				GameMode->PostDeactivationItem(DeactivationItem, PathID, ActivationSlot);
+				//GameMode->AddPopAppMessage("Error", Message, PopupType::successful);
+			}
+		}
+		else
+		{
+			if ((ErrorID == 404) || (ErrorID == 401)|| (ErrorID == 400))
+			{
+				GameMode->AddPopAppMessage("Error", Message, PopupType::error);
+			}
+			if ((ErrorID == 402) || (ErrorID == 500) || (ErrorID == 502))
+			{
+				GameMode->AddPopAppMessage("Error", Message, PopupType::warning);
+			}
+		}
+	*/
+
+
 }
 
 void UHTTPAPIComponent::OnResponseReceivedNFTmint(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessMint)
