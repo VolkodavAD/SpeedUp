@@ -1561,6 +1561,7 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 }
 void UHTTPAPIComponent::OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessBuying)
 {
+	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
@@ -1579,13 +1580,24 @@ void UHTTPAPIComponent::OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FH
 		ErrorID = 101;
 		ErrorText = "Response is null";
 	}
-	else
+	else if (ResponseObject != nullptr)
 	{
 		ErrorID = 0;
 		ErrorText = "";
 		bSuccess = ResponseObject->GetBoolField("success");
 		Message = ResponseObject->GetStringField("message");
 		
+	}
+	else
+	{
+		if ((ErrorID == 404) || (ErrorID == 401) || (ErrorID == 400))
+		{
+			GameMode->AddPopAppMessage("Error", Message, PopupType::error);
+		}
+		if ((ErrorID == 402) || (ErrorID == 500) || (ErrorID == 502))
+		{
+			GameMode->AddPopAppMessage("Error", Message, PopupType::warning);
+		}
 	}
 
 }
@@ -1675,6 +1687,7 @@ void UHTTPAPIComponent::OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FH
 
 void UHTTPAPIComponent::OnResponseReceivedNFTmint(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessMint)
 {
+	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
 	TSharedPtr<FJsonObject> ResponseObject;
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
@@ -1694,13 +1707,24 @@ void UHTTPAPIComponent::OnResponseReceivedNFTmint(FHttpRequestPtr Request, FHttp
 		ErrorID = 101;
 		ErrorText = "Response is null";
 	}
-	else
+	else if (ResponseObject != nullptr)
 	{
 		ErrorID = 0;
 		ErrorText = "";
 		bSuccess = ResponseObject->GetBoolField("success");
 		Message = ResponseObject->GetStringField("message");
 
+	}
+	else
+	{
+		if ((ErrorID == 404) || (ErrorID == 401) || (ErrorID == 400))
+		{
+			GameMode->AddPopAppMessage("Error", Message, PopupType::error);
+		}
+		if ((ErrorID == 402) || (ErrorID == 500) || (ErrorID == 502))
+		{
+			GameMode->AddPopAppMessage("Error", Message, PopupType::warning);
+		}
 	}
 }
 
