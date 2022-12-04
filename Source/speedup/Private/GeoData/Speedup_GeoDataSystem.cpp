@@ -2,7 +2,8 @@
 
 #include "GeoData/Speedup_GeoDataSystem.h"
 #include "..\..\speedupGameModeBase.h"
-#include "Engine.h"
+#include "Engine.h" 	
+#include "Kismet/KismetMathLibrary.h"
 #include "Misc/DateTime.h"
 //#include "Logging/LogMacros.h"
 //#include "Service.h"
@@ -247,7 +248,13 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 			ActivPath[SlotN]->UserPathInfo.PathLength = 0.0f;
 			ActivPath[SlotN]->UserPathInfo.PathTime = 0.0f;
 		}
-		ActivPath[SlotN]->AddPoint(AddedPoint);
+
+		if (UKismetMathLibrary::Abs(AddedPoint.PointLocation.X) > 0.001 && UKismetMathLibrary::Abs(AddedPoint.PointLocation.X) > 0.001)
+		{
+			ActivPath[SlotN]->AddPoint(AddedPoint);
+			AddedPoint.PointDistance = 0.0f;
+			AddedPoint.PointSpeed = 0.0f;
+		}
 	}
 
 	if ((ActivPath[SlotN]->UserPathInfo.PathTime > 120) || (FinalPath))
