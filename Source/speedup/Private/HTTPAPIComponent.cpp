@@ -1538,7 +1538,7 @@ void UHTTPAPIComponent::OnResponseReceivedTransactions(FHttpRequestPtr Request, 
 				//Transaction.dateTransaction.ParseHttpDate(date, Transaction.dateTransaction);
 				//printf(Transaction.dateTransaction);
 				Transaction->TransactionType = PointsObject->GetIntegerField("tx_type");
-				
+				Transaction->StampTime = PointsObject->GetStringField("timestamp");
 				
 				GameMode->GetWalletInfo()->AddTransaction(Transaction);
 				

@@ -35,6 +35,8 @@ public:
 		FString dateTransaction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
 		int TransactionType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WalletInfo")
+		FString StampTime;
 	UWalletTransaction();
 };
 
