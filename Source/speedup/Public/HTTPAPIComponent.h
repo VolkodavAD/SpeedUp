@@ -72,6 +72,7 @@ private:
 	void OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessLvlUp);
 	void OnResponseReceivedNFTmint(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessMint);
 	void OnResponseReceivedGoogleAuth(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess);
+	void OnResponseReceivedConvertSPD(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bOperationSuccess);
 
 	const FString SignUPURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/signup";
 	const FString SignINURL = "https://m2e-backend-auth.production.bc.gotbitgames.co/auth/login";
@@ -95,6 +96,7 @@ private:
 	const FString BuyingSlotURL = "https://m2e-backend-core.production.bc.gotbitgames.co/profile/slot/buy";
 	const FString NFTlevelUpURL = "https://m2e-backend-core.production.bc.gotbitgames.co/nft/up";
 	const FString MintNftURL = "https://m2e-backend-core.production.bc.gotbitgames.co/nft/mint";
+	const FString ConvertSpdURL = "https://m2e-backend-core.production.bc.gotbitgames.co/exchange/spd";
 	
 	///update-params
 	//NFTreceiptRequestURL
@@ -146,6 +148,8 @@ public:
 	FResponceInfo InfoResponseNFTlevelUp;
 	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoResponseNFTmint;
+	UPROPERTY(BlueprintReadOnly)
+	FResponceInfo InfoConvertSPD;
 
 	TMap<int, FString> ErrorsMap;
 
@@ -234,12 +238,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void NFTMint(const int NFTid, const FString TokenData);
-	//UFUNCTION(BlueprintNativeEvent)
-	//void StartPath(int ItemID, int StartPathID);
-	//void StartPath_Implementation(int ItemID, int StartPathID);
-	//UFUNCTION(BlueprintNativeEvent)
-	//void StotPath(int ItemID, int StopPathID);
-	//void StotPath_Implementation(int ItemID, int StopPathID);
+
+	UFUNCTION(BlueprintCallable)
+	void ConvertSPD(const float amount, const FString TokenData);
 
 	UFUNCTION(BlueprintCallable)
 	void Verify(const FString CodeFromMail, const FString TokenData);

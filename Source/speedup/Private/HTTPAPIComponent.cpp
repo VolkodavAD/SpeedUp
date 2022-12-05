@@ -485,6 +485,28 @@ void UHTTPAPIComponent::NFTMint(const int NFTid, const FString TokenData)
 	RequestSendCode->ProcessRequest();
 }
 
+void UHTTPAPIComponent::ConvertSPD(const float amount, const FString TokenData)
+{
+	USpeedUpGameInstance* SpeedUpGI = Cast<USpeedUpGameInstance>(GetWorld()->GetGameInstance());
+
+	const FHttpRequestRef RequestSendCode = FHttpModule::Get().CreateRequest();
+	const TSharedRef<FJsonObject> RequestJsonObject = MakeShared<FJsonObject>();
+	RequestJsonObject->SetNumberField("amount", amount);
+
+	FString BearerT = "Bearer ";
+
+	FString RequestBody;
+	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&RequestBody);
+	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);
+	RequestSendCode->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedConvertSPD);
+	RequestSendCode->SetURL(ConvertSpdURL);
+	RequestSendCode->SetVerb("POST");
+	RequestSendCode->SetHeader("Content-Type", "application/json");
+	RequestSendCode->AppendToHeader("Authorization", BearerT.Append(SpeedUpGI->UserInfo.UserToken));
+	RequestSendCode->SetContentAsString(RequestBody);
+	RequestSendCode->ProcessRequest();
+}
+
 void UHTTPAPIComponent::OnResponseReceivedSignIN(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bLoginSuccess)
 {
 	TSharedPtr<FJsonObject> ResponseObject;
@@ -1756,6 +1778,50 @@ void UHTTPAPIComponent::OnResponseReceivedGoogleAuth(FHttpRequestPtr Request, FH
 		Message = ResponseObject->GetStringField("message");
 
 	}
+}
+
+void UHTTPAPIComponent::OnResponseReceivedConvertSPD(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bOperationSuccess)
+
+{
+	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
+	TSharedPtr<FJsonObject> ResponseObject;
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
+
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoSpdConvert = InfoConvertSPD;
+
+	if (ResponseObject == nullptr)
+	{
+		InfoSpdConvert.bCorrectResponseObject = false;
+		InfoSpdConvert.bSuccess = false;
+		InfoSpdConvert.ErrorID = 101;
+		InfoSpdConvert.Message = "Response is null";
+		return;
+	}
+
+	InfoSpdConvert.ErrorID = ErrorID;
+	InfoSpdConvert.bSuccess = ResponseObject->GetBoolField("success");
+	InfoSpdConvert.Message = ResponseObject->GetStringField("message");
+	if ((ErrorID == 404) || (ErrorID == 401) || (ErrorID == 400))
+	{
+		GameMode->AddPopAppMessage("Error", Message, PopupType::error);
+	}
+	if ((ErrorID == 402) || (ErrorID == 500) || (ErrorID == 502))
+	{
+		GameMode->AddPopAppMessage("Error", Message, PopupType::warning);
+	}
+
+	if (ErrorID != 200)
+	{
+		InfoSpdConvert.bCorrectResponseObject = false;
+		return;
+	}
+	else
+	{
+		InfoSpdConvert.bCorrectResponseObject = true;
+	}
+
 }
 
 /**
