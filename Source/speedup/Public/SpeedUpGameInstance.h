@@ -127,6 +127,29 @@ struct FUserInfo : public FTableRowBase
         int AllowedSlots;
 };
 
+USTRUCT(BlueprintType)
+struct FTotalStatInfo : public FTableRowBase
+{
+    GENERATED_USTRUCT_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+       TArray<float> Distance_Mounth_Snekers;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+       TArray<float> Distance_Mounth_Car;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+       TArray<float> Distance_Mounth_Plane;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+       int Year;
+
+    FTotalStatInfo()
+    {
+        Distance_Mounth_Snekers.Reset(12);
+        Distance_Mounth_Car.Reset(12);
+        Distance_Mounth_Plane.Reset(12);
+    }
+};
+
 UCLASS()
 class SPEEDUP_API USpeedUpGameInstance : public UGameInstance
 {
