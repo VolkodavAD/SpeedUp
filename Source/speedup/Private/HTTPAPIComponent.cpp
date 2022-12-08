@@ -940,8 +940,15 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.NextUpdateTime = energy->GetStringField("next_update");
 					NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
 					NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
-					NFTItem.active = energy->GetBoolField("active");
-
+					bool bAcctiveItemResult = energy->GetBoolField("active");
+					if (bAcctiveItemResult)
+					{
+						NFTItem.ItemActivStatus = StatusItem::Active;
+					}
+					else
+					{
+						NFTItem.ItemActivStatus = StatusItem::Deactive;
+					}
 					TSharedPtr<FJsonObject> NextLevel = PointsObject->GetObjectField("next_level");
 					NFTItem.DKScount = NextLevel->GetIntegerField("dks");
 					NFTItem.SPDcount = NextLevel->GetIntegerField("spd");
@@ -973,8 +980,15 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.NextUpdateTime = energy->GetStringField("next_update");
 					NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
 					NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
-					NFTItem.active = energy->GetBoolField("active");
-
+					bool bAcctiveItemResult = energy->GetBoolField("active");
+					if (bAcctiveItemResult)
+					{
+						NFTItem.ItemActivStatus = StatusItem::Active;
+					}
+					else
+					{
+						NFTItem.ItemActivStatus = StatusItem::Deactive;
+					}
 					UItem* AddedItem = NewObject<UItem>();
 					AddedItem->SetItemInfo(NFTItem);
 					GameMode->GetNFTItemManager()->AddItem(AddedItem);
@@ -998,7 +1012,15 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					NFTItem.NextUpdateTime = energy->GetStringField("next_update");
 					NFTItem.capacity = energy->GetIntegerField("capacity"); // Byte
 					NFTItem.spendPart = energy->GetIntegerField("spend_part");  // Byte
-					NFTItem.active = energy->GetBoolField("active");
+					bool bAcctiveItemResult = energy->GetBoolField("active");
+					if (bAcctiveItemResult)
+					{
+						NFTItem.ItemActivStatus = StatusItem::Active;
+					}
+					else
+					{
+						NFTItem.ItemActivStatus = StatusItem::Deactive;
+					}
 					UItem* AddedItem = NewObject<UItem>();
 					AddedItem->SetItemInfo(NFTItem);
 					GameMode->GetNFTItemManager()->AddItem(AddedItem);

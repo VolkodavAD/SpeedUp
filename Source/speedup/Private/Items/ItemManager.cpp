@@ -118,7 +118,7 @@ bool UItemManager::ActivateItem(int ItemID, int PathID, int SlotID, int& ErrorID
 		ErrorID = 404;
 	}
 
-	ItemByID->SetItemStatus(StatusItem::Active);
+	ItemByID->SetItemActivStatus(StatusItem::Active);
 
 	ItemsSlot[SlotID].ItemID = ItemID;
 	ItemsSlot[SlotID].PathForItem = PathID;
@@ -137,9 +137,9 @@ bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 	if (ItemByID == nullptr) { return false; }
 	else { ErrorID = 404; return false; }
 
-	if (ItemByID->GetItemInfo().ItemStatus == StatusItem::Active)
+	if (ItemByID->GetItemInfo().ItemActivStatus == StatusItem::Active)
 	{
-		ItemByID->SetItemStatus(StatusItem::Deactive);
+		ItemByID->SetItemActivStatus(StatusItem::Deactive);
 
 		if (SlotID > 0 && SlotID < 3)
 		{
@@ -182,7 +182,7 @@ int UItemManager::FindFreeSlot()
 	return 0;
 }
 
-bool UItemManager::ActiveSlot()
+bool UItemManager::ActivetedSlot()
 {
 	for (int i = 0; i < 3; i++)
 	{

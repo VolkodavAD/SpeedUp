@@ -90,7 +90,7 @@ public:
 		void LevelUp();
 
 	UFUNCTION(BlueprintCallable)
-		void SetItemStatus(StatusItem NewItemStatus);
+		void SetItemActivStatus(StatusItem NewItemActivStatus);
 };
 */
 

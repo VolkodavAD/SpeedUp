@@ -49,5 +49,5 @@ void AspeedupGameModeBase::SetWalletInfo(UBaseWalletWidget* UBaseWalletWidget)
 
 void AspeedupGameModeBase::ActiveSlot()
 {
-	NFTItemManager->ActiveSlot();
+	NFTItemManager->ActivetedSlot();
 }

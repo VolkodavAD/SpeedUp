@@ -103,7 +103,7 @@ public:
 	int FindFreeSlot();
 
 	UFUNCTION(BlueprintCallable, Category = "Slot")
-	bool ActiveSlot();
+	bool ActivetedSlot();
 
 	UFUNCTION(BlueprintCallable, Category = "Slot")
 	int FindSlotByItemID(int ItemID);

@@ -9,7 +9,7 @@ void UItemBaseWidget::NativeOnInitialized()
 	SetItemName(NewItemInfo.ItemName);
 	SetNFTtype(NewItemInfo.Type);
 	SetNFTrare(NewItemInfo.ItemRarity);
-	SetNFTactiveStatus(NewItemInfo.ItemStatus);
+	SetNFTactiveStatus(NewItemInfo.ItemActivStatus);
 }
 
 void UItemBaseWidget::SetItemName(FString NFTname)

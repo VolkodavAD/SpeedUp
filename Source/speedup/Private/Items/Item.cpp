@@ -16,7 +16,7 @@ void UItem::SetItemInfo(FBaseItemInfo NewItemInfo)
 	//ItemInfo.ItemLevel = NewItemInfo.ItemLevel;
 	//ItemInfo.ItemRarity = NewItemInfo.ItemRarity;
 	//ItemInfo.Type = NewItemInfo.Type;
-	//ItemInfo.ItemStatus = NewItemInfo.ItemStatus;
+	//ItemInfo.ItemActivStatus = NewItemInfo.ItemActivStatus;
 }
 
 void UItem::UpdateLastPathID(int PathID)
@@ -49,7 +49,7 @@ void UItem::DifCapacity()
 	ItemInfo.capacity--;
 }
 
-void UItem::SetItemStatus(StatusItem NewItemStatus)
+void UItem::SetItemActivStatus(StatusItem NewItemActivStatus)
 {
-	ItemInfo.ItemStatus = NewItemStatus;
+	ItemInfo.ItemActivStatus = NewItemActivStatus;
 }

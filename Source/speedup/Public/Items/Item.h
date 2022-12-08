@@ -53,7 +53,7 @@ struct FBaseItemInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		int ItemLevel = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
-		StatusItem ItemStatus = StatusItem::Deactive;
+		StatusItem ItemActivStatus = StatusItem::Deactive;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		FString ItemImage = "image_url";
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
@@ -66,8 +66,8 @@ struct FBaseItemInfo : public FTableRowBase
 		int capacity = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		int spendPart = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
-		bool active = false;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+	//	bool active = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		int last_trip_id = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
@@ -180,5 +180,5 @@ public:
 	void DifCapacity();
 
 	UFUNCTION(BlueprintCallable)
-	void SetItemStatus(StatusItem NewItemStatus);
+	void SetItemActivStatus(StatusItem NewItemActivStatus);
 };
