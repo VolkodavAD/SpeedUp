@@ -26,7 +26,7 @@ void UHTTPAPIComponent::InitComponent()
 	ClientEmail = SpeedUpGI->UserInfo.email;
 	ClientTocken = SpeedUpGI->UserInfo.UserToken;
 
-	UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("Init HTTP with mail: %s"), ClientEmail);
+	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("Init HTTP with mail: %s"), ClientEmail);
 }
 
 void UHTTPAPIComponent::SignUpRequest(const FString Email, const FString Password)
