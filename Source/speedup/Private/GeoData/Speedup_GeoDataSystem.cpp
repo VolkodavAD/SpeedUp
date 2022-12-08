@@ -278,6 +278,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 				PathMaxSpeed = PathMaxSpeed < ActivPath[SlotN]->PointsInPath[i].PointSpeed ? ActivPath[SlotN]->PointsInPath[i].PointSpeed : PathMaxSpeed;
 			}
 			PathSumSpeed += ActivPath[SlotN]->PointsInPath[i].PointSpeed;
+			PathDistance += ActivPath[SlotN]->PointsInPath[i].PointDistance;
 		}
 		PathAverageSpeed = PathSumSpeed / ActivPath[SlotN]->PointsInPath.Num();
 
@@ -296,13 +297,13 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 		if (FinalPath)
 		{
 			AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
-			GameMode->FinalPathItem(ActivPath[SlotN]->UserPathInfo.ItemID, ActivPath[SlotN]->UserPathInfo.PathID, SlotN, PathDistance, PathAverageSpeed);
+			GameMode->FinalPathItem(ActivPath[SlotN]->UserPathInfo.ItemID, ActivPath[SlotN]->UserPathInfo.PathID, SlotN, ActivPath[SlotN]->UserPathInfo.PathLength, PathAverageSpeed);
 		}
 		else
 		{
 
 			AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
-			GameMode->UpdatePathItem(ActivPath[SlotN]->UserPathInfo.ItemID, ActivPath[SlotN]->UserPathInfo.PathID, PathDistance, PathAverageSpeed);
+			GameMode->UpdatePathItem(ActivPath[SlotN]->UserPathInfo.ItemID, ActivPath[SlotN]->UserPathInfo.PathID, ActivPath[SlotN]->UserPathInfo.PathLength, PathAverageSpeed);
 		}
 
 		ActivPath[SlotN]->PointsInPath.Empty();

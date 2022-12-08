@@ -44,26 +44,23 @@ void UItemManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 void UItemManager::InitItemManager(int SlotCount)
 {
 	ItemsSlot.Empty();
-	FItemSlot AddedSlot;
-	AddedSlot.IsUnlock = false;
-	AddedSlot.ItemID = -1;
-	AddedSlot.Items_TimerHandle = Items_TimerHandle;
+
 	for (int i = 0; i < 3; i++)
 	{
+		FItemSlot AddedSlot;
+		AddedSlot.IsUnlock = false;
+		AddedSlot.ItemID = -1;
+		AddedSlot.Items_TimerHandle = Items_TimerHandle;
+
 		//ItemsSlot[i].IsUnlock = false;
 		//ItemsSlot[i].ItemID = -1;
 		//ItemsSlot[i].Items_TimerHandle = Items_TimerHandle;
-		ItemsSlot.Add(AddedSlot);
 		if (i < SlotCount)
 		{
-			ItemsSlot[i].IsUnlock = true;
+			AddedSlot.IsUnlock = true;
 		}
+		ItemsSlot.Add(AddedSlot);
 	}
-
-	//for (int i = 0; i < SlotCount; i++)
-	//{
-	//	ItemsSlot[i].IsUnlock = true;
-	//}
 }
 
 UItem* UItemManager::GetMyItem(int ItemID)
@@ -138,13 +135,21 @@ bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 
 	UItem* ItemByID = GetMyItem(ItemID);
 	if (ItemByID == nullptr) { return false; }
+	else { ErrorID = 404; return false; }
 
-	ItemByID->SetItemStatus(StatusItem::Deactive);
+	if (ItemByID->GetItemInfo().ItemStatus == StatusItem::Active)
+	{
+		ItemByID->SetItemStatus(StatusItem::Deactive);
 
-	ItemsSlot[SlotID].ItemID = -1;
-	ItemsSlot[SlotID].PathForItem = -1;
-	ItemByID->DifCapacity();
-
+		if (SlotID > 0 && SlotID < 3)
+		{
+			ItemsSlot[SlotID].ItemID = -1;
+			ItemsSlot[SlotID].PathForItem = -1;
+			ItemByID->DifCapacity();
+		}
+		else { ErrorID = 601; return false; }
+	}
+	else { ErrorID = 201; return false; }
 	return true;
 }
 
