@@ -134,18 +134,17 @@ bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 	//	return false;
 
 	UItem* ItemByID = GetMyItem(ItemID);
-	if (ItemByID == nullptr) { return false; }
-	else { ErrorID = 404; return false; }
+	if (ItemByID == nullptr) { ErrorID = 404; return false; }
 
 	if (ItemByID->GetItemInfo().ItemActivStatus == StatusItem::Active)
 	{
-		ItemByID->SetItemActivStatus(StatusItem::Deactive);
-
 		if (SlotID > 0 && SlotID < 3)
 		{
+			ItemByID->SetItemActivStatus(StatusItem::Deactive);
 			ItemsSlot[SlotID].ItemID = -1;
 			ItemsSlot[SlotID].PathForItem = -1;
 			ItemByID->DifCapacity();
+			return true;
 		}
 		else { ErrorID = 601; return false; }
 	}
