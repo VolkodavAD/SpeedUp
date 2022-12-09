@@ -138,7 +138,7 @@ bool UItemManager::DeactivateItem(int ItemID, int SlotID, int& ErrorID)
 
 	if (ItemByID->GetItemInfo().ItemActivStatus == StatusItem::Active)
 	{
-		if (SlotID > 0 && SlotID < 3)
+		if (SlotID >= 0 && SlotID < 3)
 		{
 			ItemByID->SetItemActivStatus(StatusItem::Deactive);
 			ItemsSlot[SlotID].ItemID = -1;
