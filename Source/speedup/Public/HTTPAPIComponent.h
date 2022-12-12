@@ -151,6 +151,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FResponceInfo InfoConvertSPD;
 
+	UPROPERTY(BlueprintReadOnly)
+	FResponceInfo InfoResponseLogout;
+
 	TMap<int, FString> ErrorsMap;
 
 	UPROPERTY(BlueprintReadOnly)

@@ -571,8 +571,34 @@ void UHTTPAPIComponent::OnResponseReceivedLogOut(FHttpRequestPtr Request, FHttpR
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 	FJsonSerializer::Deserialize(JsonReader, ResponseObject);
 
-	bSuccess = ResponseObject->GetBoolField("success");
-	Message = ResponseObject->GetStringField("message");
+	ErrorID = Response->GetResponseCode();
+	FResponceInfo& InfoLogoutResponse = InfoResponseLogout;
+
+	if (ResponseObject == nullptr)
+	{
+		InfoLogoutResponse.bCorrectResponseObject = false;
+		InfoLogoutResponse.bSuccess = false;
+		InfoLogoutResponse.ErrorID = 101;
+		InfoLogoutResponse.Message = "Response is null";
+		return;
+	}
+
+	InfoLogoutResponse.ErrorID = ErrorID;
+	InfoLogoutResponse.bSuccess = ResponseObject->GetBoolField("success");
+	InfoLogoutResponse.Message = ResponseObject->GetStringField("message");
+
+	if (ErrorID != 200)
+	{
+		InfoLogoutResponse.bCorrectResponseObject = false;
+		return;
+	}
+	else
+	{
+		InfoLogoutResponse.bCorrectResponseObject = true;
+	}
+
+	//bSuccess = ResponseObject->GetBoolField("success");
+	//Message = ResponseObject->GetStringField("message");
 	
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("success : %s"), *ResponseObject->GetStringField("success"))
 	//UE_LOG(HTTP_REQUEST_RESPONSE, Log, TEXT("message : %s"), *ResponseObject->GetStringField("message"))
