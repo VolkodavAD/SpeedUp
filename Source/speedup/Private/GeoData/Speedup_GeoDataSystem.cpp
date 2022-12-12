@@ -234,7 +234,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 
 			AddedPoint.DeltaTime = UKismetMathLibrary::Abs(DeltaTimePath);
 			AddedPoint.PointDistance = DeltaLeghtPath;
-			AddedPoint.PointSpeed = DeltaLeghtPath / DeltaTimePath;
+			AddedPoint.PointSpeed = (DeltaLeghtPath / DeltaTimePath)*3600;
 
 			ActivPath[SlotN]->UserPathInfo.PathLength += DeltaLeghtPath;
 			ActivPath[SlotN]->UserPathInfo.PathTime += DeltaTimePath;

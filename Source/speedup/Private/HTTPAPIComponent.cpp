@@ -150,10 +150,16 @@ void UHTTPAPIComponent::LogoutRequest(const FString DataToken)
 
 	const TSharedRef<TJsonWriter<>> JsonWriter =TJsonWriterFactory<>::Create(&RequestBody);
 	FJsonSerializer::Serialize(RequestJsonObject, JsonWriter);	
+
+	FString BearerT = "Bearer ";
+
 	Request->OnProcessRequestComplete().BindUObject(this, &UHTTPAPIComponent::OnResponseReceivedLogOut);
 	Request->SetURL(LogOutURL);
 	Request->SetVerb("POST");
 	Request->SetHeader("Content-Type", "application/json");
+
+	Request->AppendToHeader("Authorization", BearerT.Append(ClientTocken));
+
 	Request->SetContentAsString(RequestBody);
 	Request->ProcessRequest();
 }
