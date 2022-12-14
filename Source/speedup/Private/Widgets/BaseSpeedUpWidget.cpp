@@ -17,12 +17,12 @@ void UBaseSpeedUpWidget::Show()
 */
 void UBaseSpeedUpWidget::CopyMessageToClipboard(FString text)
 {
-	//FPlatformMisc::ClipboardCopy(*text);
+	FPlatformMisc::ClipboardCopy(*text);
 }
 
 FString UBaseSpeedUpWidget::PasteMessageFromClipboard()
 {
 	FString ClipboardContent;
-	//FPlatformMisc::ClipboardPaste(ClipboardContent);
+	FPlatformMisc::ClipboardPaste(ClipboardContent);
 	return ClipboardContent;
 }
