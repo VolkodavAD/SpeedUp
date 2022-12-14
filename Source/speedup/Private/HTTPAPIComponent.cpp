@@ -1652,33 +1652,38 @@ void UHTTPAPIComponent::OnResponseReceivedBuyingSlot(FHttpRequestPtr Request, FH
 
 	if (ResponseObject == nullptr)
 	{
-		bSuccess = false;
-		Message = "ResponseObject is null";
-		Data = "";
-		ErrorID = 101;
-		ErrorText = "Response is null";
-	}
-	else if (ResponseObject != nullptr)
-	{
-		ErrorID = 0;
-		ErrorText = "";
-		bSuccess = ResponseObject->GetBoolField("success");
-		Message = ResponseObject->GetStringField("message");
-		
+		//bSuccess = false;
+		//Message = "ResponseObject is null";
+		//Data = "";
+		//ErrorID = 101;
+		//ErrorText = "Response is null";
+
+		InfoResponseBuyingSlot.ErrorID = 404;
+		InfoResponseBuyingSlot.bSuccess = false;
+		InfoResponseBuyingSlot.Message = "ResponseObject is nullptr";
 	}
 	else
 	{
-		if ((ErrorID == 404) || (ErrorID == 401) || (ErrorID == 400))
-		{
-			GameMode->AddPopAppMessage("Error", Message, PopupType::error);
-		}
-		if ((ErrorID == 402) || (ErrorID == 500) || (ErrorID == 502))
-		{
-			GameMode->AddPopAppMessage("Error", Message, PopupType::warning);
-		}
+		//ErrorID = 0;
+		//ErrorText = "";
+		//bSuccess = ResponseObject->GetBoolField("success");
+		//Message = ResponseObject->GetStringField("message");
+
+		InfoResponseBuyingSlot.ErrorID = Response->GetResponseCode();
+		InfoResponseBuyingSlot.bSuccess = ResponseObject->GetBoolField("success");
+		InfoResponseBuyingSlot.Message = ResponseObject->GetStringField("message");
 	}
 
+	if ((ErrorID == 404) || (ErrorID == 401) || (ErrorID == 400))
+	{
+		GameMode->AddPopAppMessage("Error", Message, PopupType::error);
+	}
+	if ((ErrorID == 402) || (ErrorID == 500) || (ErrorID == 502))
+	{
+		GameMode->AddPopAppMessage("Error", Message, PopupType::warning);
+	}
 }
+
 void UHTTPAPIComponent::OnResponseReceivedNFTlevelUp(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccessLvlUp)
 {
 	AspeedupGameModeBase* GameMode = (AspeedupGameModeBase*)GetWorld()->GetAuthGameMode();
