@@ -87,8 +87,8 @@ public:
 	FGeoLocationInfo GetLastLocation_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GeoData")
-	float GetDistanse2Coor(FGeoPointInfo PointStart, FGeoPointInfo PointEnd);
-	float GetDistanse2Coor_Implementation(FGeoPointInfo PointStart, FGeoPointInfo PointEnd);
+	float GetDistanse2Coor(FVector2D PointStart, FVector2D PointEnd);
+	float GetDistanse2Coor_Implementation(FVector2D PointStart, FVector2D PointEnd);
 
 	UFUNCTION(BlueprintCallable)
 	void RestartTrackPath(int ItemID, int PathID, int SlotID);

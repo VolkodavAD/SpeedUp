@@ -62,12 +62,12 @@ void USpeedup_GeoDataSystem::BeginPlay()
 FGeoLocationInfo USpeedup_GeoDataSystem::GetLastLocation_Implementation()
 {
 	FGeoLocationInfo CurrentPoint;
-	CurrentPoint.PointLocation = FVector2D();
+	CurrentPoint.PointLocationEnd = FVector2D();
 	CurrentPoint.TimeStamp = 0.0f;
 	return CurrentPoint;
 }
 
-float USpeedup_GeoDataSystem::GetDistanse2Coor_Implementation(FGeoPointInfo PointStart, FGeoPointInfo PointEnd)
+float USpeedup_GeoDataSystem::GetDistanse2Coor_Implementation(FVector2D PointStart, FVector2D PointEnd)
 {
 	return 0.0f;
 }
@@ -216,12 +216,15 @@ void USpeedup_GeoDataSystem::StopTrackPath(int ItemID, int PathID, int SlotID)
 void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 {
 	FGeoLocationInfo LastLocation = GetLastLocation();
+
 	FGeoPointInfo AddedPoint;
 	AddedPoint.PointID = ActivPath[SlotN]->PointsInPath.Num();
-	AddedPoint.PointLocation = LastLocation.PointLocation;
+	AddedPoint.PointLocationEnd = LastLocation.PointLocationEnd;
 	AddedPoint.TimeStamp = LastLocation.TimeStamp;
 	AddedPoint.DeltaTime = 0.0f;
 	AddedPoint.CurrentTime = FDateTime::UtcNow();
+
+	ActivPath[SlotN]->PointLocationLast = LastLocation.PointLocationEnd;
 
 	if (ActivPath[SlotN]->PathIsActiv == true)
 	{
@@ -230,7 +233,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 		if (ActivPath[SlotN]->PointsInPath.Num() > 0)
 		{
 			//DeltaTimePath = 2.0; //(AddedPoint.CurrentTime - ActivPath[PathID]->PointsInPath.Last().CurrentTime).GetSeconds();
-			float DeltaLeghtPath = GetDistanse2Coor(ActivPath[SlotN]->PointsInPath.Last(), AddedPoint);
+			float DeltaLeghtPath = GetDistanse2Coor(ActivPath[SlotN]->PointLocationLast, AddedPoint.PointLocationEnd);
 
 			AddedPoint.DeltaTime = UKismetMathLibrary::Abs(DeltaTimePath);
 			AddedPoint.PointDistance = DeltaLeghtPath;
@@ -238,6 +241,7 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 
 			ActivPath[SlotN]->UserPathInfo.PathLength += DeltaLeghtPath;
 			ActivPath[SlotN]->UserPathInfo.PathTime += DeltaTimePath;
+
 		}
 		else
 		{
@@ -247,9 +251,11 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 
 			ActivPath[SlotN]->UserPathInfo.PathLength = 0.0f;
 			ActivPath[SlotN]->UserPathInfo.PathTime = 0.0f;
+
+			ActivPath[SlotN]->PointLocationLast = FVector2D();
 		}
 
-		if (UKismetMathLibrary::Abs(AddedPoint.PointLocation.X) > 0.001 && UKismetMathLibrary::Abs(AddedPoint.PointLocation.X) > 0.001)
+		if (UKismetMathLibrary::Abs(AddedPoint.PointLocationEnd.X) > 0.001 && UKismetMathLibrary::Abs(AddedPoint.PointLocationEnd.X) > 0.001)
 		{
 			ActivPath[SlotN]->AddPoint(AddedPoint);
 			//AddedPoint.PointDistance = 0.0f;

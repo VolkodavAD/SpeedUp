@@ -19,7 +19,7 @@ struct FGeoPointInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int PointID = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FVector2D PointLocation;
+		FVector2D PointLocationEnd;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PointSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -40,7 +40,7 @@ struct FGeoLocationInfo : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FVector2D PointLocation;
+		FVector2D PointLocationEnd;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float TimeStamp;
 };
@@ -123,6 +123,9 @@ public:
 	FDateTime StartPathTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDateTime StopPathTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TrevelPath")
+	FVector2D PointLocationLast;
 
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
