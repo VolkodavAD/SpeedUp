@@ -16,7 +16,7 @@ FGeoPointInfo UGeotPoint::GetGeoPointInfo()
 {
 	FGeoPointInfo ReturnedGeoPoints;
 	ReturnedGeoPoints.PointID = Pointinfo.PointID;
-	ReturnedGeoPoints.PointLocation = Pointinfo.PointLocation;
+	ReturnedGeoPoints.PointLocationEnd = Pointinfo.PointLocationEnd;
 	ReturnedGeoPoints.PointSpeed = Pointinfo.PointSpeed;
 	ReturnedGeoPoints.CurrentTime = Pointinfo.CurrentTime;
 
@@ -60,7 +60,7 @@ void UGeoPath::AddPointByLocationVelocity(const int AddedPointID, const FVector2
 {
 	FGeoPointInfo NewPoint;
 	NewPoint.PointID = AddedPointID;
-	NewPoint.PointLocation = AddedPointLocation;
+	NewPoint.PointLocationEnd = AddedPointLocation;
 	NewPoint.PointSpeed = AddedPointSpeed;
 	NewPoint.CurrentTime = CurrentTime;
 
