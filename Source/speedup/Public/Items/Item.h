@@ -18,7 +18,7 @@ enum class ItemType : uint8
 	Unnone		UMETA(DisplayName = "Unnone"),
 	Sneakers	UMETA(DisplayName = "Sneakers"),
 	Car			UMETA(DisplayName = "Car"),
-	airplane	UMETA(DisplayName = "airplane"),
+	Airplane	UMETA(DisplayName = "Airplane"),
 };
 
 UENUM(BlueprintType)
