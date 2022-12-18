@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "TimerManager.h"
 #include "GeoPath.h"
+#include "SaveGeodate.h"
+#include "Kismet/GameplayStatics.h"
 //#include "GeoReferencingSystem.h"
 //#include <Engine.h>
 //#include <EngineService.h>
@@ -18,7 +20,11 @@
 //class ULocationServices;
 //class UHTTPAPIComponent;
 
-	//UHTTPAPIComponent* HTTPAPI;
+//UHTTPAPIComponent* HTTPAPI;
+
+
+//class[PROJECTNAME]_API UMySaveGame : public USaveGame
+
 UDELEGATE(BlueprintAuthorityOnly)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateBindableEvent, int, Path);
 UDELEGATE(BlueprintAuthorityOnly)
@@ -46,6 +52,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	//SaveSlotName = TEXT("SaveSlotGeoData");
 
 	FTimerDelegate TimerDelegatePuth01;
 	FTimerDelegate TimerDelegatePuth02;
@@ -107,6 +114,7 @@ public:
 	float LeghtPath_Weekly;
 	float LeghtPath_Total;
 
+	USaveGeodate* SaveGeodataMain;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseData")
 		bool ServiceEnable;
