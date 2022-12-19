@@ -12,6 +12,7 @@
 //#include "LocationServicesBPLibrary.h"
 //#include "LocationServicesBPLibraryModule.h"
 
+
 USpeedup_GeoDataSystem::USpeedup_GeoDataSystem()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -57,6 +58,19 @@ void USpeedup_GeoDataSystem::BeginPlay()
 		ActivPath[i]->SetItemID(-1);
 		ActivPath[i]->SetStatusActive(false);
 	}
+
+	SaveGeodataMain = Cast<USaveGeodate>(UGameplayStatics::LoadGameFromSlot("LastLocationSlot", 0));
+	
+	if (SaveGeodataMain)
+	{
+		// The operation was successful, so LoadedGame now contains the data we saved earlier.
+		//UE_LOG(LogTemp, Warning, TEXT("LOADED: %s"), *LoadedGame->LastPonitPath01);
+
+
+		ActivPath[0]->PointLocationLast = SaveGeodataMain->LastPonitPath0;
+		ActivPath[1]->PointLocationLast = SaveGeodataMain->LastPonitPath1;
+		ActivPath[2]->PointLocationLast = SaveGeodataMain->LastPonitPath2;
+	}
 }
 
 FGeoLocationInfo USpeedup_GeoDataSystem::GetLastLocation_Implementation()
@@ -96,7 +110,18 @@ GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
 */
 void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID)
 {
+	// The operation was successful, so LoadedGame now contains the data we saved earlier.
+	//UE_LOG(LogTemp, Warning, TEXT("LOADED: %s"), *LoadedGame->LastPonitPath01);
+
+
+	//ActivPath[0]->PointLocationLast = LoadedGame->LastPonitPath01;
+	//ActivPath[1]->PointLocationLast = LoadedGame->LastPonitPath02;
+	//ActivPath[2]->PointLocationLast = LoadedGame->LastPonitPath03;
+
 	ReInitServis();
+
+	USaveGeodate* LoadedGame = Cast<USaveGeodate>(UGameplayStatics::LoadGameFromSlot("LastLocationSlot", 0));
+
 	if (ServiceEnable && ServiceInit)
 	{
 		ActivPath[SlotID] = NewObject<UGeoPath>();
@@ -110,15 +135,26 @@ void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID
 		case 0:
 			TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 0);
 			GetWorld()->GetTimerManager().SetTimer(PathTimerHandle01, TimerDelegatePuth01, 2.0f, true, 0.1f);
-
+			if (LoadedGame)
+			{
+				//ActivPath[0]->PointLocationLast = LoadedGame->LastPonitPath0;
+			}
 			break;
 		case 1:
 			TimerDelegatePuth02.BindUFunction(this, FName("UpdateCurrentPath"), 1);
 			GetWorld()->GetTimerManager().SetTimer(PathTimerHandle02, TimerDelegatePuth02, 2.0f, true, 0.1f);
+			if (LoadedGame)
+			{
+				//ActivPath[1]->PointLocationLast = LoadedGame->LastPonitPath1;
+			}
 			break;
 		case 2:
 			TimerDelegatePuth03.BindUFunction(this, FName("UpdateCurrentPath"), 2);
 			GetWorld()->GetTimerManager().SetTimer(PathTimerHandle03, TimerDelegatePuth03, 2.0f, true, 0.1f);
+			if (LoadedGame)
+			{
+				//ActivPath[2]->PointLocationLast = LoadedGame->LastPonitPath2;
+			}
 			break;
 
 		default:
@@ -139,20 +175,33 @@ void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
 		ActivPath[SlotID]->SetItemID(ItemID);
 		ActivPath[SlotID]->SetStatusActive(true);
 
+		USaveGeodate* LoadedGame = Cast<USaveGeodate>(UGameplayStatics::LoadGameFromSlot("LastLocationSlot", 0));
+
 		switch (SlotID)
 		{
 		case 0:
 			TimerDelegatePuth01.BindUFunction(this, FName("UpdateCurrentPath"), 0);
 			GetWorld()->GetTimerManager().SetTimer(PathTimerHandle01, TimerDelegatePuth01, DeltaTimePath, true, 0.1f);
-
+			if (LoadedGame)
+			{
+				//ActivPath[0]->PointLocationLast = LoadedGame->LastPonitPath0;
+			}
 			break;
 		case 1:
 			TimerDelegatePuth02.BindUFunction(this, FName("UpdateCurrentPath"), 1);
 			GetWorld()->GetTimerManager().SetTimer(PathTimerHandle02, TimerDelegatePuth02, DeltaTimePath, true, 0.1f);
+			if (LoadedGame)
+			{
+				//ActivPath[1]->PointLocationLast = LoadedGame->LastPonitPath1;
+			}
 			break;
 		case 2:
 			TimerDelegatePuth03.BindUFunction(this, FName("UpdateCurrentPath"), 2);
 			GetWorld()->GetTimerManager().SetTimer(PathTimerHandle03, TimerDelegatePuth03, DeltaTimePath, true, 0.1f);
+			if (LoadedGame)
+			{
+				//ActivPath[2]->PointLocationLast = LoadedGame->LastPonitPath2;
+			}
 			break;
 
 		default:
@@ -258,6 +307,20 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 		if (UKismetMathLibrary::Abs(AddedPoint.PointLocationEnd.X) > 0.001 && UKismetMathLibrary::Abs(AddedPoint.PointLocationEnd.X) > 0.001)
 		{
 			ActivPath[SlotN]->AddPoint(AddedPoint);
+			if (USaveGeodate* SaveGameInstance = Cast<USaveGeodate>(UGameplayStatics::CreateSaveGameObject(USaveGeodate::StaticClass())))
+			{
+				// Set data on the savegame object.
+				SaveGameInstance->PlayerName = TEXT("PlayerOne");
+				// Save the data immediately.
+				SaveGameInstance->LastPonitPath0 = FVector2D(0.0, 0.0);
+				SaveGameInstance->LastPonitPath1 = FVector2D(0.0, 0.0);
+				SaveGameInstance->LastPonitPath2 = FVector2D(0.0, 0.0);
+				if (UGameplayStatics::SaveGameToSlot(SaveGameInstance, "LastLocationSlot", 0))
+				{
+					// Save succeeded.
+				}
+			}
+
 			//AddedPoint.PointDistance = 0.0f;
 			//AddedPoint.PointSpeed = 0.0f;
 		}
