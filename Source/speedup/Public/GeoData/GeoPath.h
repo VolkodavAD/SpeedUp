@@ -38,11 +38,11 @@ USTRUCT(BlueprintType)
 struct FGeoLocationInfo : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FVector2D PointLocationEnd;
+		FVector2D PointLocationEnd = FVector2D();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float TimeStamp;
+		float TimeStamp = 0.0f;
 };
 
 UCLASS(Blueprintable)
@@ -125,7 +125,7 @@ public:
 	FDateTime StopPathTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TrevelPath")
-	FVector2D PointLocationLast;
+	FGeoLocationInfo LastPointLocation;
 
 	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")

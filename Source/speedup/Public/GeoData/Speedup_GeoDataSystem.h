@@ -69,6 +69,9 @@ public:
 
 	float DeltaTimePath = 5.0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BaseData")
+	int UpdateNum = 0;
+
 	// отправка данных на сервер
 	UFUNCTION(BlueprintCallable, Category = "GeoData")
 	void UpdateCurrentPath(int PathID);

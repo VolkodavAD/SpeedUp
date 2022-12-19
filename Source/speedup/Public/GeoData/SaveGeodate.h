@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "GeoPath.h"
 #include "SaveGeodate.generated.h"
 
 /**
  * 
  */
+
 UCLASS()
 class SPEEDUP_API USaveGeodate : public USaveGame
 {
@@ -19,11 +21,11 @@ public:
 	FString PlayerName;
 
 	UPROPERTY(VisibleAnywhere, Category = Basic)
-	FVector2D LastPonitPath0;
+	FGeoLocationInfo LastPonitPath0;
 	UPROPERTY(VisibleAnywhere, Category = Basic)
-	FVector2D LastPonitPath1;
+	FGeoLocationInfo LastPonitPath1;
 	UPROPERTY(VisibleAnywhere, Category = Basic)
-	FVector2D LastPonitPath2;
+	FGeoLocationInfo LastPonitPath2;
 
 	USaveGeodate();
 };
