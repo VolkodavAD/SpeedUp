@@ -133,8 +133,8 @@ struct FItemStatisticByPath : public FTableRowBase
 		FTimespan TS_ended_at;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
 		int64 EndTotalMinutes;
-
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInfo")
+		int EndTotalDay;
 };
 
 UCLASS(Blueprintable)
