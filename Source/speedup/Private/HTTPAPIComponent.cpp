@@ -1021,6 +1021,16 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					{
 						NFTItem.ItemActivStatus = StatusItem::Deactive;
 					}
+
+					TSharedPtr<FJsonObject> NextLevel = PointsObject->GetObjectField("next_level");
+					NFTItem.DKScount = NextLevel->GetIntegerField("dks");
+					NFTItem.SPDcount = NextLevel->GetIntegerField("spd");
+					NFTItem.distance = NextLevel->GetIntegerField("distance");
+
+					NFTItem.nextLevelEnabled = PointsObject->GetBoolField("next_level_enabled");
+					NFTItem.distance2 = PointsObject->GetIntegerField("distance");
+
+
 					UItem* AddedItem = NewObject<UItem>();
 					AddedItem->SetItemInfo(NFTItem);
 					GameMode->GetNFTItemManager()->AddItem(AddedItem);
@@ -1053,6 +1063,16 @@ void UHTTPAPIComponent::OnResponseReceivedNFTreceipt(FHttpRequestPtr Request, FH
 					{
 						NFTItem.ItemActivStatus = StatusItem::Deactive;
 					}
+
+					TSharedPtr<FJsonObject> NextLevel = PointsObject->GetObjectField("next_level");
+					NFTItem.DKScount = NextLevel->GetIntegerField("dks");
+					NFTItem.SPDcount = NextLevel->GetIntegerField("spd");
+					NFTItem.distance = NextLevel->GetIntegerField("distance");
+
+					NFTItem.nextLevelEnabled = PointsObject->GetBoolField("next_level_enabled");
+					NFTItem.distance2 = PointsObject->GetIntegerField("distance");
+
+
 					UItem* AddedItem = NewObject<UItem>();
 					AddedItem->SetItemInfo(NFTItem);
 					GameMode->GetNFTItemManager()->AddItem(AddedItem);
