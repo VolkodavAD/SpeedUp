@@ -312,21 +312,24 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 			else
 			{
 				//DeltaTimePath = 2.0; //(AddedPoint.CurrentTime - ActivPath[PathID]->PointsInPath.Last().CurrentTime).GetSeconds();
-				float DeltaLeghtPath = GetDistanse2Coor(ActivPath[SlotN]->PointsInPath.Last().PointLocationEnd, LastLocation.PointLocationEnd);
+				float DeltaLeghtPath = UKismetMathLibrary::Abs(GetDistanse2Coor(ActivPath[SlotN]->PointsInPath.Last().PointLocationEnd, LastLocation.PointLocationEnd));
 
-				float DT1 = LastLocation.TimeStamp - ActivPath[SlotN]->LastPointLocation.TimeStamp;
-				float DT = LastLocation.TimeStamp - ActivPath[SlotN]->PointsInPath.Last().TimeStamp;
+				float DT1 = UKismetMathLibrary::Abs(LastLocation.TimeStamp - ActivPath[SlotN]->LastPointLocation.TimeStamp);
+				float DT = UKismetMathLibrary::Abs(LastLocation.TimeStamp - ActivPath[SlotN]->PointsInPath.Last().TimeStamp);
 
 				AddedPoint.DeltaTime = DT;
 				//AddedPoint.DeltaTime = UKismetMathLibrary::Abs(DeltaTimePath);
-				
+
 				AddedPoint.PointDistance = DeltaLeghtPath;
 				AddedPoint.PointSpeed = (DeltaLeghtPath / DT) * 3600;
 
 				ActivPath[SlotN]->UserPathInfo.PathLength += DeltaLeghtPath;
 				ActivPath[SlotN]->UserPathInfo.PathTime += DT;
-
 				ActivPath[SlotN]->LastPointLocation = LastLocation;
+
+				if ((AddedPoint.PointSpeed > 0) && (AddedPoint.PointSpeed < 30))
+				{
+				}
 				ActivPath[SlotN]->AddPoint(AddedPoint);
 			}
 
@@ -365,9 +368,10 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 			{
 				PathMinSpeed = PathMinSpeed > ActivPath[SlotN]->PointsInPath[i].PointSpeed ? ActivPath[SlotN]->PointsInPath[i].PointSpeed : PathMinSpeed;
 				PathMaxSpeed = PathMaxSpeed < ActivPath[SlotN]->PointsInPath[i].PointSpeed ? ActivPath[SlotN]->PointsInPath[i].PointSpeed : PathMaxSpeed;
+
+				PathSumSpeed += UKismetMathLibrary::Abs(ActivPath[SlotN]->PointsInPath[i].PointSpeed);
+				PathDistance += UKismetMathLibrary::Abs(ActivPath[SlotN]->PointsInPath[i].PointDistance);
 			}
-			PathSumSpeed += UKismetMathLibrary::Abs(ActivPath[SlotN]->PointsInPath[i].PointSpeed);
-			PathDistance += UKismetMathLibrary::Abs(ActivPath[SlotN]->PointsInPath[i].PointDistance);
 		}
 		if (ActivPath[SlotN]->PointsInPath.Num() > 0.0f)
 		{
@@ -377,6 +381,11 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 		{
 			PathAverageSpeed = 0.0f;
 		}
+
+		ActivPath[SlotN]->UserPathInfo.PathLength = PathDistance;
+		ActivPath[SlotN]->UserPathInfo.AverageSpeed = PathAverageSpeed;
+		ActivPath[SlotN]->UserPathInfo.minSpeed = PathMinSpeed;
+		ActivPath[SlotN]->UserPathInfo.maxSpeed = PathMaxSpeed;
 
 		ActivPath[SlotN]->PartsOfPath.Add(ActivPath[SlotN]->UserPathInfo);
 
