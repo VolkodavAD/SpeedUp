@@ -320,10 +320,10 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 			else
 			{
 				//DeltaTimePath = 2.0; //(AddedPoint.CurrentTime - ActivPath[PathID]->PointsInPath.Last().CurrentTime).GetSeconds();
-				float DeltaLeghtPath = UKismetMathLibrary::Abs(GetDistanse2Coor(ActivPath[SlotN]->PointsInPath.Last().PointLocationEnd, LastLocation.PointLocationEnd));
+				float DeltaLeghtPath = UKismetMathLibrary::Abs(GetDistanse2Coor(ActivPath[SlotN]->LastPointLocation.PointLocationEnd, LastLocation.PointLocationEnd));
 
-				float DT1 = UKismetMathLibrary::Abs(LastLocation.TimeStamp - ActivPath[SlotN]->LastPointLocation.TimeStamp);
-				float DT = UKismetMathLibrary::Abs(LastLocation.TimeStamp - ActivPath[SlotN]->PointsInPath.Last().TimeStamp);
+				//float DT = UKismetMathLibrary::Abs(LastLocation.TimeStamp - ActivPath[SlotN]->PointsInPath.Last().TimeStamp);
+				float DT = UKismetMathLibrary::Abs(LastLocation.TimeStamp - ActivPath[SlotN]->LastPointLocation.TimeStamp);
 
 				AddedPoint.DeltaTime = DT;
 				//AddedPoint.DeltaTime = UKismetMathLibrary::Abs(DeltaTimePath);
