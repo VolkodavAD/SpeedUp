@@ -164,7 +164,7 @@ void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID
 		ActivPath[SlotID]->SetStatusActive(true);
 
 		ActivPath[SlotID]->UserPathInfo.RangeSpeedMin = SlotRangeSpeedMin;
-		ActivPath[SlotID]->UserPathInfo.RangeSpeedMin = SlotRangeSpeedMax;
+		ActivPath[SlotID]->UserPathInfo.RangeSpeedMax = SlotRangeSpeedMax;
 
 		//ActivPath[SlotID]->
 
@@ -202,7 +202,7 @@ void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID, 
 		ActivPath[SlotID]->SetStatusActive(true);
 
 		ActivPath[SlotID]->UserPathInfo.RangeSpeedMin = SlotRangeSpeedMin;
-		ActivPath[SlotID]->UserPathInfo.RangeSpeedMin = SlotRangeSpeedMax;
+		ActivPath[SlotID]->UserPathInfo.RangeSpeedMax = SlotRangeSpeedMax;
 
 		USaveGeodate* LoadedGame = Cast<USaveGeodate>(UGameplayStatics::LoadGameFromSlot("LastLocationSlot", 0));
 
@@ -335,10 +335,10 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 				ActivPath[SlotN]->UserPathInfo.PathTime += DT;
 				ActivPath[SlotN]->LastPointLocation = LastLocation;
 
-				if ((AddedPoint.PointSpeed > 0) && (AddedPoint.PointSpeed < 30))
+				if ((AddedPoint.PointSpeed > ActivPath[SlotN]->UserPathInfo.RangeSpeedMin) && (AddedPoint.PointSpeed < ActivPath[SlotN]->UserPathInfo.RangeSpeedMax))
 				{
+					ActivPath[SlotN]->AddPoint(AddedPoint);
 				}
-				ActivPath[SlotN]->AddPoint(AddedPoint);
 			}
 
 			ActivPath[SlotN]->LastPointLocation = LastLocation;
