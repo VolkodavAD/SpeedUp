@@ -71,8 +71,8 @@ void USpeedup_GeoDataSystem::BeginPlay()
 
 
 		ActivPath[0]->LastPointLocation = SaveGeodataMain->LastPonitPath0;
-		ActivPath[1]->LastPointLocation = SaveGeodataMain->LastPonitPath1;
-		ActivPath[2]->LastPointLocation = SaveGeodataMain->LastPonitPath2;
+		ActivPath[1]->LastPointLocation = SaveGeodataMain->LastPonitPath0;
+		ActivPath[2]->LastPointLocation = SaveGeodataMain->LastPonitPath0;
 	}
 }
 
@@ -125,12 +125,13 @@ void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID
 
 	//USaveGeodate* LoadedGame = Cast<USaveGeodate>(UGameplayStatics::LoadGameFromSlot("LastLocationSlot", 0));
 	
-	FGeoPointInfo AddedPoint;
 
-	AddedPoint.PointID = 0;
-
-	if (SaveGeodataMain->HaveSave)
+	if (SaveGeodataMain)
 	{
+		FGeoPointInfo AddedPoint;
+		AddedPoint.PointID = 0;
+		AddedPoint.DeltaTime = 0.0f;
+
 		switch (SlotID)
 		{
 		case 0:
@@ -139,21 +140,20 @@ void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID
 			AddedPoint.CurrentTime = FDateTime::FromUnixTimestamp((int64)SaveGeodataMain->LastPonitPath0.TimeStamp);
 			break;
 		case 1:
-			AddedPoint.PointLocationEnd = SaveGeodataMain->LastPonitPath1.PointLocationEnd;
-			AddedPoint.TimeStamp = SaveGeodataMain->LastPonitPath1.TimeStamp;
-			AddedPoint.CurrentTime = FDateTime::FromUnixTimestamp((int64)SaveGeodataMain->LastPonitPath1.TimeStamp);
+			AddedPoint.PointLocationEnd = SaveGeodataMain->LastPonitPath0.PointLocationEnd;
+			AddedPoint.TimeStamp = SaveGeodataMain->LastPonitPath0.TimeStamp;
+			AddedPoint.CurrentTime = FDateTime::FromUnixTimestamp((int64)SaveGeodataMain->LastPonitPath0.TimeStamp);
 			break;
 		case 2:
-			AddedPoint.PointLocationEnd = SaveGeodataMain->LastPonitPath2.PointLocationEnd;
-			AddedPoint.TimeStamp = SaveGeodataMain->LastPonitPath2.TimeStamp;
-			AddedPoint.CurrentTime = FDateTime::FromUnixTimestamp((int64)SaveGeodataMain->LastPonitPath2.TimeStamp);
+			AddedPoint.PointLocationEnd = SaveGeodataMain->LastPonitPath0.PointLocationEnd;
+			AddedPoint.TimeStamp = SaveGeodataMain->LastPonitPath0.TimeStamp;
+			AddedPoint.CurrentTime = FDateTime::FromUnixTimestamp((int64)SaveGeodataMain->LastPonitPath0.TimeStamp);
 			break;
 		}
+
+		ActivPath[SlotID]->PointsInPath.Add(AddedPoint);
 	}
 
-	AddedPoint.DeltaTime = 0.0f;
-	
-	ActivPath[SlotID]->PointsInPath.Add(AddedPoint);
 
 	//if (ServiceEnable && ServiceInit)
 	{
@@ -188,7 +188,7 @@ void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID
 void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
 {
 	ReInitServis();
-	if (ServiceEnable && ServiceInit)
+	//if ((ServiceEnable && ServiceInit))
 	{
 		ActivPath[SlotID] = NewObject<UGeoPath>();
 		ActivPath[SlotID]->SetSlotID(SlotID);
@@ -281,55 +281,62 @@ void USpeedup_GeoDataSystem::UpdateLocationInPathID(int SlotN, bool FinalPath)
 
 		FGeoPointInfo AddedPoint;
 
+		AddedPoint.CurrentTime = FDateTime::UtcNow();
+		AddedPoint.DeltaTime = 0.0f;
+		AddedPoint.PointSpeed = 0.0f;
+		AddedPoint.PointDistance = 0.0f;
 		AddedPoint.PointID = ActivPath[SlotN]->PointsInPath.Num();
 		AddedPoint.PointLocationEnd = LastLocation.PointLocationEnd;
 		AddedPoint.TimeStamp = LastLocation.TimeStamp;
-		AddedPoint.DeltaTime = 0.0f;
-		AddedPoint.CurrentTime = FDateTime::UtcNow();
 
 		if (UKismetMathLibrary::Abs(AddedPoint.PointLocationEnd.X) > 0.001 && UKismetMathLibrary::Abs(AddedPoint.PointLocationEnd.X) > 0.001)
 		{
 
 			if (ActivPath[SlotN]->PointsInPath.Num() == 0)
 			{
+				/*
 				FGeoPointInfo AddedFirstPointPoint;
 
-				AddedFirstPointPoint.PointID = ActivPath[SlotN]->PointsInPath.Num();
-				AddedFirstPointPoint.PointLocationEnd = ActivPath[SlotN]->LastPointLocation.PointLocationEnd;
-				AddedFirstPointPoint.TimeStamp = ActivPath[SlotN]->LastPointLocation.TimeStamp;
-				AddedFirstPointPoint.DeltaTime = 0.0f;
 				AddedFirstPointPoint.CurrentTime = FDateTime::UtcNow();
+				AddedFirstPointPoint.PointID = ActivPath[SlotN]->PointsInPath.Num();
+				AddedFirstPointPoint.PointLocationEnd = LastLocation.PointLocationEnd;
 
-				ActivPath[SlotN]->AddPoint(AddedFirstPointPoint);
+				AddedFirstPointPoint.PointDistance = 0.0f;
+				AddedFirstPointPoint.PointSpeed = 0.0f;
+				AddedFirstPointPoint.DeltaTime = 0.0f;
+				AddedFirstPointPoint.TimeStamp = ActivPath[SlotN]->LastPointLocation.TimeStamp;
+				*/
+
+				ActivPath[SlotN]->AddPoint(AddedPoint);
 			}
 			else
 			{
 				//DeltaTimePath = 2.0; //(AddedPoint.CurrentTime - ActivPath[PathID]->PointsInPath.Last().CurrentTime).GetSeconds();
-				float DeltaLeghtPath = GetDistanse2Coor(ActivPath[SlotN]->LastPointLocation.PointLocationEnd, AddedPoint.PointLocationEnd);
-				DeltaTimePath = FDateTime::UtcNow().ToUnixTimestamp() - ActivPath[SlotN]->PointsInPath[(ActivPath[SlotN]->PointsInPath.Num()-1)].TimeStamp;
-				AddedPoint.DeltaTime = UKismetMathLibrary::Abs(DeltaTimePath);
+				float DeltaLeghtPath = GetDistanse2Coor(ActivPath[SlotN]->PointsInPath.Last().PointLocationEnd, LastLocation.PointLocationEnd);
+
+				float DT1 = LastLocation.TimeStamp - ActivPath[SlotN]->LastPointLocation.TimeStamp;
+				float DT = LastLocation.TimeStamp - ActivPath[SlotN]->PointsInPath.Last().TimeStamp;
+
+				AddedPoint.DeltaTime = DT;
+				//AddedPoint.DeltaTime = UKismetMathLibrary::Abs(DeltaTimePath);
+				
 				AddedPoint.PointDistance = DeltaLeghtPath;
-				AddedPoint.PointSpeed = (DeltaLeghtPath / DeltaTimePath) * 3600;
+				AddedPoint.PointSpeed = (DeltaLeghtPath / DT) * 3600;
 
 				ActivPath[SlotN]->UserPathInfo.PathLength += DeltaLeghtPath;
-				ActivPath[SlotN]->UserPathInfo.PathTime += DeltaTimePath;
+				ActivPath[SlotN]->UserPathInfo.PathTime += DT;
 
 				ActivPath[SlotN]->LastPointLocation = LastLocation;
 				ActivPath[SlotN]->AddPoint(AddedPoint);
 			}
-			//else
-			//{
-			//}
+
+			ActivPath[SlotN]->LastPointLocation = LastLocation;
 
 			if (USaveGeodate* SaveGameInstance = Cast<USaveGeodate>(UGameplayStatics::CreateSaveGameObject(USaveGeodate::StaticClass())))
 			{
-				// Set data on the savegame object.
 				SaveGameInstance->PlayerName = TEXT("PlayerOne");
-				// Save the data immediately.
 				SaveGameInstance->HaveSave = true;
 				SaveGameInstance->LastPonitPath0 = ActivPath[0]->LastPointLocation;
-				SaveGameInstance->LastPonitPath1 = ActivPath[1]->LastPointLocation;
-				SaveGameInstance->LastPonitPath2 = ActivPath[2]->LastPointLocation;
 
 				if (UGameplayStatics::SaveGameToSlot(SaveGameInstance, "LastLocationSlot", 0))
 				{

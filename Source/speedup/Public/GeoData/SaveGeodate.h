@@ -25,10 +25,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = Basic)
 	FGeoLocationInfo LastPonitPath0;
-	UPROPERTY(VisibleAnywhere, Category = Basic)
-	FGeoLocationInfo LastPonitPath1;
-	UPROPERTY(VisibleAnywhere, Category = Basic)
-	FGeoLocationInfo LastPonitPath2;
+	//UPROPERTY(VisibleAnywhere, Category = Basic)
+	//FGeoLocationInfo LastPonitPath1;
+	//UPROPERTY(VisibleAnywhere, Category = Basic)
+	//FGeoLocationInfo LastPonitPath2;
 
 	USaveGeodate();
 };
