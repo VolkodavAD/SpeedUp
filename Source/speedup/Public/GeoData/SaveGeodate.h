@@ -21,6 +21,9 @@ public:
 	FString PlayerName;
 
 	UPROPERTY(VisibleAnywhere, Category = Basic)
+	bool HaveSave;
+
+	UPROPERTY(VisibleAnywhere, Category = Basic)
 	FGeoLocationInfo LastPonitPath0;
 	UPROPERTY(VisibleAnywhere, Category = Basic)
 	FGeoLocationInfo LastPonitPath1;
