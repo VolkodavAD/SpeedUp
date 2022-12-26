@@ -97,6 +97,11 @@ struct FGeoPathinfo : public FTableRowBase
 		float maxSpeed = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velocity")
 		float AverageSpeed = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velocity")
+		float RangeSpeedMin = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Velocity")
+		float RangeSpeedMax = 0.0f;
 };
 
 

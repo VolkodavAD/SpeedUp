@@ -111,7 +111,7 @@ TimerDel.BindUFunction(this, FName("MyUsefulFunction"), MyInt, MyFloat);
 //Calling MyUsefulFunction after 5 seconds without looping
 GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
 */
-void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID)
+void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID, float SlotRangeSpeedMin, float SlotRangeSpeedMax)
 {
 	// The operation was successful, so LoadedGame now contains the data we saved earlier.
 	//UE_LOG(LogTemp, Warning, TEXT("LOADED: %s"), *LoadedGame->LastPonitPath01);
@@ -163,6 +163,11 @@ void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID
 		ActivPath[SlotID]->SetItemID(ItemID);
 		ActivPath[SlotID]->SetStatusActive(true);
 
+		ActivPath[SlotID]->UserPathInfo.RangeSpeedMin = SlotRangeSpeedMin;
+		ActivPath[SlotID]->UserPathInfo.RangeSpeedMin = SlotRangeSpeedMax;
+
+		//ActivPath[SlotID]->
+
 		switch (SlotID)
 		{
 		case 0:
@@ -185,7 +190,7 @@ void USpeedup_GeoDataSystem::RestartTrackPath(int ItemID, int PathID, int SlotID
 	}
 }
 
-void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
+void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID, float SlotRangeSpeedMin, float SlotRangeSpeedMax)
 {
 	ReInitServis();
 	//if ((ServiceEnable && ServiceInit))
@@ -195,6 +200,9 @@ void USpeedup_GeoDataSystem::StartTrackPath(int ItemID, int PathID, int SlotID)
 		ActivPath[SlotID]->SetPathID(PathID);
 		ActivPath[SlotID]->SetItemID(ItemID);
 		ActivPath[SlotID]->SetStatusActive(true);
+
+		ActivPath[SlotID]->UserPathInfo.RangeSpeedMin = SlotRangeSpeedMin;
+		ActivPath[SlotID]->UserPathInfo.RangeSpeedMin = SlotRangeSpeedMax;
 
 		USaveGeodate* LoadedGame = Cast<USaveGeodate>(UGameplayStatics::LoadGameFromSlot("LastLocationSlot", 0));
 

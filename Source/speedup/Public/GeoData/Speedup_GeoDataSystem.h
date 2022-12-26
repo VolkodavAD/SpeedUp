@@ -101,9 +101,9 @@ public:
 	float GetDistanse2Coor_Implementation(FVector2D PointStart, FVector2D PointEnd);
 
 	UFUNCTION(BlueprintCallable)
-	void RestartTrackPath(int ItemID, int PathID, int SlotID);
+	void RestartTrackPath(int ItemID, int PathID, int SlotID, float SlotRangeSpeedMin, float SlotRangeSpeedMax);
 	UFUNCTION(BlueprintCallable)
-	void StartTrackPath(int ItemID, int PathID, int SlotID);
+	void StartTrackPath(int ItemID, int PathID, int SlotID, float SlotRangeSpeedMin, float SlotRangeSpeedMax);
 	UFUNCTION(BlueprintCallable)
 	void StopTrackPath(int ItemID, int PathID, int SlotID);
 
